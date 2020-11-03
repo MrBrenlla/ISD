@@ -11,10 +11,10 @@ public interface SqlCarreraDao {
     public Carrera create ( Connection connection , Carrera carrera);
 
     // Autor : Carlos
-    public Carrera find ( Connection connection , int idCarrera) throws InstanceNotFoundException;
+    public Carrera find ( Connection connection , Long idCarrera) throws InstanceNotFoundException;
 
     // Autor : Yago
-    public List<Carrera> find (Connection connection , LocalDateTime fechaCelebracion , String ciudad );// InvalidDateException
+    public List<Carrera> find (Connection connection , LocalDateTime fechaCelebracion , String ciudad );// Non lanza InvalidDateException, comprobase en modelo
 
     // Autor : Brais
     public void update ( Connection connection , Carrera carrera ) throws InstanceNotFoundException;

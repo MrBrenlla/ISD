@@ -4,14 +4,14 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 
 public class Carrera {
-    private int idCarrera;
+    private Long idCarrera;
     private String ciudadCelebracion;
     private String descripcion;
     private Float precioInscripcion;
     private LocalDateTime fechaAlta;
     private LocalDateTime fechaCelebracion;
-    private int plazasDisponibles;
-    private int plazasOcupadas;
+    private Integer plazasDisponibles;
+    private Integer plazasOcupadas;
 
 
     public Carrera(int idCarrera, String ciudadCelebracion, String descripcion, Float precioInscripcion, LocalDateTime fechaAlta, LocalDateTime fechaCelebracion, int plazasDisponibles, int plazasOcupadas) {
@@ -57,7 +57,7 @@ public class Carrera {
         return plazasOcupadas;
     }
 
-    public void setIdCarrera(int idCarrera) {
+    public void setIdCarrera(Long idCarrera) {
         this.idCarrera = idCarrera;
     }
 
@@ -82,11 +82,11 @@ public class Carrera {
     }
 
     public void setPlazasDisponibles(int plazasDisponibles) {
-        this.plazasDisponibles = plazasDisponibles;
+        this.plazasDisponibles = new Integer(plazasDisponibles);
     }
 
     public void setPlazasOcupadas(int plazasOcupadas) {
-        this.plazasOcupadas = plazasOcupadas;
+        this.plazasOcupadas = new Integer(plazasOcupadas);
     }
 
     @Override
