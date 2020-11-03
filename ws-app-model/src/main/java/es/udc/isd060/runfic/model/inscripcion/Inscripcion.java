@@ -35,11 +35,11 @@ public class Inscripcion {
         return dorsal;
     }
 
-    public String getNumTarjeta() {
+    public String getTarjeta() {
         return numTarjeta;
     }
 
-    public String getEmailUsuario() {
+    public String getEmail() {
         return email;
     }
 
@@ -47,7 +47,7 @@ public class Inscripcion {
         return fechaInscripcion;
     }
 
-    public boolean isDorsalRecogido() {
+    public boolean isRecogido() {
         return recogido;
     }
 
@@ -60,14 +60,14 @@ public class Inscripcion {
     }
 
     public void setDorsal(int dorsal) {
-        this.dorsal = new Integer(dorsal);
+        this.dorsal = dorsal;
     }
 
-    public void setNumTarjeta(String numTarjeta) {
+    public void setTarjeta(String numTarjeta) {
         this.numTarjeta = numTarjeta;
     }
 
-    public void setEmailUsuario(String emailUsuario) {
+    public void setEmail(String emailUsuario) {
         this.email = emailUsuario;
     }
 
@@ -75,7 +75,7 @@ public class Inscripcion {
         this.fechaInscripcion = fechaInscripcion;
     }
 
-    public void setDorsalEsRecogido(boolean dorsalEsRecogido) {
+    public void setRecogido(boolean dorsalEsRecogido) {
         this.recogido = dorsalEsRecogido;
     }
 
@@ -87,15 +87,15 @@ public class Inscripcion {
         return getIdInscripcion() == that.getIdInscripcion() &&
                 getIdCarrera() == that.getIdCarrera() &&
                 getDorsal() == that.getDorsal() &&
-                isDorsalRecogido() == that.isDorsalRecogido() &&
-                Objects.equals(getNumTarjeta(), that.getNumTarjeta()) &&
-                Objects.equals(getEmailUsuario(), that.getEmailUsuario()) &&
+                isRecogido() == that.isRecogido() &&
+                Objects.equals(getTarjeta(), that.getTarjeta()) &&
+                Objects.equals(getEmail(), that.getEmail()) &&
                 Objects.equals(getFechaInscripcion(), that.getFechaInscripcion());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getIdInscripcion(), getIdCarrera(), getDorsal(), getNumTarjeta(), getEmailUsuario(), getFechaInscripcion(), isDorsalRecogido());
+        return Objects.hash(getIdInscripcion(), getIdCarrera(), getDorsal(), getTarjeta(), getEmail(), getFechaInscripcion(), isRecogido());
     }
 
     @Override

@@ -82,11 +82,11 @@ public class Carrera {
     }
 
     public void setPlazasDisponibles(int plazasDisponibles) {
-        this.plazasDisponibles = new Integer(plazasDisponibles);
+        this.plazasDisponibles = plazasDisponibles;
     }
 
     public void setPlazasOcupadas(int plazasOcupadas) {
-        this.plazasOcupadas = new Integer(plazasOcupadas);
+        this.plazasOcupadas = plazasOcupadas;
     }
 
     @Override

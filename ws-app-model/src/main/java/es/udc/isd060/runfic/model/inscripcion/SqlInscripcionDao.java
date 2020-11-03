@@ -8,21 +8,21 @@ import java.util.List;
 public interface SqlInscripcionDao {
 
     // Autor : Brais
-    public Inscripcion create(Connection connection, Inscripcion inscripcion);// fullCapacityException , inscriptionsAlreadyClosed
+     Inscripcion create(Connection connection, Inscripcion inscripcion);// fullCapacityException , inscriptionsAlreadyClosed
 
     // Autor : Carlos
-    public Inscripcion find(Connection connection, Long idInscripcion) throws InstanceNotFoundException;
+     Inscripcion find(Connection connection, Long idInscripcion);
 
     // Autor : Brais
-    public List<Inscripcion> find (Connection connection , String emailUsuario ) ;
+     List<Inscripcion> find (Connection connection , String emailUsuario ) ;
 
     // Autor : Brais
-    public boolean notExist (Connection connection , String emailUsuario, Long IdCarrera ) ;
+     List<Inscripcion> find (Connection connection , String emailUsuario, Long IdCarrera ) ;
 
     // Autor : Carlos
-    public  void update( Connection connection , Inscripcion inscripcion); throws InstanceNotFoundException;
+      void update( Connection connection , Inscripcion inscripcion);
 
     // Autor : Yago
-    public void remove ( Connection connection , Inscripcion inscripcion);
+     void remove ( Connection connection , Inscripcion inscripcion);
 
 }
