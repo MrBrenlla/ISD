@@ -17,7 +17,7 @@ public interface SqlCarreraDao {
      List<Carrera> find (Connection connection , LocalDateTime fechaCelebracion , String ciudad );// Non lanza InvalidDateException, comprobase en modelo
 
     // Autor : Brais
-     void update ( Connection connection , Carrera carrera );
+     boolean update ( Connection connection , Long idCarrera );
 
     // Autor : Yago
      void remove ( Connection connection , Carrera carrera ) ;

@@ -14,7 +14,7 @@ public class Carrera {
     private Integer plazasOcupadas;
 
 
-    public Carrera(int idCarrera, String ciudadCelebracion, String descripcion, Float precioInscripcion, LocalDateTime fechaAlta, LocalDateTime fechaCelebracion, int plazasDisponibles, int plazasOcupadas) {
+    public Carrera(int idCarrera, String ciudadCelebracion, String descripcion, Float precioInscripcion, LocalDateTime fechaAlta, LocalDateTime fechaCelebracion, Integer plazasDisponibles, Integer plazasOcupadas) {
         this.idCarrera = idCarrera;
         this.ciudadCelebracion = ciudadCelebracion;
         this.descripcion = descripcion;
@@ -25,7 +25,7 @@ public class Carrera {
         this.plazasOcupadas = plazasOcupadas;
     }
 
-    public int getIdCarrera() {
+    public long getIdCarrera() {
         return idCarrera;
     }
 
