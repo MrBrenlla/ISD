@@ -7,8 +7,17 @@ DROP TABLE Inscripcion;
 
 -- -------------------------------- Carrera -----------------------------------
 CREATE TABLE Carrera (
-
+	idCarrera BIGINT NOT NULL AUTO_INCREMENT,
+    ciudadCelebracion VARCHAR(60) NOT NULL,
+    descripcion VARCHAR (200) COLLATE latin1_bin NOT NULL,
+    precioInscripcion FLOAT,
+    fechaAlta DATETIME NOT NULL,
+    fechaCelebracion DATETIME NOT NULL,
+    plazasDisponibles SMALLINT,
+    plazasOcupadas SMALLINT,
+    CONSTRAINT CarreraPK PRIMARY KEY (idCarrera)
  ) ENGINE = InnoDB;
+
 
 -- ------------------------------ Inscripcion ---------------------------------
 
