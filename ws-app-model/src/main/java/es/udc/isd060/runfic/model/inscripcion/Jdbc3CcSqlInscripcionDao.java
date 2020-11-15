@@ -6,7 +6,7 @@ public class Jdbc3CcSqlInscripcionDao extends AbstractSqlInscripcionDao{
         /* Create "queryString". */
         String queryString = "INSERT INTO Inscripcion"
                 + " (idCarrera, dorsal, numTarjeta, email, fechaInscripcion, recogido)"
-                + " VALUES (?, ?, ?, ?, ?)";
+                + " VALUES (?, ?, ?, ?, ?, ?)";
 
         try (PreparedStatement preparedStatement = connection.prepareStatement(
                 queryString, Statement.RETURN_GENERATED_KEYS)) {
