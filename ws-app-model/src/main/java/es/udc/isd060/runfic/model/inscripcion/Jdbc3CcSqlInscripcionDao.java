@@ -1,5 +1,9 @@
 package es.udc.isd060.runfic.model.inscripcion;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.Statement;
+
 public class Jdbc3CcSqlInscripcionDao extends AbstractSqlInscripcionDao{
     public Inscripcion create(Connection connection, Inscripcion inscripcion) {
 
