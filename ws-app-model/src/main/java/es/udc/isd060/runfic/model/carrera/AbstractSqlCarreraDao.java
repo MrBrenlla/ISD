@@ -16,6 +16,25 @@ public abstract class AbstractSqlCarreraDao implements SqlCarreraDao {
     //****************************************** Brais *************************************************
     //**************************************************************************************************
 
+    @Override
+    public boolean update(Connection connection, Long idCarrera) {
+
+        Carrera c = find(connection , idCarrera);
+
+        String queryString = "UPDATE Carrera"
+                + " SET plazasOcupadas = " + (c.getPlazasOcupadas()+1)
+                + " WHERE idCarrera = " + idCarrera;
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(queryString)) {
+
+            /* Execute query. */
+            return 1 == preparedStatement.executeUpdate();
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 
     //**************************************************************************************************
     //********************************************* Yago ***********************************************
@@ -26,8 +45,8 @@ public abstract class AbstractSqlCarreraDao implements SqlCarreraDao {
     //**************************************************************************************************
     //******************************************** Carlos **********************************************
     //**************************************************************************************************
-
-    public Carrera find(Connection connection, Long idCarrera) throws InstanceNotFoundException {
+    @Override
+    public Carrera find(Connection connection, Long idCarrera){
         /* Create "queryString". */
         String queryString = "SELECT idCarrera, ciudadCelebracion, descripcion"
                 + ", precioInscripcion, fechaAlta, fechaCelebracion ,plazasDisponibles , plazasOcupadas "

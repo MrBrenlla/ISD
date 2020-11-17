@@ -4,7 +4,9 @@ import es.udc.isd060.runfic.model.RunFicService.exceptions.DorsalHaSidoRecogidoE
 import es.udc.isd060.runfic.model.RunFicService.exceptions.NumTarjetaIncorrectoException;
 import es.udc.isd060.runfic.model.carrera.*;
 import es.udc.isd060.runfic.model.inscripcion.Inscripcion;
+import es.udc.ws.util.exceptions.InputValidationException;
 import es.udc.ws.util.exceptions.InstanceNotFoundException;
+import java.util.List;
 
 import java.time.LocalDateTime;
 
@@ -14,14 +16,18 @@ public interface RunFicService {
     //****************************************** Brais *************************************************
     //**************************************************************************************************
 
+    public Inscripcion addInscripcion(String email,String tarjeta, long carrera) throws InputValidationException;
+
+    public List<Inscripcion> findInscripcion(String email);
+
     //**************************************************************************************************
     //****************************************** Yago *************************************************
     //**************************************************************************************************
     public Carrera addCarrera(Carrera carrera);
 
-    public <List>Carrera findCarrera (LocalDateTime fechaCelebracion);
+    public List<Carrera> findCarrera(LocalDateTime fechaCelebracion);
 
-    public <List>Carrera findCarrera (LocalDateTime fechaCelebracion, String ciudad);
+    public List<Carrera> findCarrera(LocalDateTime fechaCelebracion, String ciudad);
 
     //**************************************************************************************************
     //****************************************** Carlos *************************************************

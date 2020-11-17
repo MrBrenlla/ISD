@@ -8,10 +8,11 @@ import es.udc.ws.util.exceptions.InputValidationException;
 import es.udc.ws.util.exceptions.InstanceNotFoundException;
 import es.udc.ws.util.sql.DataSourceLocator;
 
+import java.awt.*;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
-
+import java.util.List;
 import javax.sql.DataSource;
 
 import es.udc.isd060.runfic.model.carrera.*;
@@ -32,14 +33,73 @@ public class RunFicServiceImpl implements RunFicService {
 
     private void validateInscripcion(@org.jetbrains.annotations.NotNull Inscripcion i) throws InputValidationException {
 
-        if (i.getTarjeta().length()<>16) throw new InputValidationException();
+        if (i.getTarjeta().length()!=16) throw new InputValidationException("Tarxeta erronea");
         PropertyValidator.validateMandatoryString("email", i.getEmail());
-        if (! i.getEmail().contains("@")) throw new InputValidationException();
+        if (! i.getEmail().contains("@")) throw new InputValidationException("non é un email valido");
     }
 
     //**************************************************************************************************
     //****************************************** Brais *************************************************
     //**************************************************************************************************
+
+    public Inscripcion addInscripcion(String email,String tarjeta, long carrera) throws InputValidationException {
+        LocalDateTime hoxe= LocalDateTime.now();
+
+        Inscripcion i =new Inscripcion(null,carrera,null,tarjeta,email,hoxe,false);
+
+        validateInscripcion(i);
+
+        try (Connection connection = dataSource.getConnection()) {
+
+            try {
+
+                /* Prepare connection. */
+                connection.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
+                connection.setAutoCommit(false);
+
+                /* Do work. */
+
+                Carrera c = carreraDao.find(connection,carrera);
+
+                if(c.getFechaCelebracion().minusDays(1).isBefore(hoxe)) throw new InputValidationException("Data de escripcion sobrepasada");
+
+                if(! carreraDao.update(connection,carrera)) throw new RuntimeException();
+
+                i.setDorsal(c.getPlazasOcupadas()+1);
+
+                i= inscripcionDao.create(connection,i);
+
+                /* Commit. */
+                connection.commit();
+
+                return i;
+
+            } catch (SQLException e) {
+                connection.rollback();
+                throw new RuntimeException(e);
+            } catch (RuntimeException | Error e) {
+                connection.rollback();
+                throw e;
+            } catch (InstanceNotFoundException e) {
+                connection.rollback();
+                throw e;
+            }
+
+        } catch (SQLException | InstanceNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
+    public List<Inscripcion> findInscripcion(String email){
+
+        try (Connection connection = dataSource.getConnection()) {
+            return inscripcionDao.find(connection,email);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
 
     //**************************************************************************************************
     //****************************************** Yago *************************************************
@@ -51,12 +111,12 @@ public class RunFicServiceImpl implements RunFicService {
     }
 
     @Override
-    public <List> Carrera findCarrera(LocalDateTime fechaCelebracion) {
+    public List<Carrera> findCarrera(LocalDateTime fechaCelebracion) {
         return null;
     }
 
     @Override
-    public <List> Carrera findCarrera(LocalDateTime fechaCelebracion, String ciudad) {
+    public List<Carrera> findCarrera(LocalDateTime fechaCelebracion, String ciudad) {
         return null;
     }
     
