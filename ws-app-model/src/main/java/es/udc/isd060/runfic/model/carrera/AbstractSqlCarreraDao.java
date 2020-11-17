@@ -17,7 +17,7 @@ public abstract class AbstractSqlCarreraDao implements SqlCarreraDao {
     //**************************************************************************************************
 
     @Override
-    public boolean update(Connection connection, Long idCarrera) {
+    public boolean update(Connection connection, Long idCarrera) throws InstanceNotFoundException {
 
         Carrera c = find(connection , idCarrera);
 
@@ -46,7 +46,7 @@ public abstract class AbstractSqlCarreraDao implements SqlCarreraDao {
     //******************************************** Carlos **********************************************
     //**************************************************************************************************
     @Override
-    public Carrera find(Connection connection, Long idCarrera){
+    public Carrera find(Connection connection, Long idCarrera) throws InstanceNotFoundException{
         /* Create "queryString". */
         String queryString = "SELECT idCarrera, ciudadCelebracion, descripcion"
                 + ", precioInscripcion, fechaAlta, fechaCelebracion ,plazasDisponibles , plazasOcupadas "
