@@ -13,6 +13,28 @@ public class Carrera {
     private Integer plazasDisponibles;
     private Integer plazasOcupadas;
 
+    public Carrera(String ciudadCelebracion, String descripcion, Float precioInscripcion, LocalDateTime fechaAlta, LocalDateTime fechaCelebracion, Integer plazasDisponibles, Integer plazasOcupadas) {
+
+        this.ciudadCelebracion = ciudadCelebracion;
+        this.descripcion = descripcion;
+        this.precioInscripcion = precioInscripcion;
+        this.fechaAlta = fechaAlta;
+        this.fechaCelebracion = fechaCelebracion;
+        this.plazasDisponibles = plazasDisponibles;
+        this.plazasOcupadas = plazasOcupadas;
+    }
+
+    /*
+    public Carrera(Long idCarrera, Carrera otraCarrera ) {
+        this.idCarrera = idCarrera;
+        this.ciudadCelebracion = otraCarrera.getCiudadCelebracion();
+        this.descripcion = otraCarrera.getDescripcion();
+        this.precioInscripcion = otraCarrera.getPrecioInscripcion();
+        this.fechaAlta = otraCarrera.getFechaAlta();
+        this.fechaCelebracion = otraCarrera.getFechaCelebracion();
+        this.plazasDisponibles = otraCarrera.getPlazasDisponibles();
+        this.plazasOcupadas = otraCarrera.getPlazasOcupadas();
+    }*/
 
     public Carrera(Long idCarrera, String ciudadCelebracion, String descripcion, Float precioInscripcion, LocalDateTime fechaAlta, LocalDateTime fechaCelebracion, Integer plazasDisponibles, Integer plazasOcupadas) {
         this.idCarrera = idCarrera;
@@ -24,18 +46,8 @@ public class Carrera {
         this.plazasDisponibles = plazasDisponibles;
         this.plazasOcupadas = plazasOcupadas;
     }
-    public Carrera(Long idCarrera, Carrera otraCarrera ) {
-        this.idCarrera = idCarrera;
-        this.ciudadCelebracion = otraCarrera.getCiudadCelebracion();
-        this.descripcion = otraCarrera.getDescripcion();
-        this.precioInscripcion = otraCarrera.getPrecioInscripcion();
-        this.fechaAlta = otraCarrera.getFechaAlta();
-        this.fechaCelebracion = otraCarrera.getFechaCelebracion();
-        this.plazasDisponibles = otraCarrera.getPlazasDisponibles();
-        this.plazasOcupadas = otraCarrera.getPlazasOcupadas();
-    }
 
-    public long getIdCarrera() {
+    public Long getIdCarrera() {
         return idCarrera;
     }
 
@@ -59,11 +71,11 @@ public class Carrera {
         return fechaCelebracion;
     }
 
-    public int getPlazasDisponibles() {
+    public Integer getPlazasDisponibles() {
         return plazasDisponibles;
     }
 
-    public int getPlazasOcupadas() {
+    public Integer getPlazasOcupadas() {
         return plazasOcupadas;
     }
 
@@ -91,11 +103,11 @@ public class Carrera {
         this.fechaCelebracion = fechaCelebracion;
     }
 
-    public void setPlazasDisponibles(int plazasDisponibles) {
+    public void setPlazasDisponibles(Integer plazasDisponibles) {
         this.plazasDisponibles = plazasDisponibles;
     }
 
-    public void setPlazasOcupadas(int plazasOcupadas) {
+    public void setPlazasOcupadas(Integer plazasOcupadas) {
         this.plazasOcupadas = plazasOcupadas;
     }
 
@@ -133,3 +145,4 @@ public class Carrera {
                 '}';
     }
 }
+

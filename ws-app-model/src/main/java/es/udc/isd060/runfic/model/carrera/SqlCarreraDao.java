@@ -9,7 +9,7 @@ import java.util.List;
 public interface SqlCarreraDao {
 
     // Autor : Yago
-     public Carrera create (Connection connection , Carrera carrera);
+     public Carrera create ( Connection connection , Carrera carrera);
 
     // Autor : Carlos
      public Carrera find ( Connection connection , Long idCarrera) throws InstanceNotFoundException;
@@ -21,7 +21,7 @@ public interface SqlCarreraDao {
      public boolean update ( Connection connection , Long idCarrera );
 
     // Autor : Yago
-     public void remove ( Connection connection , Carrera carrera ) ;
+     public void remove ( Connection connection , Long idCarrera ) throws InstanceNotFoundException;
 
 
 }

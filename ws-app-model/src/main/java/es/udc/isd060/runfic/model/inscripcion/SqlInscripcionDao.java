@@ -23,6 +23,6 @@ public interface SqlInscripcionDao {
      public void update( Connection connection , Inscripcion inscripcion) throws InstanceNotFoundException;
 
     // Autor : Yago
-     public void remove ( Connection connection , Inscripcion inscripcion);
+    public void remove (Connection connection , Long idInscripcion) throws InstanceNotFoundException;
 
 }

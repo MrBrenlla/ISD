@@ -38,6 +38,35 @@ public class RunFicServiceImpl implements RunFicService {
         if (! i.getEmail().contains("@")) throw new InputValidationException("non é un email valido");
     }
 
+    private void validateCarrera(Carrera carrera) throws InputValidationException {
+        if(carrera.getPrecioInscripcion() < 0.0)
+        {
+            throw new InputValidationException("PrecioInscripcion is not valid is not valid");
+        }
+
+        if(carrera.getCiudadCelebracion() == null || carrera.getCiudadCelebracion().length() == 0)
+        {
+            throw new InputValidationException("CiudadCelebracion is not valid is not valid");
+        }
+
+        if(carrera.getDescripcion() == null || carrera.getDescripcion().length() == 0)
+        {
+            throw new InputValidationException("Descripcion is not valid is not valid");
+        }
+
+        if(carrera.getPlazasDisponibles() < 0)
+        {
+            throw new InputValidationException("PlazasDisponibles is not valid is not valid");
+        }
+
+        if(carrera.getPlazasOcupadas() < 0)
+        {
+            throw new InputValidationException("PlazasOcupadas is not valid is not valid");
+        }
+
+
+    }
+
     //**************************************************************************************************
     //****************************************** Brais *************************************************
     //**************************************************************************************************
@@ -106,18 +135,93 @@ public class RunFicServiceImpl implements RunFicService {
     //**************************************************************************************************
 
     @Override
-    public Carrera addCarrera(Carrera carrera) {
-        return null;
+    public Carrera addCarrera(Carrera carrera) throws InputValidationException {
+
+        validateCarrera(carrera);
+        carrera.setFechaAlta(LocalDateTime.now());
+
+        try (Connection connection = dataSource.getConnection()) {
+
+            try {
+
+                /* Prepare connection. */
+                connection.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
+                connection.setAutoCommit(false);
+
+                /* Do work. */
+                Carrera createdCarrera = carreraDao.create(connection, carrera);
+
+                /* Commit. */
+                connection.commit();
+
+                return createdCarrera;
+
+            } catch (SQLException e) {
+                connection.rollback();
+                throw new RuntimeException(e);
+            } catch (RuntimeException | Error e) {
+                connection.rollback();
+                throw e;
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
     }
 
     @Override
-    public List<Carrera> findCarrera(LocalDateTime fechaCelebracion) {
-        return null;
+    public List<Carrera> findCarrera (LocalDateTime fechaCelebracion) {
+
+        try (Connection connection = dataSource.getConnection()) {
+            return findCarrera(fechaCelebracion,null);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
     public List<Carrera> findCarrera(LocalDateTime fechaCelebracion, String ciudad) {
-        return null;
+
+        try (Connection connection = dataSource.getConnection()) {
+            return carreraDao.find(connection, fechaCelebracion, ciudad);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public void removeCarrera(Long idCarrera) throws InstanceNotFoundException {
+
+        try (Connection connection = dataSource.getConnection()) {
+
+            try {
+
+                /* Prepare connection. */
+                connection.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
+                connection.setAutoCommit(false);
+
+                /* Do work. */
+                carreraDao.remove(connection, idCarrera);
+
+                /* Commit. */
+                connection.commit();
+
+            } catch (InstanceNotFoundException e) {
+                connection.commit();
+                throw e;
+            } catch (SQLException e) {
+                connection.rollback();
+                throw new RuntimeException(e);
+            } catch (RuntimeException | Error e) {
+                connection.rollback();
+                throw e;
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
     }
     
     //**************************************************************************************************
@@ -178,3 +282,4 @@ public class RunFicServiceImpl implements RunFicService {
 
         }
     }
+}

@@ -23,11 +23,13 @@ public interface RunFicService {
     //**************************************************************************************************
     //****************************************** Yago *************************************************
     //**************************************************************************************************
-    public Carrera addCarrera(Carrera carrera);
+    public Carrera addCarrera(Carrera carrera) throws InputValidationException;
 
-    public List<Carrera> findCarrera(LocalDateTime fechaCelebracion);
+    public List<Carrera> findCarrera (LocalDateTime fechaCelebracion);
 
-    public List<Carrera> findCarrera(LocalDateTime fechaCelebracion, String ciudad);
+    public List<Carrera> findCarrera (LocalDateTime fechaCelebracion, String ciudad);
+
+    public void removeCarrera(Long idCarrera) throws InstanceNotFoundException;
 
     //**************************************************************************************************
     //****************************************** Carlos *************************************************

@@ -2,7 +2,6 @@ package es.udc.isd060.runfic.model.inscripcion;
 
 
 import es.udc.ws.util.exceptions.InstanceNotFoundException;
-import jdk.internal.reflect.FieldAccessor;
 
 import java.sql.*;
 import java.time.LocalDateTime;
@@ -15,8 +14,7 @@ public abstract class AbstractSqlInscripcionDao implements SqlInscripcionDao {
     //**************************************************************************************************
     //****************************************** Brais *************************************************
     //**************************************************************************************************
-
-    @override
+    @Override
     public List<Inscripcion> find(Connection connection, String email, Long idCarrera)
             throws InstanceNotFoundException {
 
@@ -64,16 +62,40 @@ public abstract class AbstractSqlInscripcionDao implements SqlInscripcionDao {
             throw new RuntimeException(e);
         }
     }
-    @override
+
+    @Override
     public List<Inscripcion> find(Connection connection , String email ) {
-        return find(connection, email, NULL);
+        return find(connection, email, null);
     }
 
 
     //**************************************************************************************************
     //********************************************* Yago ***********************************************
     //**************************************************************************************************
+    @Override
+    public void remove (Connection connection , Long idInscripcion) throws InstanceNotFoundException {
 
+        /* Create "queryString". */
+
+        String queryString = "DELETE FROM Inscripcion  WHERE" + " idInscripcion  = ?";
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(queryString)) {
+
+            /* Fill "preparedStatement". */
+            int i = 1;
+            preparedStatement.setLong(i++, idInscripcion);
+
+            /* Execute query. */
+            int removedRows = preparedStatement.executeUpdate();
+
+            if (removedRows == 0) {
+                throw new InstanceNotFoundException(idInscripcion, Inscripcion.class.getName());
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
 
     //**************************************************************************************************
