@@ -33,9 +33,9 @@ public class RunFicServiceImpl implements RunFicService {
 
     private void validateInscripcion(@org.jetbrains.annotations.NotNull Inscripcion i) throws InputValidationException {
 
-        if (i.getTarjeta().length()!=16) throw new InputValidationException("Tarxeta erronea");
+        if (i.getTarjeta().length() != 16) throw new InputValidationException("Tarxeta erronea");
         PropertyValidator.validateMandatoryString("email", i.getEmail());
-        if (! i.getEmail().contains("@")) throw new InputValidationException("non é un email valido");
+        if (!i.getEmail().contains("@")) throw new InputValidationException("non é un email valido");
     }
 
     private void validateCarrera(Carrera carrera) throws InputValidationException {
@@ -71,10 +71,10 @@ public class RunFicServiceImpl implements RunFicService {
     //****************************************** Brais *************************************************
     //**************************************************************************************************
 
-    public Inscripcion addInscripcion(String email,String tarjeta, long carrera) throws InputValidationException {
-        LocalDateTime hoxe= LocalDateTime.now();
+    public Inscripcion addInscripcion(String email, String tarjeta, long carrera) throws InputValidationException {
+        LocalDateTime hoxe = LocalDateTime.now();
 
-        Inscripcion i =new Inscripcion(null,carrera,null,tarjeta,email,hoxe,false);
+        Inscripcion i = new Inscripcion(null, carrera, null, tarjeta, email, hoxe, false);
 
         validateInscripcion(i);
 
@@ -88,15 +88,16 @@ public class RunFicServiceImpl implements RunFicService {
 
                 /* Do work. */
 
-                Carrera c = carreraDao.find(connection,carrera);
+                Carrera c = carreraDao.find(connection, carrera);
 
-                if(c.getFechaCelebracion().minusDays(1).isBefore(hoxe)) throw new InputValidationException("Data de escripcion sobrepasada");
+                if (c.getFechaCelebracion().minusDays(1).isBefore(hoxe))
+                    throw new InputValidationException("Data de escripcion sobrepasada");
 
-                if(! carreraDao.update(connection,carrera)) throw new RuntimeException();
+                if (!carreraDao.update(connection, carrera)) throw new RuntimeException();
 
-                i.setDorsal(c.getPlazasOcupadas()+1);
+                i.setDorsal(c.getPlazasOcupadas() + 1);
 
-                i= inscripcionDao.create(connection,i);
+                i = inscripcionDao.create(connection, i);
 
                 /* Commit. */
                 connection.commit();
@@ -120,10 +121,10 @@ public class RunFicServiceImpl implements RunFicService {
     }
 
 
-    public List<Inscripcion> findInscripcion(String email){
+    public List<Inscripcion> findInscripcion(String email) {
 
         try (Connection connection = dataSource.getConnection()) {
-            return inscripcionDao.find(connection,email);
+            return inscripcionDao.find(connection, email);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -223,13 +224,13 @@ public class RunFicServiceImpl implements RunFicService {
         }
 
     }
-    
+
     //**************************************************************************************************
     //****************************************** Carlos *************************************************
     //**************************************************************************************************
 
 
-    public Carrera findCarrera ( Long idCarrera ) throws InstanceNotFoundException{
+    public Carrera findCarrera(Long idCarrera) throws InstanceNotFoundException {
         try (Connection connection = dataSource.getConnection()) {
             return carreraDao.find(connection, idCarrera);
         } catch (SQLException e) {
@@ -238,8 +239,8 @@ public class RunFicServiceImpl implements RunFicService {
     }
 
 
-    public Inscripcion recogerDorsal (Long idInscripcion,String numTarjeta) throws InstanceNotFoundException ,
-            DorsalHaSidoRecogidoException , NumTarjetaIncorrectoException {
+    public Inscripcion recogerDorsal(Long idInscripcion, String numTarjeta) throws InstanceNotFoundException,
+            DorsalHaSidoRecogidoException, NumTarjetaIncorrectoException {
         try (Connection connection = dataSource.getConnection()) {
             try {
                 connection.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
@@ -263,7 +264,7 @@ public class RunFicServiceImpl implements RunFicService {
                 }
                 // Todo ok
                 inscripcion.setRecogido(true);
-                inscripcionDao.update(connection,inscripcion);
+                inscripcionDao.update(connection, inscripcion);
                 connection.commit();
                 return inscripcion;
             } catch (InstanceNotFoundException e) {
