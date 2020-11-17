@@ -7,7 +7,7 @@ public class SqlInscripcionDaoFactory {
     private final static String CLASS_NAME_PARAMETER = "SqlInscripcionDaoFactory.className";
     private static SqlInscripcionDao dao = null;
 
-    private SqlInscripcionDaoFactory() {
+    private SqlMovieDaoFactory() {
     }
 
     @SuppressWarnings("rawtypes")

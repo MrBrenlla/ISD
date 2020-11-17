@@ -1,16 +1,12 @@
 package es.udc.isd060.runfic.model.inscripcion;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.Statement;
-
 public class Jdbc3CcSqlInscripcionDao extends AbstractSqlInscripcionDao{
     public Inscripcion create(Connection connection, Inscripcion inscripcion) {
 
         /* Create "queryString". */
         String queryString = "INSERT INTO Inscripcion"
                 + " (idCarrera, dorsal, numTarjeta, email, fechaInscripcion, recogido)"
-                + " VALUES (?, ?, ?, ?, ?, ?)";
+                + " VALUES (?, ?, ?, ?, ?)";
 
         try (PreparedStatement preparedStatement = connection.prepareStatement(
                 queryString, Statement.RETURN_GENERATED_KEYS)) {

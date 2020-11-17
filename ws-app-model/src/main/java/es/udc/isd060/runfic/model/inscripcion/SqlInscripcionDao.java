@@ -1,8 +1,8 @@
 package es.udc.isd060.runfic.model.inscripcion;
 
-
+import com.sun.jdi.connect.spi.Connection;
 import es.udc.ws.util.exceptions.InstanceNotFoundException;
-import java.sql.Connection;
+
 import java.util.List;
 
 public interface SqlInscripcionDao {
@@ -11,7 +11,7 @@ public interface SqlInscripcionDao {
      Inscripcion create(Connection connection, Inscripcion inscripcion);// fullCapacityException , inscriptionsAlreadyClosed
 
     // Autor : Carlos
-     Inscripcion find(Connection connection, Long idInscripcion) throws InstanceNotFoundException;
+     Inscripcion find(Connection connection, Long idInscripcion);
 
     // Autor : Brais
      List<Inscripcion> find (Connection connection , String emailUsuario ) ;
@@ -20,7 +20,7 @@ public interface SqlInscripcionDao {
      List<Inscripcion> find (Connection connection , String emailUsuario, Long IdCarrera ) ;
 
     // Autor : Carlos
-      void update( Connection connection , Inscripcion inscripcion) throws InstanceNotFoundException;
+      void update( Connection connection , Inscripcion inscripcion);
 
     // Autor : Yago
      void remove ( Connection connection , Inscripcion inscripcion);

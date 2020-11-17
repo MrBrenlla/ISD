@@ -10,7 +10,7 @@ public class SqlCarreraDaoFactory {
     private final static String CLASS_NAME_PARAMETER = "SqlCarreraDaoFactory.className";
     private static SqlCarreraDao dao = null;
 
-    private SqlCarreraDaoFactory() {
+    private SqlMovieDaoFactory() {
     }
 
     @SuppressWarnings("rawtypes")
