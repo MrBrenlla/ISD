@@ -1,5 +1,6 @@
 package es.udc.isd060.runfic.model.RunFicService;
 
+import es.udc.isd060.runfic.model.RunFicService.exceptions.CarreraYaCelebradaException;
 import es.udc.isd060.runfic.model.RunFicService.exceptions.DorsalHaSidoRecogidoException;
 import es.udc.isd060.runfic.model.RunFicService.exceptions.NumTarjetaIncorrectoException;
 import es.udc.isd060.runfic.model.carrera.*;
@@ -37,6 +38,6 @@ public interface RunFicService {
 
     public Carrera findCarrera ( Long idCarrera ) throws InstanceNotFoundException;
 
-    public Inscripcion recogerDorsal (Long idInscripcion,String numTarjeta) throws InstanceNotFoundException, DorsalHaSidoRecogidoException, NumTarjetaIncorrectoException;
+    public Inscripcion recogerDorsal (Long idInscripcion,String numTarjeta) throws InstanceNotFoundException, DorsalHaSidoRecogidoException, NumTarjetaIncorrectoException, CarreraYaCelebradaException, CarreraYaCelebradaException, InputValidationException;
 
 }

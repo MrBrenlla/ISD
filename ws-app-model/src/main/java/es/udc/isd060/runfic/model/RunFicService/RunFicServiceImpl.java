@@ -2,6 +2,7 @@ package es.udc.isd060.runfic.model.RunFicService;
 
 import static es.udc.isd060.runfic.model.util.ModelConstants.RUNFIC_DATA_SOURCE;
 
+import es.udc.isd060.runfic.model.RunFicService.exceptions.CarreraYaCelebradaException;
 import es.udc.isd060.runfic.model.RunFicService.exceptions.DorsalHaSidoRecogidoException;
 import es.udc.isd060.runfic.model.RunFicService.exceptions.NumTarjetaIncorrectoException;
 import es.udc.ws.util.exceptions.InputValidationException;
@@ -31,13 +32,27 @@ public class RunFicServiceImpl implements RunFicService {
         inscripcionDao = SqlInscripcionDaoFactory.getDao();
     }
 
+    private void validateNumTarjeta (String numTarjeta) throws InputValidationException {
+        if (numTarjeta.length() != 16) throw new InputValidationException("Tarxeta erronea");
+    }
+
+    private void validateEmail (String email) throws InputValidationException{
+        PropertyValidator.validateMandatoryString("email", i.getEmail());
+        if (!email.contains("@")) throw new InputValidationException("Non é un email valido");
+    }
+    private void validateInscripcion(@org.jetbrains.annotations.NotNull Inscripcion i) throws InputValidationException {
+        validateEmail(i.getEmail());
+        validateNumTarjeta(i.getTarjeta());
+    }
+
+/*
     private void validateInscripcion(@org.jetbrains.annotations.NotNull Inscripcion i) throws InputValidationException {
 
         if (i.getTarjeta().length() != 16) throw new InputValidationException("Tarxeta erronea");
         PropertyValidator.validateMandatoryString("email", i.getEmail());
         if (!i.getEmail().contains("@")) throw new InputValidationException("non é un email valido");
     }
-
+*/
     private void validateCarrera(Carrera carrera) throws InputValidationException {
         if(carrera.getPrecioInscripcion() < 0.0)
         {
@@ -240,7 +255,9 @@ public class RunFicServiceImpl implements RunFicService {
 
 
     public Inscripcion recogerDorsal(Long idInscripcion, String numTarjeta) throws InstanceNotFoundException,
-            DorsalHaSidoRecogidoException, NumTarjetaIncorrectoException {
+            DorsalHaSidoRecogidoException, NumTarjetaIncorrectoException, CarreraYaCelebradaException, InputValidationException {
+        // TODO OPCIONAL check numTarjeta
+        validateNumTarjeta(numTarjeta);
         try (Connection connection = dataSource.getConnection()) {
             try {
                 connection.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
@@ -248,11 +265,10 @@ public class RunFicServiceImpl implements RunFicService {
 
                 // Buscamos la inscripcion correspondiente al id proporcionado
                 Inscripcion inscripcion = inscripcionDao.find(connection, idInscripcion);
-                // Comprobamos que la carrera no haya empezado NOTA : Operacion pesada
-                Long idCarrera = inscripcion.getIdCarrera();
-                Inscripcion inscripcion = carreraDao.find(connection, );
-                if (inscripcion.isRecogido()) {
-                    throw new DorsalHaSidoRecogidoException();
+                // OPCIONAL Comprobamos que la carrera no haya empezado Nota : Requiere consulta extra
+                Carrera carrera = carreraDao.find(connection,inscripcion.getIdCarrera());
+                if (carrera.getFechaCelebracion().isAfter(LocalDateTime.now())) {
+                    throw new CarreraYaCelebradaException();
                 }
                 // Comprobamos que el dorsal no ha sido recogido
                 if (inscripcion.isRecogido()) {
