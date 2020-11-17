@@ -83,6 +83,12 @@ public class RunFicServiceImpl implements RunFicService {
 
                 // Buscamos la inscripcion correspondiente al id proporcionado
                 Inscripcion inscripcion = inscripcionDao.find(connection, idInscripcion);
+                // Comprobamos que la carrera no haya empezado NOTA : Operacion pesada
+                Long idCarrera = inscripcion.getIdCarrera();
+                Inscripcion inscripcion = carreraDao.find(connection, );
+                if (inscripcion.isRecogido()) {
+                    throw new DorsalHaSidoRecogidoException();
+                }
                 // Comprobamos que el dorsal no ha sido recogido
                 if (inscripcion.isRecogido()) {
                     throw new DorsalHaSidoRecogidoException();
@@ -92,6 +98,8 @@ public class RunFicServiceImpl implements RunFicService {
                     throw new NumTarjetaIncorrectoException();
                 }
                 // Todo ok
+                inscripcion.setRecogido(true);
+                inscripcionDao.update(connection,inscripcion);
                 connection.commit();
                 return inscripcion;
             } catch (InstanceNotFoundException e) {

@@ -9,19 +9,19 @@ import java.util.List;
 public interface SqlCarreraDao {
 
     // Autor : Yago
-     Carrera create (Connection connection , Carrera carrera);
+     public Carrera create (Connection connection , Carrera carrera);
 
     // Autor : Carlos
-     Carrera find ( Connection connection , Long idCarrera);
+     public Carrera find ( Connection connection , Long idCarrera) throws InstanceNotFoundException;
 
     // Autor : Yago
-     List<Carrera> find (Connection connection , LocalDateTime fechaCelebracion , String ciudad );// Non lanza InvalidDateException, comprobase en modelo
+     public List<Carrera> find (Connection connection , LocalDateTime fechaCelebracion , String ciudad );
 
     // Autor : Brais
-     boolean update ( Connection connection , Long idCarrera );
+     public boolean update ( Connection connection , Long idCarrera );
 
     // Autor : Yago
-     void remove ( Connection connection , Carrera carrera ) ;
+     public void remove ( Connection connection , Carrera carrera ) ;
 
 
 }

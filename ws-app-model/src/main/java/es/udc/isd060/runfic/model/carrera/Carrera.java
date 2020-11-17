@@ -24,6 +24,16 @@ public class Carrera {
         this.plazasDisponibles = plazasDisponibles;
         this.plazasOcupadas = plazasOcupadas;
     }
+    public Carrera(Long idCarrera, Carrera otraCarrera ) {
+        this.idCarrera = idCarrera;
+        this.ciudadCelebracion = otraCarrera.getCiudadCelebracion();
+        this.descripcion = otraCarrera.getDescripcion();
+        this.precioInscripcion = otraCarrera.getPrecioInscripcion();
+        this.fechaAlta = otraCarrera.getFechaAlta();
+        this.fechaCelebracion = otraCarrera.getFechaCelebracion();
+        this.plazasDisponibles = otraCarrera.getPlazasDisponibles();
+        this.plazasOcupadas = otraCarrera.getPlazasOcupadas();
+    }
 
     public long getIdCarrera() {
         return idCarrera;

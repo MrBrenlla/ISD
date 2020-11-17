@@ -23,11 +23,11 @@ public class Inscripcion {
     }
 
 
-    public int getIdInscripcion() {
+    public Long getIdInscripcion() {
         return idInscripcion;
     }
 
-    public int getIdCarrera() {
+    public Long getIdCarrera() {
         return idCarrera;
     }
 

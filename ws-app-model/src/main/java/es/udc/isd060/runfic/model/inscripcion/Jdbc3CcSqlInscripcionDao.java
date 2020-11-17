@@ -1,11 +1,11 @@
 package es.udc.isd060.runfic.model.inscripcion;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.Statement;
+import java.sql.*;
 
 public class Jdbc3CcSqlInscripcionDao extends AbstractSqlInscripcionDao{
+
     public Inscripcion create(Connection connection, Inscripcion inscripcion) {
+
 
         /* Create "queryString". */
         String queryString = "INSERT INTO Inscripcion"
@@ -18,7 +18,7 @@ public class Jdbc3CcSqlInscripcionDao extends AbstractSqlInscripcionDao{
             /* Fill "preparedStatement". */
             int i = 1;
             preparedStatement.setLong(i++, inscripcion.getIdCarrera());
-            preparedStatement.setInt(i++, inscripcion.getDorsal().intValue());
+            preparedStatement.setInt(i++, inscripcion.getDorsal());
             preparedStatement.setString(i++,inscripcion.getTarjeta());
             preparedStatement.setString(i++, inscripcion.getEmail());
             preparedStatement.setTimestamp(i++, Timestamp.valueOf(inscripcion.getFechaInscripcion()));
@@ -37,7 +37,7 @@ public class Jdbc3CcSqlInscripcionDao extends AbstractSqlInscripcionDao{
             Long idInscripcion = resultSet.getLong(1);
 
             /* Return Inscripcion. */
-            return new Inscripcion(idInscripcion, inscripcion.getIdCarrera(), inscripcion.getDorsal().intValue(),
+            return new Inscripcion(idInscripcion, inscripcion.getIdCarrera(), inscripcion.getDorsal(),
                     inscripcion.getTarjeta(), inscripcion.getEmail(),inscripcion.getFechaInscripcion(),
                     false);
 

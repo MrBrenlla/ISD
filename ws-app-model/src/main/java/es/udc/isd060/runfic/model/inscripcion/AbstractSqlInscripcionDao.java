@@ -16,58 +16,6 @@ public abstract class AbstractSqlInscripcionDao implements SqlInscripcionDao {
     //****************************************** Brais *************************************************
     //**************************************************************************************************
 
-    @override
-    public List<Inscripcion> find(Connection connection, String email, Long idCarrera)
-            throws InstanceNotFoundException {
-
-        /* Create "queryString". */
-        String queryString = "SELECT idInscripcion, idCarrera, dorsal, numTarjeta"
-                + ", email, fechaInscripcion, recogido FROM Movie WHERE email = " + email;
-
-        if (idCarrera != null) {
-            queryString = queryString + " & idCarrera = ?";
-            /* Fill "preparedStatement". */
-            preparedStatement.setLong(1, idCarrera);
-        }
-
-        try (PreparedStatement preparedStatement = connection.prepareStatement(queryString)) {
-
-            /* Execute query. */
-            ResultSet resultSet = preparedStatement.executeQuery();
-
-            if (!resultSet.next()) {
-                throw new InstanceNotFoundException(idCarrera, email,
-                        Inscripcion.class.getName());
-            }
-
-            List<Inscripcion> inscripcions = new ArrayList<Inscripcion>();
-
-            /* Get results. */
-            while (resultSet.next()) {
-
-                i = 1;
-                Long idInscripcion = resultSet.getLong(i++);
-                Long idCarrera = resultSet.getLong(i++);
-                Integer dorsal = new Integer(resultSet.getInt(i++));
-                String tarjeta = resultSet.getString(i++);
-                String email = resultSet.getString(i++);
-                LocalDateTime fechaIscripcion = resultSet.getTimestamp(i++).toLocalDateTime();
-                boolean recogido = resultSet.getBoolean(i++);
-
-                inscripcions.add(new Inscripcion(idInscripcion, idCarrera, dorsal, tarjeta, email, fechaIscripcion, recogido));
-
-            }
-            /* Return movie. */
-            return inscripcions;
-
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-    }
-    @override
-    public List<Inscripcion> find(Connection connection , String email ) {
-        return find(connection, email, NULL);
-    }
 
     //**************************************************************************************************
     //********************************************* Yago ***********************************************
@@ -79,7 +27,7 @@ public abstract class AbstractSqlInscripcionDao implements SqlInscripcionDao {
     //******************************************** Carlos **********************************************
     //**************************************************************************************************
 
-    Inscripcion find(Connection connection, Long idInscripcion) throws InstanceNotFoundException {
+    public Inscripcion find(Connection connection, Long idInscripcion) throws InstanceNotFoundException {
         /* Create "queryString". */
         String queryString = "SELECT idInscripcion, idCarrera, dorsal, numTarjeta"
                 + ", email, fechaInscripcion, recogido FROM Inscripcion WHERE idInscripcion = ?";
@@ -104,7 +52,8 @@ public abstract class AbstractSqlInscripcionDao implements SqlInscripcionDao {
             Integer dorsal = resultSet.getInt(i++);
             String  numTarjeta  = resultSet.getString(i++);
             String email = resultSet.getString(i++);
-            LocalDateTime fechaInscripcion = fechaInscripcion.adjustInto(resultSet.getTimestamp(i++));
+            Timestamp fechaInscripcionAsTimestamp=resultSet.getTimestamp(i++);
+            LocalDateTime fechaInscripcion = fechaInscripcionAsTimestamp.toLocalDateTime();
             boolean recogido = resultSet.getBoolean(i++);
 
             /* Return Inscripcion. */
@@ -118,7 +67,7 @@ public abstract class AbstractSqlInscripcionDao implements SqlInscripcionDao {
     }
 
 
-    void update(Connection connection , Inscripcion inscripcion) throws InstanceNotFoundException {
+    public void update(Connection connection, Inscripcion inscripcion) throws InstanceNotFoundException {
 
         /* Create "queryString". */
         String queryString = "UPDATE Inscripcion "+
@@ -130,12 +79,12 @@ public abstract class AbstractSqlInscripcionDao implements SqlInscripcionDao {
             /* Fill "preparedStatement". */
             int i = 1;
             preparedStatement.setLong(i++,inscripcion.getIdInscripcion());
-            preparedStatement.setLong(i++,inscripcion.getIdCarrera());
+            Long idCarrera = inscripcion.getIdCarrera();
+            preparedStatement.setLong(i++,idCarrera);
             preparedStatement.setInt(i++,inscripcion.getDorsal());
             preparedStatement.setString(i++,inscripcion.getTarjeta());
             preparedStatement.setString(i++, inscripcion.getEmail());
-            Timestamp fechaInscripcion = fechaInscripcion.adjustInto(inscripcion.getFechaInscripcion());
-            preparedStatement.setTimestamp(i++,fechaInscripcion);
+            preparedStatement.setTimestamp(i++,Timestamp.valueOf(inscripcion.getFechaInscripcion()));
             preparedStatement.setBoolean(i++,inscripcion.isRecogido());
             preparedStatement.setLong(i++,inscripcion.getIdInscripcion());
 

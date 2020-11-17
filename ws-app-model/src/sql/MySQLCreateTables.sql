@@ -25,7 +25,7 @@ CREATE TABLE Inscripcion (
     idInscripcion BIGINT NOT NULL AUTO_INCREMENT,
     idCarrera BIGINT NOT NULL,
     dorsal NUMERIC NOT NULL,
-    numTarjrta VARCHAR(16) NOT NULL,
+    numTarjeta VARCHAR(16) NOT NULL,
     fechaInscripción DATETIME NOT NULL,
     email VARCHAR(40),
     recogido BOOLEAN NOT NULL,
