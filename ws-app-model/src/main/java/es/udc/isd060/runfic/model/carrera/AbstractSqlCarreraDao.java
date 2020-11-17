@@ -8,6 +8,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
+import java.time.temporal.Temporal;
 
 public abstract class AbstractSqlCarreraDao implements SqlCarreraDao {
 
@@ -28,17 +29,7 @@ public abstract class AbstractSqlCarreraDao implements SqlCarreraDao {
     //**************************************************************************************************
     //******************************************** Carlos **********************************************
     //**************************************************************************************************
-/*
- private Long idCarrera;
-    private String ciudadCelebracion;
-    private String descripcion;
-    private Float precioInscripcion;
-    private LocalDateTime fechaAlta;
-    private LocalDateTime fechaCelebracion;
-    private Integer plazasDisponibles;
-    private Integer plazasOcupadas;
 
- */
     Carrera find (Connection connection , Long idCarrera) throws InstanceNotFoundException {
         /* Create "queryString". */
         String queryString = "SELECT idCarrera, ciudadCelebracion, descripcion"
@@ -60,13 +51,15 @@ public abstract class AbstractSqlCarreraDao implements SqlCarreraDao {
             }
 
             /* Get results. */
-            int i=1;
+            i=1;
             idCarrera = resultSet.getLong(i++);
             String ciudadCelebracion = resultSet.getString(i++);
             String descripcion = resultSet.getString(i++);
             Float precioInscripcion = resultSet.getFloat(i++);
-            LocalDateTime fechaAlta = fechaAlta.adjustInto(resultSet.getTimestamp(i++));
-            LocalDateTime fechaCelebracion = fechaCelebracion.adjustInto(resultSet.getTimestamp(i++));
+            LocalDateTime fechaAlta = null;
+            fechaAlta.adjustInto((Temporal)resultSet.getTimestamp(i++));
+            LocalDateTime fechaCelebracion = null;
+            fechaCelebracion.adjustInto((Temporal) resultSet.getTimestamp(i++));
             Integer plazasDisponibles = resultSet.getInt(i++);
             Integer plazasOcupadas = resultSet.getInt(i++);
 
