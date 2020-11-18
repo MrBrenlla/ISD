@@ -17,27 +17,27 @@ public interface RunFicService {
     //****************************************** Brais *************************************************
     //**************************************************************************************************
 
-    public Inscripcion addInscripcion(String email,String tarjeta, long carrera) throws InputValidationException;
+    Inscripcion addInscripcion(String email, String tarjeta, long carrera) throws InputValidationException;
 
-    public List<Inscripcion> findInscripcion(String email);
+    List<Inscripcion> findInscripcion(String email);
 
     //**************************************************************************************************
     //****************************************** Yago *************************************************
     //**************************************************************************************************
-    public Carrera addCarrera(Carrera carrera) throws InputValidationException;
+    Carrera addCarrera(Carrera carrera) throws InputValidationException;
 
-    public List<Carrera> findCarrera (LocalDateTime fechaCelebracion);
+    List<Carrera> findCarrera(LocalDateTime fechaCelebracion);
 
-    public List<Carrera> findCarrera (LocalDateTime fechaCelebracion, String ciudad);
+    List<Carrera> findCarrera(LocalDateTime fechaCelebracion, String ciudad);
 
-    public void removeCarrera(Long idCarrera) throws InstanceNotFoundException;
+    void removeCarrera(Long idCarrera) throws InstanceNotFoundException;
 
     //**************************************************************************************************
     //****************************************** Carlos *************************************************
     //**************************************************************************************************
 
-    public Carrera findCarrera ( Long idCarrera ) throws InstanceNotFoundException;
+    Carrera findCarrera(Long idCarrera) throws InstanceNotFoundException;
 
-    public Inscripcion recogerDorsal (Long idInscripcion,String numTarjeta) throws InstanceNotFoundException, DorsalHaSidoRecogidoException, NumTarjetaIncorrectoException, CarreraYaCelebradaException, CarreraYaCelebradaException, InputValidationException;
+    Inscripcion recogerDorsal(Long idInscripcion, String numTarjeta) throws InstanceNotFoundException, DorsalHaSidoRecogidoException, NumTarjetaIncorrectoException, CarreraYaCelebradaException, InputValidationException;
 
 }

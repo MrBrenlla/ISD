@@ -93,8 +93,8 @@ public class Inscripcion {
         if (this == o) return true;
         if (!(o instanceof Inscripcion)) return false;
         Inscripcion that = (Inscripcion) o;
-        return getIdInscripcion() == that.getIdInscripcion() &&
-                getIdCarrera() == that.getIdCarrera() &&
+        return getIdInscripcion().equals( that.getIdInscripcion()) &&
+                getIdCarrera().equals(that.getIdCarrera()) &&
                 getDorsal() == that.getDorsal() &&
                 isRecogido() == that.isRecogido() &&
                 Objects.equals(getTarjeta(), that.getTarjeta()) &&

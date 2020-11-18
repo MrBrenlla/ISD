@@ -1,6 +1,5 @@
 package es.udc.isd060.runfic.model.carrera;
 
-import es.udc.isd060.runfic.model.inscripcion.SqlInscripcionDao;
 import es.udc.ws.util.configuration.ConfigurationParametersManager;
 
 public class SqlCarreraDaoFactory {

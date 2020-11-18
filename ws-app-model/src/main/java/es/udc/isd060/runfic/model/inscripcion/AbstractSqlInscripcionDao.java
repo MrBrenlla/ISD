@@ -6,6 +6,7 @@ import es.udc.ws.util.exceptions.InstanceNotFoundException;
 import java.sql.*;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.ArrayList;
 
 public abstract class AbstractSqlInscripcionDao implements SqlInscripcionDao {
 
@@ -15,44 +16,40 @@ public abstract class AbstractSqlInscripcionDao implements SqlInscripcionDao {
     //****************************************** Brais *************************************************
     //**************************************************************************************************
     @Override
-    public List<Inscripcion> find(Connection connection, String email, Long idCarrera)
-            throws InstanceNotFoundException {
+    public List<Inscripcion> find(Connection connection, String email, Long idCarrera) {
 
         /* Create "queryString". */
         String queryString = "SELECT idInscripcion, idCarrera, dorsal, numTarjeta"
-                + ", email, fechaInscripcion, recogido FROM Movie WHERE email = " + email;
+                + ", email, fechaInscripcion, recogido FROM Inscripcion WHERE email = ?" ;
 
-        if (idCarrera != null) {
-            queryString = queryString + " & idCarrera = ?";
-            /* Fill "preparedStatement". */
-            preparedStatement.setLong(1, idCarrera);
-        }
+        if (idCarrera != null)  queryString = queryString + " & idCarrera = ?";
+
 
         try (PreparedStatement preparedStatement = connection.prepareStatement(queryString)) {
 
+            preparedStatement.setString(1, email);
+            if (idCarrera != null) preparedStatement.setLong(2, idCarrera);
             /* Execute query. */
             ResultSet resultSet = preparedStatement.executeQuery();
 
-            if (!resultSet.next()) {
-                throw new InstanceNotFoundException(idCarrera, email,
-                        Inscripcion.class.getName());
-            }
 
-            List<Inscripcion> inscripcions = new ArrayList<Inscripcion>();
+            List<Inscripcion> inscripcions = new ArrayList<>();
+
+            int i;
 
             /* Get results. */
             while (resultSet.next()) {
 
                 i = 1;
                 Long idInscripcion = resultSet.getLong(i++);
-                Long idCarrera = resultSet.getLong(i++);
+                Long id = resultSet.getLong(i++);
                 Integer dorsal = resultSet.getInt(i++);
                 String tarjeta = resultSet.getString(i++);
-                String email = resultSet.getString(i++);
+                String mail = resultSet.getString(i++);
                 LocalDateTime fechaIscripcion = resultSet.getTimestamp(i++).toLocalDateTime();
-                boolean recogido = resultSet.getBoolean(i++);
+                boolean recogido = resultSet.getBoolean(i);
 
-                inscripcions.add(new Inscripcion(idInscripcion, idCarrera, dorsal, tarjeta, email, fechaIscripcion, recogido));
+                inscripcions.add(new Inscripcion(idInscripcion, id, dorsal, tarjeta, mail, fechaIscripcion, recogido));
 
             }
             /* Return movie. */
@@ -64,7 +61,7 @@ public abstract class AbstractSqlInscripcionDao implements SqlInscripcionDao {
     }
 
     @Override
-    public List<Inscripcion> find(Connection connection , String email ) {
+    public List<Inscripcion> find(Connection connection , String email ){
         return find(connection, email, null);
     }
 
@@ -83,7 +80,7 @@ public abstract class AbstractSqlInscripcionDao implements SqlInscripcionDao {
 
             /* Fill "preparedStatement". */
             int i = 1;
-            preparedStatement.setLong(i++, idInscripcion);
+            preparedStatement.setLong(i, idInscripcion);
 
             /* Execute query. */
             int removedRows = preparedStatement.executeUpdate();
@@ -129,7 +126,7 @@ public abstract class AbstractSqlInscripcionDao implements SqlInscripcionDao {
             String email = resultSet.getString(i++);
             Timestamp fechaInscripcionAsTimestamp=resultSet.getTimestamp(i++);
             LocalDateTime fechaInscripcion = fechaInscripcionAsTimestamp.toLocalDateTime();
-            boolean recogido = resultSet.getBoolean(i++);
+            boolean recogido = resultSet.getBoolean(i);
 
             /* Return Inscripcion. */
             return new Inscripcion(idInscripcion,idCarrera,dorsal,numTarjeta,email,fechaInscripcion,recogido);
@@ -161,7 +158,7 @@ public abstract class AbstractSqlInscripcionDao implements SqlInscripcionDao {
             preparedStatement.setString(i++, inscripcion.getEmail());
             preparedStatement.setTimestamp(i++,Timestamp.valueOf(inscripcion.getFechaInscripcion()));
             preparedStatement.setBoolean(i++,inscripcion.isRecogido());
-            preparedStatement.setLong(i++,inscripcion.getIdInscripcion());
+            preparedStatement.setLong(i,inscripcion.getIdInscripcion());
 
             /* Execute query. */
             int updatedRows = preparedStatement.executeUpdate();

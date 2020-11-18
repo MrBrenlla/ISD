@@ -26,7 +26,7 @@ CREATE TABLE Inscripcion (
     idCarrera BIGINT NOT NULL,
     dorsal NUMERIC NOT NULL,
     numTarjeta VARCHAR(16) NOT NULL,
-    fechaInscripción DATETIME NOT NULL,
+    fechaInscripcion DATETIME NOT NULL,
     email VARCHAR(40),
     recogido BOOLEAN NOT NULL,
     CONSTRAINT InscripcionPK PRIMARY KEY(idInscripcion),

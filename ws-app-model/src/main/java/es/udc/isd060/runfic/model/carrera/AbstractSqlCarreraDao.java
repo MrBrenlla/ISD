@@ -1,13 +1,10 @@
 package es.udc.isd060.runfic.model.carrera;
 
-import es.udc.isd060.runfic.model.inscripcion.Inscripcion;
 import es.udc.ws.util.exceptions.InstanceNotFoundException;
 
 import java.sql.*;
 import java.time.LocalDateTime;
-import java.time.temporal.Temporal;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 
 
@@ -59,18 +56,18 @@ public abstract class AbstractSqlCarreraDao implements SqlCarreraDao {
                     Timestamp.valueOf(fechaCelebracion));
 
             if(ciudad != null ) {
-                preparedStatement.setString(count++,ciudad);
+                preparedStatement.setString(count,ciudad);
             }
 
             /* Execute query. */
             ResultSet resultSet = preparedStatement.executeQuery();
 
             /* Read movies. */
-            List<Carrera> carreras = new ArrayList<Carrera>();
+            List<Carrera> carreras = new ArrayList<>();
 
             while (resultSet.next()) {
                 int i = 1;
-                Long idCarrera = Long.valueOf(resultSet.getLong(i++));
+                Long idCarrera = resultSet.getLong(i++);
                 String ciudadCelebracion = resultSet.getString(i++);
                 String descripcion = resultSet.getString(i++);
                 Float precioInscripcion = resultSet.getFloat(i++);
@@ -79,7 +76,7 @@ public abstract class AbstractSqlCarreraDao implements SqlCarreraDao {
                 Timestamp fechaCelebracion_AsTimestamp = resultSet.getTimestamp(i++);
                 LocalDateTime fechaCelebracion_ = fechaCelebracion_AsTimestamp.toLocalDateTime();
                 Integer plazasDisponibles = resultSet.getInt(i++);
-                Integer plazasOcupadas = resultSet.getInt(i++);
+                Integer plazasOcupadas = resultSet.getInt(i);
 
                 carreras.add(new Carrera(idCarrera, ciudadCelebracion, descripcion, precioInscripcion, fechaAlta, fechaCelebracion_, plazasDisponibles, plazasOcupadas));
             }
@@ -103,7 +100,7 @@ public abstract class AbstractSqlCarreraDao implements SqlCarreraDao {
 
             /* Fill "preparedStatement". */
             int i = 1;
-            preparedStatement.setLong(i++, idCarrera);
+            preparedStatement.setLong(i, idCarrera);
 
             /* Execute query. */
             int removedRows = preparedStatement.executeUpdate();
@@ -132,7 +129,7 @@ public abstract class AbstractSqlCarreraDao implements SqlCarreraDao {
 
             /* Fill "preparedStatement". */
             int i = 1;
-            preparedStatement.setLong(i++, idCarrera);
+            preparedStatement.setLong(i, idCarrera);
 
             /* Execute query. */
             ResultSet resultSet = preparedStatement.executeQuery();
@@ -151,9 +148,9 @@ public abstract class AbstractSqlCarreraDao implements SqlCarreraDao {
             Timestamp fechaAltaAsTimestamp=resultSet.getTimestamp(i++);
             LocalDateTime fechaAlta = fechaAltaAsTimestamp.toLocalDateTime();
             Timestamp fechaCelebracionAsTimestamp=resultSet.getTimestamp(i++);
-            LocalDateTime fechaCelebracion = fechaAltaAsTimestamp.toLocalDateTime();
+            LocalDateTime fechaCelebracion = fechaCelebracionAsTimestamp.toLocalDateTime();
             Integer plazasDisponibles = resultSet.getInt(i++);
-            Integer plazasOcupadas = resultSet.getInt(i++);
+            Integer plazasOcupadas = resultSet.getInt(i);
 
             /* Return Inscripcion. */
             return new Carrera(idCarrera,ciudadCelebracion,descripcion,precioInscripcion,fechaAlta,

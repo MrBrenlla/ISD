@@ -19,16 +19,12 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import javax.sql.DataSource;
-import java.awt.*;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 
-import static es.udc.isd060.runfic.model.util.ModelConstants.MAX_PRICE;
 import static es.udc.isd060.runfic.model.util.ModelConstants.RUNFIC_DATA_SOURCE;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -37,7 +33,6 @@ public class RunFicServiceTest {
     private static RunFicService runFicService = null;
     private static SqlCarreraDao carreraDao = null;
     private static SqlInscripcionDao inscripcionDao = null;
-    private static LocalDateTime hoxe = LocalDateTime.of(2020, 11, 17, 19, 8);
 
     private final long NON_EXISTENT_CARRERA_ID = -1;
 
@@ -82,19 +77,13 @@ public class RunFicServiceTest {
         return getValidCarrera("Barcelona");
     }
 
-    private Carrera getValidCarrera( LocalDateTime fechaCelebracion){
-        return new Carrera("test", "descripcion", 1.0f , LocalDateTime.now(),
-                fechaCelebracion, 100 , 1);
-    }
-
-
-
     private Carrera createCarrera(Carrera carrera) {
 
         Carrera addedCarrera = null;
         try {
             addedCarrera = runFicService.addCarrera(carrera);
         } catch (InputValidationException e) {
+            if(addedCarrera!=null)removeCarrera(addedCarrera);
             throw new RuntimeException(e);
         }
         return addedCarrera;
@@ -118,20 +107,6 @@ public class RunFicServiceTest {
         return new Inscripcion(idCarrera,2,"0","pepito@gmail.com",date1,false);
     }
 
-    private Inscripcion getValidInscripcion() {
-        return getValidInscripcion(1L);
-    }
-
-    private Inscripcion createInscripcion(Inscripcion inscripcion) {
-
-        Inscripcion addedInscripcion = null;
-        try {
-            addedInscripcion = runFicService.addInscripcion(inscripcion.getEmail(),inscripcion.getEmail(),inscripcion.getIdCarrera());
-        } catch (InputValidationException e) {
-            throw new RuntimeException(e);
-        }
-        return addedInscripcion;
-    }
 
     private void removeInscripcion(Inscripcion inscripcion) {
         try (Connection connection = dataSource.getConnection()) {
@@ -189,7 +164,7 @@ public class RunFicServiceTest {
 
 
     @Test
-    public void testFindByDateAndCity() throws InputValidationException, SQLException {
+    public void testFindByDateAndCity() throws InputValidationException {
         Carrera carrera1 = runFicService.addCarrera(getValidCarrera());
         Carrera carrera2 = runFicService.addCarrera(getValidCarrera_2());
         LocalDateTime fecha = LocalDateTime.of(2020, 1, 1, 19, 8);
@@ -266,13 +241,14 @@ public class RunFicServiceTest {
     }
 
     @Test
-    public void testRemoveInscripcion() throws InstanceNotFoundException {
+    public void testRemoveInscripcion() throws InputValidationException {
 
-        Inscripcion inscripcion = createInscripcion(getValidInscripcion());
+        Carrera carrera = createCarrera(getValidCarrera());
+        Inscripcion i = runFicService.addInscripcion("b@gmail.com","1234567812345678", carrera.getIdCarrera());
 
-        removeInscripcion(inscripcion);
+        removeInscripcion(i);
 
-        assertTrue(runFicService.findInscripcion(inscripcion.getEmail()).isEmpty());
+        assertTrue(runFicService.findInscripcion(i.getEmail()).isEmpty());
 
     }
 
@@ -412,11 +388,20 @@ public class RunFicServiceTest {
         Inscripcion i=null;
         Carrera carrera = null;
         try {
-            carrera = createCarrera(getValidCarrera());
-            Inscripcion inscripcion=new Inscripcion(1L,carrera.getIdCarrera(),1,"1234567812345678",
-                    "b@gmail.com",hoxe,false);
+            carrera = createCarrera(getValidCarrera("Santiago"));
+            Inscripcion inscripcion=new Inscripcion(carrera.getIdCarrera(),carrera.getIdCarrera(),carrera.getPlazasOcupadas()+1,"1234567812345678",
+                    "b@gmail.com",null,false);
 
+            LocalDateTime antes= LocalDateTime.now().withNano(0);
             i = runFicService.addInscripcion("b@gmail.com","1234567812345678", carrera.getIdCarrera());
+            LocalDateTime despois= LocalDateTime.now().withNano(0);
+
+            assertTrue(antes.isBefore(i.getFechaInscripcion())|antes.isEqual(i.getFechaInscripcion()));
+            assertTrue(despois.isAfter(i.getFechaInscripcion())|despois.isEqual(i.getFechaInscripcion()));
+
+            inscripcion.setIdInscripcion(i.getIdInscripcion());
+            inscripcion.setFechaInscripcion(i.getFechaInscripcion());
+
             assertEquals(inscripcion,i);
             Carrera aux = runFicService.findCarrera(i.getIdCarrera());
             assertEquals(carrera.getPlazasOcupadas()+1,aux.getPlazasOcupadas());
@@ -428,18 +413,52 @@ public class RunFicServiceTest {
         }
     }
 
+    @Test
+    public void testAddInscripcion_CarreraInexistente() {
+
+            assertThrows(InstanceNotFoundException.class,() -> runFicService.findCarrera(1L));
+            assertThrows(InputValidationException.class,() -> runFicService.addInscripcion("b@gmail.com","1234567812345678", 1L));
+
+    }
+
+    @Test
+    public void testAddInscripcion_DatosErroneos()  {
+
+        Carrera carrera = null;
+        try {
+            carrera = createCarrera(getValidCarrera("Santiago"));
+            final Long id=carrera.getIdCarrera();
+            assertThrows(InputValidationException.class,()->runFicService.addInscripcion("b@gmail.com","123456781234567", id));
+            assertThrows(InputValidationException.class,()->runFicService.addInscripcion("hanbdb","1234567812345678",id));
+        } finally {
+            if (carrera!=null) removeCarrera(carrera);
+        }
+
+    }
+
+    @Test
     public void testFindInscripcion()  {
         Inscripcion i=null;
         Carrera carrera = null;
-        try {
-            carrera = createCarrera(getValidCarrera());
-            Inscripcion inscripcion=new Inscripcion(1L,carrera.getIdCarrera(),1,"1234567812345678",
-                    "b@gmail.com",hoxe,false);
 
+        assertTrue(runFicService.findInscripcion("b@gmail.com").isEmpty());
+
+        try {
+
+
+            carrera = createCarrera(getValidCarrera());
+            LocalDateTime antes= LocalDateTime.now().withNano(0);
             i = runFicService.addInscripcion("b@gmail.com","1234567812345678", carrera.getIdCarrera());
-            List<Inscripcion> l= new ArrayList<Inscripcion>();
+            LocalDateTime despois= LocalDateTime.now().withNano(0);
+
+            assertTrue(antes.isBefore(i.getFechaInscripcion())|antes.isEqual(i.getFechaInscripcion()));
+            assertTrue(despois.isAfter(i.getFechaInscripcion())|despois.isEqual(i.getFechaInscripcion()));
+
+            List<Inscripcion> l= new ArrayList<>();
+            i.setFechaInscripcion(i.getFechaInscripcion());
             l.add(i);
             assertEquals(l,runFicService.findInscripcion(i.getEmail()));
+
         } catch (InputValidationException e) {
             e.printStackTrace();
         } finally {

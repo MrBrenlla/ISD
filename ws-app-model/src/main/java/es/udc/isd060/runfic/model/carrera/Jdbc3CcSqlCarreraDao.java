@@ -1,11 +1,6 @@
 package es.udc.isd060.runfic.model.carrera;
 
-import es.udc.isd060.runfic.model.inscripcion.Inscripcion;
-import es.udc.ws.util.exceptions.InstanceNotFoundException;
-
 import java.sql.*;
-import java.time.LocalDateTime;
-import java.util.List;
 
 public class Jdbc3CcSqlCarreraDao extends AbstractSqlCarreraDao {
 
@@ -40,7 +35,7 @@ public class Jdbc3CcSqlCarreraDao extends AbstractSqlCarreraDao {
             preparedStatement.setTimestamp(i++,
                     Timestamp.valueOf(carrera.getFechaCelebracion()));
             preparedStatement.setInt(i++, carrera.getPlazasDisponibles());
-            preparedStatement.setInt(i++, carrera.getPlazasOcupadas());
+            preparedStatement.setInt(i, carrera.getPlazasOcupadas());
 
             /* Execute query. */
             preparedStatement.executeUpdate();

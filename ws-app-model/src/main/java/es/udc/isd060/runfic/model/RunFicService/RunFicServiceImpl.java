@@ -1,30 +1,32 @@
 package es.udc.isd060.runfic.model.RunFicService;
 
-import static es.udc.isd060.runfic.model.util.ModelConstants.RUNFIC_DATA_SOURCE;
-
 import es.udc.isd060.runfic.model.RunFicService.exceptions.CarreraYaCelebradaException;
 import es.udc.isd060.runfic.model.RunFicService.exceptions.DorsalHaSidoRecogidoException;
 import es.udc.isd060.runfic.model.RunFicService.exceptions.NumTarjetaIncorrectoException;
+import es.udc.isd060.runfic.model.carrera.Carrera;
+import es.udc.isd060.runfic.model.carrera.SqlCarreraDao;
+import es.udc.isd060.runfic.model.carrera.SqlCarreraDaoFactory;
+import es.udc.isd060.runfic.model.inscripcion.Inscripcion;
+import es.udc.isd060.runfic.model.inscripcion.SqlInscripcionDao;
+import es.udc.isd060.runfic.model.inscripcion.SqlInscripcionDaoFactory;
 import es.udc.ws.util.exceptions.InputValidationException;
 import es.udc.ws.util.exceptions.InstanceNotFoundException;
 import es.udc.ws.util.sql.DataSourceLocator;
+import es.udc.ws.util.validation.PropertyValidator;
 
-import java.awt.*;
+import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.List;
-import javax.sql.DataSource;
 
-import es.udc.isd060.runfic.model.carrera.*;
-import es.udc.isd060.runfic.model.inscripcion.*;
-import es.udc.ws.util.validation.PropertyValidator;
+import static es.udc.isd060.runfic.model.util.ModelConstants.RUNFIC_DATA_SOURCE;
 
 public class RunFicServiceImpl implements RunFicService {
 
     private final DataSource dataSource;
-    private SqlCarreraDao carreraDao = null;
-    private SqlInscripcionDao inscripcionDao = null;
+    private final SqlCarreraDao carreraDao;
+    private final SqlInscripcionDao inscripcionDao;
 
     public RunFicServiceImpl() {
         dataSource = DataSourceLocator.getDataSource(RUNFIC_DATA_SOURCE);
@@ -37,7 +39,7 @@ public class RunFicServiceImpl implements RunFicService {
     }
 
     private void validateEmail (String email) throws InputValidationException{
-        PropertyValidator.validateMandatoryString("email", i.getEmail());
+        PropertyValidator.validateMandatoryString("email", email);
         if (!email.contains("@")) throw new InputValidationException("Non é un email valido");
     }
     private void validateInscripcion(@org.jetbrains.annotations.NotNull Inscripcion i) throws InputValidationException {
@@ -87,7 +89,7 @@ public class RunFicServiceImpl implements RunFicService {
     //**************************************************************************************************
 
     public Inscripcion addInscripcion(String email, String tarjeta, long carrera) throws InputValidationException {
-        LocalDateTime hoxe = LocalDateTime.now();
+        LocalDateTime hoxe = LocalDateTime.now().withNano(0);
 
         Inscripcion i = new Inscripcion(null, carrera, null, tarjeta, email, hoxe, false);
 
@@ -102,13 +104,20 @@ public class RunFicServiceImpl implements RunFicService {
                 connection.setAutoCommit(false);
 
                 /* Do work. */
-
-                Carrera c = carreraDao.find(connection, carrera);
+                Carrera c;
+                try {
+                    c = carreraDao.find(connection, carrera);
+                }catch (InstanceNotFoundException e){
+                    throw new InputValidationException("Carreira inexistente");
+                }
 
                 if (c.getFechaCelebracion().minusDays(1).isBefore(hoxe))
                     throw new InputValidationException("Data de escripcion sobrepasada");
 
-                if (!carreraDao.update(connection, carrera)) throw new RuntimeException();
+                if (!carreraDao.update(connection, carrera)){
+                    connection.rollback();
+                    throw new RuntimeException();
+                }
 
                 i.setDorsal(c.getPlazasOcupadas() + 1);
 
@@ -122,10 +131,7 @@ public class RunFicServiceImpl implements RunFicService {
             } catch (SQLException e) {
                 connection.rollback();
                 throw new RuntimeException(e);
-            } catch (RuntimeException | Error e) {
-                connection.rollback();
-                throw e;
-            } catch (InstanceNotFoundException e) {
+            } catch (RuntimeException | Error | InstanceNotFoundException e) {
                 connection.rollback();
                 throw e;
             }
@@ -140,7 +146,7 @@ public class RunFicServiceImpl implements RunFicService {
 
         try (Connection connection = dataSource.getConnection()) {
             return inscripcionDao.find(connection, email);
-        } catch (SQLException e) {
+        } catch (SQLException | InstanceNotFoundException e) {
             throw new RuntimeException(e);
         }
 
@@ -188,12 +194,7 @@ public class RunFicServiceImpl implements RunFicService {
 
     @Override
     public List<Carrera> findCarrera (LocalDateTime fechaCelebracion) {
-
-        try (Connection connection = dataSource.getConnection()) {
-            return findCarrera(fechaCelebracion,null);
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
+        return findCarrera(fechaCelebracion,null);
     }
 
     @Override
@@ -283,13 +284,7 @@ public class RunFicServiceImpl implements RunFicService {
                 inscripcionDao.update(connection, inscripcion);
                 connection.commit();
                 return inscripcion;
-            } catch (InstanceNotFoundException e) {
-                connection.rollback();
-                throw e;
-            } catch (DorsalHaSidoRecogidoException e) {
-                connection.rollback();
-                throw e;
-            } catch (NumTarjetaIncorrectoException e) {
+            } catch (InstanceNotFoundException | DorsalHaSidoRecogidoException | NumTarjetaIncorrectoException e) {
                 connection.rollback();
                 throw e;
             }
