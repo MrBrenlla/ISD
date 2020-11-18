@@ -2,8 +2,8 @@
 -- Model
 -------------------------------------------------------------------------------
 
-DROP TABLE Carrera;
 DROP TABLE Inscripcion;
+DROP TABLE Carrera;
 
 -- -------------------------------- Carrera -----------------------------------
 CREATE TABLE Carrera (
