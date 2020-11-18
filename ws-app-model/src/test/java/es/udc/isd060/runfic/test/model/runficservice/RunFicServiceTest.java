@@ -30,8 +30,7 @@ import java.util.List;
 
 import static es.udc.isd060.runfic.model.util.ModelConstants.MAX_PRICE;
 import static es.udc.isd060.runfic.model.util.ModelConstants.RUNFIC_DATA_SOURCE;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class RunFicServiceTest {
     private static DataSource dataSource = null;
@@ -84,7 +83,7 @@ public class RunFicServiceTest {
     }
 
     private Carrera getValidCarrera( LocalDateTime fechaCelebracion){
-        return new Carrera("test", "descripcion", 1.0 , LocalDateTime.now(),
+        return new Carrera("test", "descripcion", 1.0f , LocalDateTime.now(),
                 fechaCelebracion, 100 , 1);
     }
 
@@ -101,10 +100,10 @@ public class RunFicServiceTest {
         return addedCarrera;
     }
 
-    private void removeCarrera(Long idCarrera) {
+    private void removeCarrera(Carrera carrera) {
         try (Connection connection = dataSource.getConnection()) {
 
-            carreraDao.remove(connection, idCarrera);
+            carreraDao.remove(connection, carrera.getIdCarrera());
             /* Commit. */
             connection.commit();
 
@@ -134,10 +133,10 @@ public class RunFicServiceTest {
         return addedInscripcion;
     }
 
-    private void removeInscripcion(Long idInscripcion) {
+    private void removeInscripcion(Inscripcion inscripcion) {
         try (Connection connection = dataSource.getConnection()) {
 
-            inscripcionDao.remove(connection, idInscripcion);
+            inscripcionDao.remove(connection, inscripcion.getIdInscripcion());
             /* Commit. */
             connection.commit();
 
@@ -167,7 +166,7 @@ public class RunFicServiceTest {
         } finally {
             // Clear Database
             if (addedCarrera!=null) {
-                removeCarrera(addedCarrera.getIdCarrera());
+                removeCarrera(addedCarrera);
             }
         }
     }
@@ -199,8 +198,8 @@ public class RunFicServiceTest {
             List<Carrera> carreras = runFicService.findCarrera(fecha, "Mallorca");
             assertEquals(carrera2.getIdCarrera(), carreras.get(carreras.size() - 1).getIdCarrera());
         }finally {
-            removeCarrera(carrera1.getIdCarrera());
-            removeCarrera(carrera2.getIdCarrera());
+            removeCarrera(carrera1);
+            removeCarrera(carrera2);
         }
     }
 
@@ -212,7 +211,7 @@ public class RunFicServiceTest {
             Carrera carrera = getValidCarrera();
             carrera.setCiudadCelebracion(null);
             Carrera addedCarrera = runFicService.addCarrera(carrera);
-            removeCarrera(addedCarrera.getIdCarrera());
+            removeCarrera(addedCarrera);
         });
 
         // Check carrera ciudad not empty
@@ -220,7 +219,7 @@ public class RunFicServiceTest {
             Carrera carrera = getValidCarrera();
             carrera.setCiudadCelebracion("");
             Carrera addedCarrera = runFicService.addCarrera(carrera);
-            removeCarrera(addedCarrera.getIdCarrera());
+            removeCarrera(addedCarrera);
         });
 
         // Check carrera descripcion not null
@@ -228,7 +227,7 @@ public class RunFicServiceTest {
             Carrera carrera = getValidCarrera();
             carrera.setDescripcion(null);
             Carrera addedCarrera = runFicService.addCarrera(carrera);
-            removeCarrera(addedCarrera.getIdCarrera());
+            removeCarrera(addedCarrera);
         });
 
         // Check carrera descripcion not empty
@@ -236,7 +235,7 @@ public class RunFicServiceTest {
             Carrera carrera = getValidCarrera();
             carrera.setDescripcion("");
             Carrera addedCarrera = runFicService.addCarrera(carrera);
-            removeCarrera(addedCarrera.getIdCarrera());
+            removeCarrera(addedCarrera);
         });
 
         // Check carrera precioInscripcion >= 0
@@ -244,7 +243,7 @@ public class RunFicServiceTest {
             Carrera carrera = getValidCarrera();
             carrera.setPrecioInscripcion((float) -1);
             Carrera addedCarrera = runFicService.addCarrera(carrera);
-            removeCarrera(addedCarrera.getIdCarrera());
+            removeCarrera(addedCarrera);
         });
 
         // Check carrera plazasDisponibles >= 0
@@ -252,7 +251,7 @@ public class RunFicServiceTest {
             Carrera carrera = getValidCarrera();
             carrera.setPlazasDisponibles(-1);
             Carrera addedCarrera = runFicService.addCarrera(carrera);
-            removeCarrera(addedCarrera.getIdCarrera());
+            removeCarrera(addedCarrera);
         });
 
         // Check carrera plazasOcupadas >= 0
@@ -260,7 +259,7 @@ public class RunFicServiceTest {
             Carrera carrera = getValidCarrera();
             carrera.setPlazasOcupadas(-1);
             Carrera addedCarrera = runFicService.addCarrera(carrera);
-            removeCarrera(addedCarrera.getIdCarrera());
+            removeCarrera(addedCarrera);
         });
 
 
@@ -271,9 +270,9 @@ public class RunFicServiceTest {
 
         Inscripcion inscripcion = createInscripcion(getValidInscripcion());
 
-        runFicService.removeCarrera(inscripcion.getIdInscripcion());
+        removeInscripcion(inscripcion);
 
-        assertThrows(InstanceNotFoundException.class, () -> runFicService.findCarrera(inscripcion.getIdCarrera()));
+        assertTrue(runFicService.findInscripcion(inscripcion.getEmail()).isEmpty());
 
     }
 
