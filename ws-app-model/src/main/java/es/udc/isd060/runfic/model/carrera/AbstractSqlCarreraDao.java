@@ -70,12 +70,14 @@ public abstract class AbstractSqlCarreraDao implements SqlCarreraDao {
 
             while (resultSet.next()) {
                 int i = 1;
-                Long idCarrera = resultSet.getLong(i++);
+                Long idCarrera = Long.valueOf(resultSet.getLong(i++));
                 String ciudadCelebracion = resultSet.getString(i++);
                 String descripcion = resultSet.getString(i++);
                 Float precioInscripcion = resultSet.getFloat(i++);
-                LocalDateTime fechaAlta = resultSet.getTimestamp(4).toLocalDateTime();
-                LocalDateTime fechaCelebracion_ = resultSet.getTimestamp(4).toLocalDateTime();
+                Timestamp fechaAltaAsTimestamp = resultSet.getTimestamp(i++);
+                LocalDateTime fechaAlta = fechaAltaAsTimestamp.toLocalDateTime();
+                Timestamp fechaCelebracion_AsTimestamp = resultSet.getTimestamp(i++);
+                LocalDateTime fechaCelebracion_ = fechaCelebracion_AsTimestamp.toLocalDateTime();
                 Integer plazasDisponibles = resultSet.getInt(i++);
                 Integer plazasOcupadas = resultSet.getInt(i++);
 

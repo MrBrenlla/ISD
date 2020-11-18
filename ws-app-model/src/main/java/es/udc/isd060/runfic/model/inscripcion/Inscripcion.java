@@ -22,6 +22,15 @@ public class Inscripcion {
         this.recogido = recogido;
     }
 
+    public Inscripcion(Long idCarrera, Integer dorsal, String numTarjeta, String emailUsuario, LocalDateTime fechaInscripcion, boolean recogido) {
+        this.idCarrera = idCarrera;
+        this.dorsal = dorsal;
+        this.numTarjeta = numTarjeta;
+        this.email = emailUsuario;
+        this.fechaInscripcion = fechaInscripcion;
+        this.recogido = recogido;
+    }
+
 
     public Long getIdInscripcion() {
         return idInscripcion;
