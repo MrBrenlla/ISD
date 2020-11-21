@@ -34,6 +34,9 @@ public class RunFicServiceTest {
     private static SqlCarreraDao carreraDao = null;
     private static SqlInscripcionDao inscripcionDao = null;
 
+    private static final long SIMULATION_TEST_TIME = 1000;
+
+
     private final long NON_EXISTENT_CARRERA_ID = -1;
 
     @BeforeAll
@@ -264,46 +267,20 @@ public class RunFicServiceTest {
     //******************************************** Carlos **********************************************
     //**************************************************************************************************
 
+    // Buscar carrera y crear carrera se prueban al mismo tiempo , es decir para probar uno el otro se supone
+    // que funciona
+
 
     @Test
-    public void testFindCarreraExistenteByIdCarrera()  {
-        Carrera carrera = getValidCarrera();
-        try {
-            carrera = runFicService.addCarrera(carrera);
-            runFicService.findCarrera(carrera.getIdCarrera());
-
-        }catch (InputValidationException | InstanceNotFoundException e) {
-            e.printStackTrace();
-        } finally {
-            if (carrera!=null) removeCarrera(carrera);
-        }
-    }
-
-/*
-    @Test(expected = InputValidationException.class)
-    public void testFindCarreraInexistenteByIdCarrera()  {
-        Carrera carrera = getValidCarrera("Insertada");
-        try {
-            carrera = runFicService.addCarrera(carrera);
-            runFicService.findCarrera(carrerrecogerDorsala.getIdCarrera()+1);
-
-        }catch ( InstanceNotFoundException e) {
-            e.printStackTrace();
-        } finally {
-            if (carrera!=null) removeCarrera(carrera);
-        }
-    }
-*/
-
-    @Test
-    public void testRecogerDorsalValido(){
+    public void testRecogerDorsalDatosValidos(){
         Carrera carrera = getValidCarrera();
         Inscripcion inscripcion = null;
+        Inscripcion inscripcion1;
         try {
             carrera = runFicService.addCarrera(carrera);
             inscripcion = runFicService.addInscripcion(getValidEmail(),getValidTarjeta(), carrera.getIdCarrera());
-            runFicService.recogerDorsal(inscripcion.getIdInscripcion(),inscripcion.getTarjeta());
-
+            inscripcion1 = runFicService.recogerDorsal(inscripcion.getIdInscripcion(),inscripcion.getTarjeta());
+            assertTrue(inscripcion1.isRecogido());
         }catch (InputValidationException | InstanceNotFoundException |
                 CarreraYaCelebradaException | NumTarjetaIncorrectoException |
                 DorsalHaSidoRecogidoException e) {
@@ -313,69 +290,77 @@ public class RunFicServiceTest {
             if (carrera!=null) removeCarrera(carrera);
         }
     }
-// TODO preguntar a profesor por expected
-/*
-    @Test(expected = CarreraYaCelebradaException.class)
-    public void testRecogerDorsalCarreraYaCelebrada(){
-        Carrera carrera = getValidCarrera(LocalDateTime.now().minusDays(1));
-        Inscripcion inscripcion = null;
-        try {
-            carrera = runFicService.addCarrera(carrera);
-            inscripcion = runFicService.addInscripcion(getValidEmail(),getValidTarjeta(),carrera.getIdCarrera());
+
+
+    // TODO mejorar sintaxis
+    @Test
+    public void testRecogerDorsalDatosInvalidos(){
+
+
+        // Test idInscripcion incorrecto
+        assertThrows(InstanceNotFoundException.class , () -> {
+            // Obtenemos una Carrera
+            Carrera carrera = getValidCarrera();
+
+            // Obtenemos una Inscripcion
+            Inscripcion inscripcion = runFicService.addInscripcion(getValidEmail(),getValidTarjeta(),
+                    carrera.getIdCarrera());
+
+            // Recogemos dorsal idInscripcion incorrecto
+            runFicService.recogerDorsal(inscripcion.getIdInscripcion()+1,inscripcion.getTarjeta());
+        });
+
+        // Test numTarjeta incorrecto
+        assertThrows(NumTarjetaIncorrectoException.class , () -> {
+            // Obtenemos una Carrera
+            Carrera carrera = getValidCarrera();
+
+            // Obtenemos una Inscripcion
+            Inscripcion inscripcion = runFicService.addInscripcion(getValidEmail(),getValidTarjeta(),
+                    carrera.getIdCarrera());
+
+            // Recogemos dorsal con un numero de tarjeta incorrecto
+            runFicService.recogerDorsal(inscripcion.getIdInscripcion(),
+                    inscripcion.getTarjeta().replace("1","2"));
+        });
+
+        // Test dorsal recogido
+        assertThrows(NumTarjetaIncorrectoException.class , () -> {
+            // Obtenemos una Carrera
+            Carrera carrera = getValidCarrera();
+
+            // Obtenemos una Inscripcion
+            Inscripcion inscripcion = runFicService.addInscripcion(getValidEmail(),getValidTarjeta(),
+                    carrera.getIdCarrera());
+
+            // Recogemos dorsal 2 veces ( la segunda debería saltar la excepción )
+            runFicService.recogerDorsal(inscripcion.getIdInscripcion(), inscripcion.getTarjeta());
+            runFicService.recogerDorsal(inscripcion.getIdInscripcion(), inscripcion.getTarjeta());
+        });
+
+        /*
+        // NOTA : Este test simula el paso del tiempo real
+        // el test podría fallar si SIMULATION_TEST_TIME es muy pequeño
+        assertThrows(CarreraYaCelebradaException.class , () -> {
+            // Obtenemos una Carrera que se celebrara en un futuro ( con margen SIMULATION_TEST_TIME )
+            Carrera carrera = getValidCarrera();
+            LocalDateTime fechaCelebracion = LocalDateTime.now().plusNanos(1000000*SIMULATION_TEST_TIME);
+            carrera.setFechaCelebracion(fechaCelebracion);
+
+            // Nos inscribimos
+            Inscripcion inscripcion = runFicService.addInscripcion(getValidEmail(),getValidTarjeta(),
+                    carrera.getIdCarrera());
+
+            // Esperamos 2 veces SIMULATION_TEST_TIME
+            Thread.sleep(2*SIMULATION_TEST_TIME);
+
+            // Recogemos dorsal ( debería saltar excepción ya que la carrera debería de haber empezado )
             runFicService.recogerDorsal(inscripcion.getIdInscripcion(),inscripcion.getTarjeta());
+        });
+        */
 
-        }catch (InputValidationException | InstanceNotFoundException |
-                NumTarjetaIncorrectoException |
-                DorsalHaSidoRecogidoException e) {
-            e.printStackTrace();
-        } finally {
-            if (inscripcion!=null) removeInscripcion(inscripcion); // Con Cascade no hace falta
-            if (carrera!=null) removeCarrera(carrera);
-        }
     }
-*/
 
-/*
-    @Test(expected=NumTarjetaIncorrectoException.class)
-    public void testRecogerDorsalNumTarjetaNoExiste(){
-        Carrera carrera = getValidCarrera();
-        Inscripcion inscripcion = null;
-        try {
-            carrera = runFicService.addCarrera(carrera);
-            inscripcion = runFicService.addInscripcion(getValidEmail(),"9234567812345678", carrera.getIdCarrera());
-            runFicService.recogerDorsal(inscripcion.getIdInscripcion(),inscripcion.getTarjeta());
-
-        }catch (InputValidationException | InstanceNotFoundException |
-                 NumTarjetaIncorrectoException |
-                DorsalHaSidoRecogidoException e) {
-            e.printStackTrace();
-        } finally {
-            if (inscripcion!=null) removeInscripcion(inscripcion); // Con Cascade no hace falta
-            if (carrera!=null) removeCarrera(carrera);
-        }
-    }
-*/
-
-    /*
-    @Test(expected=InputValidationException.class)
-    public void testRecogerDorsalEmailNoExiste(){
-        Carrera carrera = getValidCarrera();
-        Inscripcion inscripcion = null;
-        try {
-            carrera = runFicService.addCarrera(carrera);
-            inscripcion = runFicService.addInscripcion("error@test",getValidTarjeta(), carrera.getIdCarrera());
-            runFicService.recogerDorsal(inscripcion.getIdInscripcion(),inscripcion.getTarjeta());
-
-        }catch (InstanceNotFoundException |
-                CarreraYaCelebradaException | NumTarjetaIncorrectoException |
-                DorsalHaSidoRecogidoException e) {
-            e.printStackTrace();
-        } finally {
-            if (inscripcion!=null) removeInscripcion(inscripcion); // Con Cascade no hace falta
-            if (carrera!=null) removeCarrera(carrera);
-        }
-    }
-*/
 
 
 
