@@ -168,8 +168,8 @@ public abstract class AbstractSqlInscripcionDao implements SqlInscripcionDao {
                         Inscripcion.class.getName());
             }
 
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
 
 

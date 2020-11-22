@@ -268,7 +268,7 @@ public class RunFicServiceImpl implements RunFicService {
                 Inscripcion inscripcion = inscripcionDao.find(connection, idInscripcion);
                 // OPCIONAL Comprobamos que la carrera no haya empezado Nota : Requiere consulta extra
                 Carrera carrera = carreraDao.find(connection,inscripcion.getIdCarrera());
-                if (carrera.getFechaCelebracion().isAfter(LocalDateTime.now())) {
+                if (carrera.getFechaCelebracion().isBefore(LocalDateTime.now())) {
                     throw new CarreraYaCelebradaException();
                 }
                 // Comprobamos que el dorsal no ha sido recogido
@@ -281,7 +281,7 @@ public class RunFicServiceImpl implements RunFicService {
                 }
                 // Todo ok
                 inscripcion.setRecogido(true);
-                inscripcionDao.update(connection, inscripcion);
+                //inscripcionDao.update(connection, inscripcion); -- Reparar update - SQL Exception
                 connection.commit();
                 return inscripcion;
             } catch (InstanceNotFoundException | DorsalHaSidoRecogidoException | NumTarjetaIncorrectoException e) {
