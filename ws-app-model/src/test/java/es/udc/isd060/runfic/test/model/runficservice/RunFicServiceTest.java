@@ -66,7 +66,7 @@ public class RunFicServiceTest {
     }
 
     private Carrera getValidCarrera(String ciudadCelebracion) {
-        LocalDateTime date1 = LocalDateTime.of(2021, 2, 13, 15, 30);
+        LocalDateTime date1 = LocalDateTime.now().plusDays(45);
         return new Carrera(null,ciudadCelebracion,"Descripcion", 5.5f,LocalDateTime.now(),date1,0,100);
     }
 
@@ -376,7 +376,7 @@ public class RunFicServiceTest {
         Inscripcion i=null;
         Carrera carrera = null;
         try {
-            carrera = createCarrera(getValidCarrera("Santiago"));
+            carrera = createCarrera(getValidCarrera("Negreira"));
             Inscripcion inscripcion=new Inscripcion(carrera.getIdCarrera(),carrera.getIdCarrera(),carrera.getPlazasOcupadas()+1,"1234567812345678",
                     "b@gmail.com",null,false);
 
