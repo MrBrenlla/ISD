@@ -47,6 +47,17 @@ public class Carrera {
         this.plazasOcupadas = plazasOcupadas;
     }
 
+    // Carlos
+    public Carrera(String ciudadCelebracion, String descripcion, Float precioInscripcion, LocalDateTime fechaCelebracion, Integer plazasDisponibles) {
+        this.ciudadCelebracion = ciudadCelebracion;
+        this.descripcion = descripcion;
+        this.precioInscripcion = precioInscripcion;
+        this.fechaAlta = LocalDateTime.now();
+        this.fechaCelebracion = fechaCelebracion;
+        this.plazasDisponibles = plazasDisponibles;
+        this.plazasOcupadas = 0;
+    }
+
     public Long getIdCarrera() {
         return idCarrera;
     }

@@ -12,6 +12,9 @@ public class Inscripcion {
     private LocalDateTime fechaInscripcion;
     private boolean recogido;
 
+    // Carlos
+    public static final Integer DORSAL_NULL = -1;
+
     public Inscripcion(Long idInscripcion, Long idCarrera, Integer dorsal, String numTarjeta, String emailUsuario, LocalDateTime fechaInscripcion, boolean recogido) {
         this.idInscripcion = idInscripcion;
         this.idCarrera = idCarrera;
@@ -29,6 +32,16 @@ public class Inscripcion {
         this.email = emailUsuario;
         this.fechaInscripcion = fechaInscripcion;
         this.recogido = recogido;
+    }
+
+    // Carlos
+    public Inscripcion(Long idCarrera, String numTarjeta, String email) {
+        this.idCarrera = idCarrera;
+        this.dorsal = DORSAL_NULL;
+        this.numTarjeta = numTarjeta;
+        this.email = email;
+        this.fechaInscripcion = LocalDateTime.now();
+        this.recogido = false;
     }
 
 
@@ -70,6 +83,11 @@ public class Inscripcion {
 
     public void setDorsal(int dorsal) {
         this.dorsal = dorsal;
+    }
+
+    // Carlos
+    public void generateDorsal() {
+        this.dorsal = idCarrera.intValue();
     }
 
     public void setTarjeta(String numTarjeta) {

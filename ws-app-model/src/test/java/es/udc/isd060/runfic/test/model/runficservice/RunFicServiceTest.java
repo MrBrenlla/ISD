@@ -37,6 +37,10 @@ public class RunFicServiceTest {
     private static final long SIMULATION_TEST_TIME = 1000;
 
 
+    //private static final long SIMULATION_TEST_TIME = 1000;
+    //Carlos
+    private static final int DIFF_TEST_DAYS = 10;
+
     private final long NON_EXISTENT_CARRERA_ID = -1;
 
     @BeforeAll
@@ -56,6 +60,63 @@ public class RunFicServiceTest {
         inscripcionDao = SqlInscripcionDaoFactory.getDao();
 
     }
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    // Carlos
+    private String getValidTarjeta( int seed ){
+        List<String> tarjetas = new ArrayList<>(10);
+
+        tarjetas.add("0000000000000000");
+        tarjetas.add("0000000000000001");
+        tarjetas.add("0000000000000002");
+        tarjetas.add("0000000000000003");
+        tarjetas.add("0000000000000004");
+        tarjetas.add("0000000000000005");
+        tarjetas.add("0000000000000006");
+        tarjetas.add("0000000000000007");
+        tarjetas.add("0000000000000008");
+        tarjetas.add("0000000000000009");
+
+        return tarjetas.get(seed%tarjetas.size());
+    }
+
+    // Carlos
+    private String getValidEmail( int seed ){
+        List<String> mails = new ArrayList<>(10);
+
+        mails.add("0@test");
+        mails.add("1@test");
+        mails.add("2@test");
+        mails.add("3@test");
+        mails.add("4@test");
+        mails.add("5@test");
+        mails.add("6@test");
+        mails.add("7@test");
+        mails.add("8@test");
+        mails.add("9@test");
+
+        return mails.get(seed%mails.size());
+
+    }
+
+
+    // Carlos
+    private Carrera getValidCarrera(int seed) {
+        LocalDateTime fechaCelebracion = LocalDateTime.now().plusDays(DIFF_TEST_DAYS);
+        return new Carrera("TEST","seed="+seed,(seed%100)*0.1f,fechaCelebracion,seed%100);
+    }
+
+    // Carlos
+    private Inscripcion getValidInscripcion( Carrera carrera , int seed ){
+        return new Inscripcion(carrera.getIdCarrera(),getValidTarjeta(seed),getValidEmail(seed));
+    }
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
 
     private String getValidTarjeta(){
         return "1234567812345678";
