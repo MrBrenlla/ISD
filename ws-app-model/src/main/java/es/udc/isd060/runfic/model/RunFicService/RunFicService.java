@@ -15,7 +15,7 @@ public interface RunFicService {
     //****************************************** Brais *************************************************
     //**************************************************************************************************
 
-    Inscripcion addInscripcion(String email, String tarjeta, long carrera) throws InputValidationException, CarreraInexistente,UsuarioInscrito,FueraDePlazo,SinPlazas;
+    Inscripcion addInscripcion(String email, String tarjeta, long carrera) throws InputValidationException;
 
     List<Inscripcion> findInscripcion(String email);
 
@@ -28,6 +28,8 @@ public interface RunFicService {
 
     List<Carrera> findCarrera(LocalDateTime fechaCelebracion, String ciudad);
 
+    void removeCarrera(Long idCarrera) throws InstanceNotFoundException;
+
     //**************************************************************************************************
     //****************************************** Carlos *************************************************
     //**************************************************************************************************
@@ -35,4 +37,8 @@ public interface RunFicService {
     Carrera findCarrera(Long idCarrera) throws InstanceNotFoundException;
 
     Inscripcion recogerDorsal(Long idInscripcion, String numTarjeta) throws InstanceNotFoundException, DorsalHaSidoRecogidoException, NumTarjetaIncorrectoException, CarreraYaCelebradaException, InputValidationException;
+
+    // addInscrcipcion alternativo
+    public Inscripcion addInscripcion(String email, String numTarjeta, Carrera carrera ) throws InputValidationException,
+            InstanceNotFoundException, PlazoDeInscripcionYaTerminadoException, PlazasNoDisponiblesException, UsuarioYaRegistradoException;
 }
