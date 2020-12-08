@@ -18,7 +18,7 @@ public interface SqlInscripcionDao {
     List<Inscripcion> find(Connection connection, String emailUsuario) throws InstanceNotFoundException;
 
     // Autor : Brais
-    List<Inscripcion> find(Connection connection, String emailUsuario, Long IdCarrera) throws InstanceNotFoundException;
+    boolean find(Connection connection, String emailUsuario, Long IdCarrera) throws InstanceNotFoundException;
 
     // Autor : Carlos
     void update(Connection connection, Inscripcion inscripcion) throws InstanceNotFoundException;
