@@ -2,9 +2,7 @@ package es.udc.isd060.runfic.test.model.runficservice;
 
 import es.udc.isd060.runfic.model.RunFicService.RunFicService;
 import es.udc.isd060.runfic.model.RunFicService.RunFicServiceFactory;
-import es.udc.isd060.runfic.model.RunFicService.exceptions.CarreraYaCelebradaException;
-import es.udc.isd060.runfic.model.RunFicService.exceptions.DorsalHaSidoRecogidoException;
-import es.udc.isd060.runfic.model.RunFicService.exceptions.NumTarjetaIncorrectoException;
+import es.udc.isd060.runfic.model.RunFicService.exceptions.*;
 import es.udc.isd060.runfic.model.carrera.Carrera;
 import es.udc.isd060.runfic.model.carrera.SqlCarreraDao;
 import es.udc.isd060.runfic.model.carrera.SqlCarreraDaoFactory;
@@ -34,7 +32,6 @@ public class RunFicServiceTest {
     private static SqlCarreraDao carreraDao = null;
     private static SqlInscripcionDao inscripcionDao = null;
 
-    private static final long SIMULATION_TEST_TIME = 1000;
 
 
     //private static final long SIMULATION_TEST_TIME = 1000;
@@ -101,17 +98,47 @@ public class RunFicServiceTest {
 
     }
 
+    // Carlos
+    private String getInvalidTarjeta(){
+        return "INVALID CARD";
+    }
+
+    // Carlos
+    private String getInvalidEmail(){
+        return "INVALID MAIL";
+    }
+
 
     // Carlos
     private Carrera getValidCarrera(int seed) {
         LocalDateTime fechaCelebracion = LocalDateTime.now().plusDays(DIFF_TEST_DAYS);
-        return new Carrera("TEST","seed="+seed,(seed%100)*0.1f,fechaCelebracion,seed%100);
+        return new Carrera("VALID","seed="+seed,(seed%100)*0.1f,fechaCelebracion,seed%100);
+    }
+
+    private Carrera getValidCarrera(int seed , int hoursToCelebrate) {
+        Carrera carrera = getValidCarrera(seed);
+        carrera.setFechaCelebracion(LocalDateTime.now().plusHours(hoursToCelebrate));
+        return carrera;
+    }
+
+    // Carlos
+    private Carrera getInvalidCarrera() {
+        return new Carrera("INVALID","Invalid Carrera",0.1f,LocalDateTime.now().minusDays(DIFF_TEST_DAYS),-1);
     }
 
     // Carlos
     private Inscripcion getValidInscripcion( Carrera carrera , int seed ){
         return new Inscripcion(carrera.getIdCarrera(),getValidTarjeta(seed),getValidEmail(seed));
     }
+
+    // Carlos
+    private void cleanDB(Carrera carrera , Inscripcion inscripcion ) {
+        if (inscripcion!=null) removeInscripcion(inscripcion); // Con CASCADE no hace falta
+        if (carrera!=null) removeCarrera(carrera);
+    }
+
+
+
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -331,25 +358,167 @@ public class RunFicServiceTest {
     // Buscar carrera y crear carrera se prueban al mismo tiempo , es decir para probar uno el otro se supone
     // que funciona
 
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    // Tests del método ALTERNATIVO de AddInscripcion
 
     @Test
-    public void testRecogerDorsalDatosValidos(){
-        Carrera carrera = createCarrera(getValidCarrera("Santiago"));
-        Inscripcion inscripcion = new Inscripcion(carrera.getIdCarrera(),carrera.getIdCarrera(),carrera.getPlazasOcupadas()+1,"1234567812345678",
-                "b@gmail.com",null,false);
-        Inscripcion inscripcion1;
+    public void testAddInscripcionAlt(){
+        int SEED = 1;
+        Carrera carrera = getValidCarrera(SEED);
+        Inscripcion inscripcion= null;
         try {
             carrera = runFicService.addCarrera(carrera);
-            inscripcion = runFicService.addInscripcion(getValidEmail(),getValidTarjeta(), carrera.getIdCarrera());
-            inscripcion1 = runFicService.recogerDorsal(inscripcion.getIdInscripcion(),inscripcion.getTarjeta());
-            assertTrue(inscripcion1.isRecogido());
-        }catch (InputValidationException | InstanceNotFoundException |
-                CarreraYaCelebradaException | NumTarjetaIncorrectoException |
-                DorsalHaSidoRecogidoException e) {
+            String tarjeta = getValidTarjeta(SEED);
+            String email = getValidEmail(SEED);
+            inscripcion =runFicService.addInscripcion(email,tarjeta,carrera);
+
+        }catch (PlazasNoDisponiblesException | InputValidationException |
+                InstanceNotFoundException | PlazoDeInscripcionYaTerminadoException |
+                UsuarioYaRegistradoException e) {
+            e.printStackTrace();
+        }finally {
+            // Clean Database
+            cleanDB(carrera,inscripcion);
+        }
+
+    }
+
+    // TODO solucionar problemas de limpieza
+    @Test
+    public void testAddInscripcionAltDatosInvalidos(){
+
+        // Check inscripcion email invalido
+        assertThrows(InputValidationException.class, () -> {
+            // Get data
+            int seed = 1;
+            Carrera carrera = getValidCarrera(seed);
+            String mail = getInvalidEmail();
+            String tarjeta = getValidTarjeta(seed);
+
+            // Add Carrera
+            carrera = runFicService.addCarrera(carrera);
+
+            // Add Inscripcion ( should throw exception )
+            Inscripcion inscripcion = runFicService.addInscripcion(mail,tarjeta,carrera);
+
+            // Clean Database
+            cleanDB(carrera,inscripcion);
+        });
+
+        // Check inscripcion tarjeta invalida
+        assertThrows(InputValidationException.class, () -> {
+            // Get data
+            int seed = 2;
+            Carrera carrera = getValidCarrera(seed);
+            String mail = getValidEmail(seed);
+            String tarjeta = getInvalidTarjeta();
+
+            // Add Carrera
+            carrera = runFicService.addCarrera(carrera);
+
+            // Add Inscripcion ( should throw exception )
+            Inscripcion inscripcion = runFicService.addInscripcion(mail,tarjeta,carrera);
+
+            // Clean Database
+            cleanDB(carrera,inscripcion);
+        });
+
+        // TODO Carrera Inexistente
+        /*
+        // Check inscripcion Carrera inexistente
+        assertThrows(InstanceNotFoundException.class, () -> {
+            // Get data
+            int seed = 3;
+            Carrera carrera = getValidCarrera(seed);
+            Carrera carreraInexistente = getValidCarrera(seed+1);
+            String mail = getValidEmail(seed);
+            String tarjeta = getValidTarjeta(seed);
+
+            // Add Carrera
+            carrera = runFicService.addCarrera(carrera);
+
+            // Add Inscripcion ( should throw exception )
+            Inscripcion inscripcion = runFicService.addInscripcion(mail,tarjeta,carreraInexistente);
+
+            // Clean Database
+            cleanDB(carrera,null);
+        });
+        */
+
+        // Check inscripcion fuera de plazo
+        assertThrows(PlazoDeInscripcionYaTerminadoException.class, () -> {
+            // Get data
+            int seed = 4;
+            String mail = getValidEmail(seed);
+            String tarjeta = getValidTarjeta(seed);
+            // Get Carrera que se celebra en 10 horas ( ya no se puede registrarse en ella)
+            Carrera carrera = getValidCarrera(seed,10);
+
+            // Add Carrera
+            Carrera addedCarrera = runFicService.addCarrera(carrera);
+
+            // Add Inscripcion ( should throw exception )
+            Inscripcion inscripcion = runFicService.addInscripcion(mail,tarjeta,addedCarrera);
+
+            // Clean Database
+            cleanDB(carrera,inscripcion);
+        });
+
+        // Check inscripcion 2 veces
+        assertThrows(UsuarioYaRegistradoException.class, () -> {
+            // Get data
+            int seed = 5;
+            Carrera carrera = getValidCarrera(seed);
+            String mail = getValidEmail(seed);
+            String tarjeta = getValidTarjeta(seed);
+
+            // Add Carrera
+            carrera = runFicService.addCarrera(carrera);
+
+            // Add Inscripcion ( should throw exception 2nd time )
+            Inscripcion inscripcion = runFicService.addInscripcion(mail,tarjeta,carrera);
+            inscripcion = runFicService.addInscripcion(mail,tarjeta,carrera);
+
+            // Clean Database
+            cleanDB(carrera,inscripcion);
+        });
+
+
+
+    }
+
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+   /*
+    @Test
+    public void testRecogerDorsalDatosValidos(){
+        int SEED = 1;
+        Carrera carrera = getValidCarrera(SEED);
+        Inscripcion inscripcion= null;
+        Inscripcion inscripcionRecogida;
+        try {
+            // Añadimos la carrera y la inscripcion a la BBDD y recogemos dorsal
+            carrera = runFicService.addCarrera(carrera);
+            String email = getValidEmail(SEED);
+            String tarjeta = getValidTarjeta(SEED);
+            inscripcion = runFicService.addInscripcion(email,tarjeta, carrera);
+            inscripcionRecogida = runFicService.recogerDorsal(inscripcion.getIdInscripcion(),tarjeta);
+
+            // Comprobamos que la inscripcion haya sido recogida
+            assertTrue(inscripcionRecogida.isRecogido());
+
+            // Comprobamos que la inscripcion "sea la misma" que la del dorsal recogido (ver método Inscripcion.same() )
+            assertTrue(inscripcion.same(inscripcionRecogida));
+
+        }catch (InputValidationException | InstanceNotFoundException | CarreraYaCelebradaException |
+                NumTarjetaIncorrectoException | DorsalHaSidoRecogidoException |
+                PlazoDeInscripcionYaTerminadoException | PlazasNoDisponiblesException |
+                UsuarioYaRegistradoException e) {
             e.printStackTrace();
         } finally {
-            if (inscripcion!=null) removeInscripcion(inscripcion); // Con Cascade no hace falta
-            if (carrera!=null) removeCarrera(carrera);
+            cleanDB(carrera,inscripcion);
         }
     }
 
@@ -358,35 +527,24 @@ public class RunFicServiceTest {
     @Test
     public void testRecogerDorsalDatosInvalidos(){
 
-
         // Test idInscripcion incorrecto
         assertThrows(InstanceNotFoundException.class , () -> {
+            int SEED = 1;
             // Obtenemos una Carrera
-            Carrera carrera =  createCarrera(getValidCarrera("Santiago"));
-
+            Carrera carrera = getValidCarrera(SEED);
             // Obtenemos una Inscripcion
-            Inscripcion inscripcion = runFicService.addInscripcion(getValidEmail(),getValidTarjeta(),
-                    carrera.getIdCarrera());
+            String email = getValidEmail(SEED);
+            String tarjeta = getValidTarjeta(SEED);
+            Inscripcion inscripcion = runFicService.addInscripcion(email,tarjeta,carrera);
 
             // Recogemos dorsal idInscripcion incorrecto
-            runFicService.recogerDorsal(inscripcion.getIdInscripcion()+1,inscripcion.getTarjeta());
+            //runFicService.recogerDorsal(inscripcion.getIdInscripcion()+1,tarjeta);
 
-            removeCarrera(carrera);
+            //if (inscripcion!=null) removeInscripcion(inscripcion); // Con CASCADE no hace falta
+            //if (carrera!=null) removeCarrera(carrera);
         });
 
         // Test numTarjeta incorrecto
-        assertThrows(NumTarjetaIncorrectoException.class , () -> {
-            // Obtenemos una Carrera
-            Carrera carrera = createCarrera(getValidCarrera("Santiago"));
-
-            // Obtenemos una Inscripcion
-            Inscripcion inscripcion = runFicService.addInscripcion(getValidEmail(),getValidTarjeta(),
-                    carrera.getIdCarrera());
-
-            // Recogemos dorsal con un numero de tarjeta incorrecto
-            runFicService.recogerDorsal(inscripcion.getIdInscripcion(),
-                    inscripcion.getTarjeta().replace("1","2"));
-        });
 
         // Test dorsal recogido
         /*assertThrows(DorsalHaSidoRecogidoException.class , () -> {
@@ -421,11 +579,11 @@ public class RunFicServiceTest {
             // Recogemos dorsal ( debería saltar excepción ya que la carrera debería de haber empezado )
             runFicService.recogerDorsal(inscripcion.getIdInscripcion(),inscripcion.getTarjeta());
         });
-        */
+
 
     }
 
-
+*/
 
 
     //**************************************************************************************************

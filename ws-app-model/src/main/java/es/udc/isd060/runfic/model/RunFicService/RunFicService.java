@@ -1,8 +1,6 @@
 package es.udc.isd060.runfic.model.RunFicService;
 
-import es.udc.isd060.runfic.model.RunFicService.exceptions.CarreraYaCelebradaException;
-import es.udc.isd060.runfic.model.RunFicService.exceptions.DorsalHaSidoRecogidoException;
-import es.udc.isd060.runfic.model.RunFicService.exceptions.NumTarjetaIncorrectoException;
+import es.udc.isd060.runfic.model.RunFicService.exceptions.*;
 import es.udc.isd060.runfic.model.carrera.*;
 import es.udc.isd060.runfic.model.inscripcion.Inscripcion;
 import es.udc.ws.util.exceptions.InputValidationException;
@@ -40,4 +38,7 @@ public interface RunFicService {
 
     Inscripcion recogerDorsal(Long idInscripcion, String numTarjeta) throws InstanceNotFoundException, DorsalHaSidoRecogidoException, NumTarjetaIncorrectoException, CarreraYaCelebradaException, InputValidationException;
 
+    // addInscrcipcion alternativo
+    public Inscripcion addInscripcion(String email, String numTarjeta, Carrera carrera ) throws InputValidationException,
+            InstanceNotFoundException, PlazoDeInscripcionYaTerminadoException, PlazasNoDisponiblesException, UsuarioYaRegistradoException;
 }

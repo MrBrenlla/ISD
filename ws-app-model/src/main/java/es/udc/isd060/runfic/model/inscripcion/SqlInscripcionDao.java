@@ -1,6 +1,7 @@
 package es.udc.isd060.runfic.model.inscripcion;
 
 
+import es.udc.isd060.runfic.model.carrera.Carrera;
 import es.udc.ws.util.exceptions.InstanceNotFoundException;
 import java.sql.Connection;
 import java.util.List;
@@ -25,4 +26,8 @@ public interface SqlInscripcionDao {
     // Autor : Yago
     void remove(Connection connection, Long idInscripcion) throws InstanceNotFoundException;
 
-}
+    // Autor : Carlos
+    // FIND alternativo para email y Carrera
+    public Inscripcion findAlt(Connection connection, String email, Carrera carrera) throws InstanceNotFoundException;
+
+    }

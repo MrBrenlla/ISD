@@ -120,6 +120,19 @@ public class Inscripcion {
                 Objects.equals(getFechaInscripcion(), that.getFechaInscripcion());
     }
 
+    // Carlos
+    // Igual que equals pero no miramos el dorsal ni si ha sido recogido ( son "la misma" si el reso es igual )
+    public boolean same(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Inscripcion)) return false;
+        Inscripcion that = (Inscripcion) o;
+        return getIdInscripcion().equals( that.getIdInscripcion()) &&
+                getIdCarrera().equals(that.getIdCarrera()) &&
+                Objects.equals(getTarjeta(), that.getTarjeta()) &&
+                Objects.equals(getEmail(), that.getEmail()) &&
+                Objects.equals(getFechaInscripcion(), that.getFechaInscripcion());
+    }
+
     @Override
     public int hashCode() {
         return Objects.hash(getIdInscripcion(), getIdCarrera(), getDorsal(), getTarjeta(), getEmail(), getFechaInscripcion(), isRecogido());

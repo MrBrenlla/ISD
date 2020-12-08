@@ -1,8 +1,6 @@
 package es.udc.isd060.runfic.model.RunFicService;
 
-import es.udc.isd060.runfic.model.RunFicService.exceptions.CarreraYaCelebradaException;
-import es.udc.isd060.runfic.model.RunFicService.exceptions.DorsalHaSidoRecogidoException;
-import es.udc.isd060.runfic.model.RunFicService.exceptions.NumTarjetaIncorrectoException;
+import es.udc.isd060.runfic.model.RunFicService.exceptions.*;
 import es.udc.isd060.runfic.model.carrera.Carrera;
 import es.udc.isd060.runfic.model.carrera.SqlCarreraDao;
 import es.udc.isd060.runfic.model.carrera.SqlCarreraDaoFactory;
@@ -18,6 +16,7 @@ import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import static es.udc.isd060.runfic.model.util.ModelConstants.RUNFIC_DATA_SOURCE;
@@ -46,6 +45,8 @@ public class RunFicServiceImpl implements RunFicService {
         validateEmail(i.getEmail());
         validateNumTarjeta(i.getTarjeta());
     }
+
+
 
 /*
     private void validateInscripcion(@org.jetbrains.annotations.NotNull Inscripcion i) throws InputValidationException {
@@ -246,6 +247,73 @@ public class RunFicServiceImpl implements RunFicService {
     //**************************************************************************************************
 
 
+    // TODO GENERAL cuando se puede usar commit en lugar de rollback
+
+    // addInscripcion ALTERNATIVO
+    public Inscripcion addInscripcion(String email, String numTarjeta, Carrera carrera ) throws InputValidationException,
+            InstanceNotFoundException, PlazoDeInscripcionYaTerminadoException, PlazasNoDisponiblesException, UsuarioYaRegistradoException {
+
+        PropertyValidator.validateCreditCard(numTarjeta);
+        validateEmail(email);
+        Inscripcion inscripcionCreada = null;
+
+        try (Connection connection = dataSource.getConnection()) {
+
+            try {
+                /* Prepare connection. */
+                connection.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
+                connection.setAutoCommit(false);
+
+                // Buscamos la carrera correspondiente
+                carrera = carreraDao.find(connection, carrera.getIdCarrera());
+
+
+                // Comprobamos carrera en plazo ( fecha celebracion >24h a partir de ahora)
+                if (!( LocalDateTime.now().isBefore(carrera.getFechaCelebracion().minusHours(24)))) {
+                    throw new PlazoDeInscripcionYaTerminadoException();
+                }
+                // Comprobamos que haya plazas disponibles
+                if(!(carrera.getPlazasDisponibles()>=0)){
+                    throw new PlazasNoDisponiblesException();
+                }
+                // Comprobamos que el usuario no haya sido registrado
+                boolean usuarioNoRegistrado = false;
+                try {
+                    // Si NO encontramos una inscripcion creada salta excepcion ( entonces OK )
+                    Inscripcion inscripcion = inscripcionDao.findAlt(connection,email, carrera);
+                } catch ( InstanceNotFoundException e){
+                    usuarioNoRegistrado = true;
+                }
+                // Si usuarioNoRegistrado=false no salto excepcion -> usuario ya inscrito
+                if (usuarioNoRegistrado == false){
+                    throw new UsuarioYaRegistradoException();
+                }
+
+
+                // si OK
+                Inscripcion inscripcion = new Inscripcion(carrera.getIdCarrera(),numTarjeta,email);
+                inscripcionCreada = inscripcionDao.create(connection,inscripcion);
+
+                /* Commit. */
+                connection.commit();
+
+
+
+            } catch (InstanceNotFoundException  e) {
+                connection.rollback();
+                throw e;
+            } catch ( PlazasNoDisponiblesException | PlazoDeInscripcionYaTerminadoException e) {
+                connection.rollback();
+                throw e;
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        return inscripcionCreada;
+    }
+
     public Carrera findCarrera(Long idCarrera) throws InstanceNotFoundException {
         try (Connection connection = dataSource.getConnection()) {
             return carreraDao.find(connection, idCarrera);
@@ -257,10 +325,11 @@ public class RunFicServiceImpl implements RunFicService {
 
     public Inscripcion recogerDorsal(Long idInscripcion, String numTarjeta) throws InstanceNotFoundException,
             DorsalHaSidoRecogidoException, NumTarjetaIncorrectoException, CarreraYaCelebradaException, InputValidationException {
-        // TODO OPCIONAL check numTarjeta
-        validateNumTarjeta(numTarjeta);
+
+        PropertyValidator.validateCreditCard(numTarjeta);
         try (Connection connection = dataSource.getConnection()) {
             try {
+                /* Prepare connection. */
                 connection.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
                 connection.setAutoCommit(false);
 
@@ -281,7 +350,7 @@ public class RunFicServiceImpl implements RunFicService {
                 }
                 // Todo ok
                 inscripcion.setRecogido(true);
-                //inscripcionDao.update(connection, inscripcion); -- Reparar update - SQL Exception
+                inscripcionDao.update(connection, inscripcion);
                 connection.commit();
                 return inscripcion;
             } catch (InstanceNotFoundException | DorsalHaSidoRecogidoException | NumTarjetaIncorrectoException e) {
