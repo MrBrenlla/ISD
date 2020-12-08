@@ -16,14 +16,14 @@ public abstract class AbstractSqlInscripcionDao implements SqlInscripcionDao {
     //**************************************************************************************************
     //****************************************** Brais *************************************************
     //**************************************************************************************************
-
-    private List<Inscripcion> auxfind(Connection connection, String email, Long idCarrera) {
+    @Override
+    public List<Inscripcion> find(Connection connection, String email, Long idCarrera) {
 
         /* Create "queryString". */
         String queryString = "SELECT idInscripcion, idCarrera, dorsal, numTarjeta"
                 + ", email, fechaInscripcion, recogido FROM Inscripcion WHERE email = ?" ;
 
-        if (idCarrera != null)  queryString = queryString + " AND idCarrera = ?";
+        if (idCarrera != null)  queryString = queryString + " & idCarrera = ?";
 
 
         try (PreparedStatement preparedStatement = connection.prepareStatement(queryString)) {
@@ -53,7 +53,7 @@ public abstract class AbstractSqlInscripcionDao implements SqlInscripcionDao {
                 inscripcions.add(new Inscripcion(idInscripcion, id, dorsal, tarjeta, mail, fechaIscripcion, recogido));
 
             }
-            System.out.println(inscripcions.toString());
+            /* Return movie. */
             return inscripcions;
 
         } catch (SQLException e) {
@@ -62,13 +62,8 @@ public abstract class AbstractSqlInscripcionDao implements SqlInscripcionDao {
     }
 
     @Override
-    public boolean find(Connection connection, String email, Long idCarrera){
-       return ! (auxfind(connection,email,idCarrera).isEmpty());
-    }
-
-    @Override
     public List<Inscripcion> find(Connection connection , String email ){
-        return auxfind(connection, email, null);
+        return find(connection, email, null);
     }
 
 
