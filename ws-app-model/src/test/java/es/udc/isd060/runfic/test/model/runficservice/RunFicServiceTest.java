@@ -155,12 +155,12 @@ public class RunFicServiceTest {
 
     private Carrera getValidCarrera(String ciudadCelebracion) {
         LocalDateTime date1 = LocalDateTime.now().plusDays(45);
-        return new Carrera(null,ciudadCelebracion,"Descripcion", 5.5f,LocalDateTime.now(),date1,0,100);
+        return new Carrera(null,ciudadCelebracion,"Descripcion", 5.5f,LocalDateTime.now(),date1,100,0);
     }
 
     private Carrera getValidCarrera_2() {
         LocalDateTime date1 = LocalDateTime.of(2022, 5, 11, 19, 30);
-        return new Carrera(null,"Mallorca","Descripcion", 2.5f,LocalDateTime.now(),date1,0,120);
+        return new Carrera(null,"Mallorca","Descripcion", 2.5f,LocalDateTime.now(),date1,120,0);
     }
 
 
@@ -184,11 +184,9 @@ public class RunFicServiceTest {
         try (Connection connection = dataSource.getConnection()) {
 
             carreraDao.remove(connection, carrera.getIdCarrera());
-            /* Commit. */
-            connection.commit();
-
 
         } catch (SQLException | InstanceNotFoundException throwables) {
+
             throwables.printStackTrace();
         }
     }
@@ -237,21 +235,6 @@ public class RunFicServiceTest {
         }
     }
 
-    @Test
-    public void testRemoveCarrera() throws InstanceNotFoundException {
-
-        Carrera carrera = createCarrera(getValidCarrera());
-
-        runFicService.removeCarrera(carrera.getIdCarrera());
-
-        assertThrows(InstanceNotFoundException.class, () -> runFicService.findCarrera(carrera.getIdCarrera()));
-
-    }
-
-    @Test
-    public void testRemoveNonExistentCarrera() {
-        assertThrows(InstanceNotFoundException.class, () -> runFicService.removeCarrera(NON_EXISTENT_CARRERA_ID));
-    }
 
 
     @Test
@@ -332,10 +315,11 @@ public class RunFicServiceTest {
     }
 
     @Test
-    public void testRemoveInscripcion() throws InputValidationException {
+    public void testRemoveInscripcion() throws InputValidationException, CarreraInexistente,UsuarioInscrito,FueraDePlazo,SinPlazas {
 
         Carrera carrera = createCarrera(getValidCarrera());
-        Inscripcion i = runFicService.addInscripcion("b@gmail.com","1234567812345678", carrera.getIdCarrera());
+        assertTrue(runFicService.findInscripcion("y@gmail.com").isEmpty());
+        Inscripcion i = runFicService.addInscripcion("y@gmail.com","1234567812345678", carrera.getIdCarrera());
 
         removeInscripcion(i);
 
@@ -343,10 +327,6 @@ public class RunFicServiceTest {
 
     }
 
-    @Test
-    public void testRemoveNonExistentInscripcion() {
-        assertThrows(InstanceNotFoundException.class, () -> runFicService.removeCarrera(NON_EXISTENT_CARRERA_ID));
-    }
 
 
 
@@ -357,136 +337,6 @@ public class RunFicServiceTest {
 
     // Buscar carrera y crear carrera se prueban al mismo tiempo , es decir para probar uno el otro se supone
     // que funciona
-
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-    // Tests del método ALTERNATIVO de AddInscripcion
-
-    @Test
-    public void testAddInscripcionAlt(){
-        int SEED = 1;
-        Carrera carrera = getValidCarrera(SEED);
-        Inscripcion inscripcion= null;
-        try {
-            carrera = runFicService.addCarrera(carrera);
-            String tarjeta = getValidTarjeta(SEED);
-            String email = getValidEmail(SEED);
-            inscripcion =runFicService.addInscripcion(email,tarjeta,carrera);
-
-        }catch (PlazasNoDisponiblesException | InputValidationException |
-                InstanceNotFoundException | PlazoDeInscripcionYaTerminadoException |
-                UsuarioYaRegistradoException e) {
-            e.printStackTrace();
-        }finally {
-            // Clean Database
-            cleanDB(carrera,inscripcion);
-        }
-
-    }
-
-    // TODO solucionar problemas de limpieza
-    @Test
-    public void testAddInscripcionAltDatosInvalidos(){
-
-        // Check inscripcion email invalido
-        assertThrows(InputValidationException.class, () -> {
-            // Get data
-            int seed = 1;
-            Carrera carrera = getValidCarrera(seed);
-            String mail = getInvalidEmail();
-            String tarjeta = getValidTarjeta(seed);
-
-            // Add Carrera
-            carrera = runFicService.addCarrera(carrera);
-
-            // Add Inscripcion ( should throw exception )
-            Inscripcion inscripcion = runFicService.addInscripcion(mail,tarjeta,carrera);
-
-            // Clean Database
-            cleanDB(carrera,inscripcion);
-        });
-
-        // Check inscripcion tarjeta invalida
-        assertThrows(InputValidationException.class, () -> {
-            // Get data
-            int seed = 2;
-            Carrera carrera = getValidCarrera(seed);
-            String mail = getValidEmail(seed);
-            String tarjeta = getInvalidTarjeta();
-
-            // Add Carrera
-            carrera = runFicService.addCarrera(carrera);
-
-            // Add Inscripcion ( should throw exception )
-            Inscripcion inscripcion = runFicService.addInscripcion(mail,tarjeta,carrera);
-
-            // Clean Database
-            cleanDB(carrera,inscripcion);
-        });
-
-        // TODO Carrera Inexistente
-        /*
-        // Check inscripcion Carrera inexistente
-        assertThrows(InstanceNotFoundException.class, () -> {
-            // Get data
-            int seed = 3;
-            Carrera carrera = getValidCarrera(seed);
-            Carrera carreraInexistente = getValidCarrera(seed+1);
-            String mail = getValidEmail(seed);
-            String tarjeta = getValidTarjeta(seed);
-
-            // Add Carrera
-            carrera = runFicService.addCarrera(carrera);
-
-            // Add Inscripcion ( should throw exception )
-            Inscripcion inscripcion = runFicService.addInscripcion(mail,tarjeta,carreraInexistente);
-
-            // Clean Database
-            cleanDB(carrera,null);
-        });
-        */
-
-        // Check inscripcion fuera de plazo
-        assertThrows(PlazoDeInscripcionYaTerminadoException.class, () -> {
-            // Get data
-            int seed = 4;
-            String mail = getValidEmail(seed);
-            String tarjeta = getValidTarjeta(seed);
-            // Get Carrera que se celebra en 10 horas ( ya no se puede registrarse en ella)
-            Carrera carrera = getValidCarrera(seed,10);
-
-            // Add Carrera
-            Carrera addedCarrera = runFicService.addCarrera(carrera);
-
-            // Add Inscripcion ( should throw exception )
-            Inscripcion inscripcion = runFicService.addInscripcion(mail,tarjeta,addedCarrera);
-
-            // Clean Database
-            cleanDB(carrera,inscripcion);
-        });
-
-        // Check inscripcion 2 veces
-        assertThrows(UsuarioYaRegistradoException.class, () -> {
-            // Get data
-            int seed = 5;
-            Carrera carrera = getValidCarrera(seed);
-            String mail = getValidEmail(seed);
-            String tarjeta = getValidTarjeta(seed);
-
-            // Add Carrera
-            carrera = runFicService.addCarrera(carrera);
-
-            // Add Inscripcion ( should throw exception 2nd time )
-            Inscripcion inscripcion = runFicService.addInscripcion(mail,tarjeta,carrera);
-            inscripcion = runFicService.addInscripcion(mail,tarjeta,carrera);
-
-            // Clean Database
-            cleanDB(carrera,inscripcion);
-        });
-
-
-
-    }
 
 
 
@@ -612,7 +462,7 @@ public class RunFicServiceTest {
             assertEquals(inscripcion,i);
             Carrera aux = runFicService.findCarrera(i.getIdCarrera());
             assertEquals(carrera.getPlazasOcupadas()+1,aux.getPlazasOcupadas());
-        } catch (InputValidationException | InstanceNotFoundException e) {
+        } catch (InputValidationException | CarreraInexistente | UsuarioInscrito | FueraDePlazo | SinPlazas | InstanceNotFoundException e) {
             e.printStackTrace();
         } finally {
             if (carrera!=null) removeCarrera(carrera);
@@ -621,15 +471,15 @@ public class RunFicServiceTest {
     }
 
     @Test
-    public void testAddInscripcion_CarreraInexistente() {
+    public void testAddInscripcion_CarreraInexistente(){
 
             assertThrows(InstanceNotFoundException.class,() -> runFicService.findCarrera(1L));
-            assertThrows(InputValidationException.class,() -> runFicService.addInscripcion("b@gmail.com","1234567812345678", 1L));
+            assertThrows(CarreraInexistente.class,() -> runFicService.addInscripcion("b@gmail.com","1234567812345678", 1L));
 
     }
 
     @Test
-    public void testAddInscripcion_DatosErroneos()  {
+    public void testAddInscripcion_DatosErroneos() {
 
         Carrera carrera = null;
         try {
@@ -644,7 +494,59 @@ public class RunFicServiceTest {
     }
 
     @Test
-    public void testFindInscripcion()  {
+    public void testAddInscripcion_YaInscrito() {
+
+        Carrera carrera = null;
+        Inscripcion i = null;
+        try {
+            carrera = createCarrera(getValidCarrera("Santiago"));
+            final Long id = carrera.getIdCarrera();
+            i = runFicService.addInscripcion("b@gmail.com","1234567812345678", id);
+            assertTrue(i.getEmail().equals("b@gmail.com") && i.getIdCarrera().equals(id));
+            assertThrows(UsuarioInscrito.class,()->runFicService.addInscripcion("b@gmail.com","1234567812345679", id));
+        } catch ( CarreraInexistente | UsuarioInscrito | FueraDePlazo | SinPlazas | InputValidationException e) {
+            e.printStackTrace();
+        } finally {
+            if (carrera!=null) removeCarrera(carrera);
+            if (i!=null) removeInscripcion(i);
+        }
+    }
+
+    @Test
+    public void testAddInscripcion_SinPlazas() {
+
+        Carrera carrera = null;
+        try {
+            carrera =getValidCarrera("Vigo");
+            carrera.setPlazasDisponibles(0);
+            carrera=createCarrera(carrera);
+            final Long id=carrera.getIdCarrera();
+            assertThrows(SinPlazas.class,()->runFicService.addInscripcion("b@gmail.com","1234567812345678", id));
+        } finally {
+            if (carrera!=null) removeCarrera(carrera);
+        }
+
+    }
+
+    @Test
+    public void testAddInscripcion_FueraDePlazo() {
+
+        Carrera carrera = null;
+        try {
+            carrera =getValidCarrera("Lugo");
+            carrera.setFechaCelebracion(LocalDateTime.now().plusHours(2));
+            carrera=createCarrera(carrera);
+            assertTrue(runFicService.findInscripcion("b@gmail.com").isEmpty());
+            final Long id=carrera.getIdCarrera();
+            assertThrows(FueraDePlazo.class,()->runFicService.addInscripcion("b@gmail.com","1234567812345678", id));
+        } finally {
+            if (carrera!=null) removeCarrera(carrera);
+        }
+
+    }
+
+    @Test
+    public void testFindInscripcion() {
         Inscripcion i=null;
         Carrera carrera = null;
 
@@ -653,7 +555,7 @@ public class RunFicServiceTest {
         try {
 
 
-            carrera = createCarrera(getValidCarrera());
+            carrera = createCarrera(getValidCarrera("Ourense"));
             LocalDateTime antes= LocalDateTime.now().withNano(0);
             i = runFicService.addInscripcion("b@gmail.com","1234567812345678", carrera.getIdCarrera());
             LocalDateTime despois= LocalDateTime.now().withNano(0);
@@ -666,7 +568,7 @@ public class RunFicServiceTest {
             l.add(i);
             assertEquals(l,runFicService.findInscripcion(i.getEmail()));
 
-        } catch (InputValidationException e) {
+        } catch (InputValidationException | CarreraInexistente | UsuarioInscrito | FueraDePlazo | SinPlazas e) {
             e.printStackTrace();
         } finally {
             if (carrera!=null) removeCarrera(carrera);
