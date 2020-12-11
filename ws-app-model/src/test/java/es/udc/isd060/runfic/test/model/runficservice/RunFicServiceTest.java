@@ -191,6 +191,8 @@ public class RunFicServiceTest {
         }
     }
 
+
+
     private Inscripcion getValidInscripcion(Long idCarrera) {
         LocalDateTime date1 = LocalDateTime.of(2021, 2, 13, 15, 30);
         return new Inscripcion(idCarrera,2,"0","pepito@gmail.com",date1,false);
@@ -202,7 +204,7 @@ public class RunFicServiceTest {
 
             inscripcionDao.remove(connection, inscripcion.getIdInscripcion());
             /* Commit. */
-            connection.commit();
+            //connection.commit();
 
 
         } catch (SQLException | InstanceNotFoundException throwables) {
@@ -340,36 +342,50 @@ public class RunFicServiceTest {
 
 
 
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-   /*
+
     @Test
     public void testRecogerDorsalDatosValidos(){
-        int SEED = 1;
-        Carrera carrera = getValidCarrera(SEED);
+        int seed = 10;
+        Carrera carrera = null;
         Inscripcion inscripcion= null;
-        Inscripcion inscripcionRecogida;
+        Inscripcion inscripcionOriginal;
         try {
-            // Añadimos la carrera y la inscripcion a la BBDD y recogemos dorsal
+            // Añadimos carrera valida a BBDD
+            carrera = getValidCarrera(seed);
             carrera = runFicService.addCarrera(carrera);
-            String email = getValidEmail(SEED);
-            String tarjeta = getValidTarjeta(SEED);
-            inscripcion = runFicService.addInscripcion(email,tarjeta, carrera);
-            inscripcionRecogida = runFicService.recogerDorsal(inscripcion.getIdInscripcion(),tarjeta);
+
+            // Añadimos inscripcion valida a BBDD
+            String email = getValidEmail(seed);
+            String tarjeta = getValidTarjeta(seed);
+            // addInscripcion original
+            inscripcion = runFicService.addInscripcion(email,tarjeta, carrera.getIdCarrera());
+            // addInscripcion alternativa
+            //inscripcion = runFicService.addInscripcion(email,tarjeta, carrera);
+
+            inscripcionOriginal = Inscripcion.copy(inscripcion);
+
+            // Recogemos dorsal
+            inscripcion = runFicService.recogerDorsal(inscripcion.getIdInscripcion(),tarjeta);
 
             // Comprobamos que la inscripcion haya sido recogida
-            assertTrue(inscripcionRecogida.isRecogido());
+            assertTrue(inscripcion.isRecogido());
 
             // Comprobamos que la inscripcion "sea la misma" que la del dorsal recogido (ver método Inscripcion.same() )
-            assertTrue(inscripcion.same(inscripcionRecogida));
+            // TODO same
+            //assertTrue(inscripcion.same(inscripcionOriginal));
 
-        }catch (InputValidationException | InstanceNotFoundException | CarreraYaCelebradaException |
-                NumTarjetaIncorrectoException | DorsalHaSidoRecogidoException |
-                PlazoDeInscripcionYaTerminadoException | PlazasNoDisponiblesException |
-                UsuarioYaRegistradoException e) {
+
+        }catch (InputValidationException | InstanceNotFoundException |
+                CarreraYaCelebradaException | NumTarjetaIncorrectoException |
+                DorsalHaSidoRecogidoException | UsuarioInscrito | CarreraInexistente | SinPlazas | FueraDePlazo e) {
             e.printStackTrace();
-        } finally {
+        }
+        finally {
             cleanDB(carrera,inscripcion);
         }
+
     }
 
 
@@ -379,61 +395,209 @@ public class RunFicServiceTest {
 
         // Test idInscripcion incorrecto
         assertThrows(InstanceNotFoundException.class , () -> {
-            int SEED = 1;
+            int SEED = 20;
             // Obtenemos una Carrera
             Carrera carrera = getValidCarrera(SEED);
             // Obtenemos una Inscripcion
             String email = getValidEmail(SEED);
             String tarjeta = getValidTarjeta(SEED);
-            Inscripcion inscripcion = runFicService.addInscripcion(email,tarjeta,carrera);
+            carrera=runFicService.addCarrera(carrera);
+            Inscripcion inscripcion = runFicService.addInscripcion(email,tarjeta,carrera.getIdCarrera());
 
             // Recogemos dorsal idInscripcion incorrecto
-            //runFicService.recogerDorsal(inscripcion.getIdInscripcion()+1,tarjeta);
+            runFicService.recogerDorsal(inscripcion.getIdInscripcion()+1,tarjeta);
 
-            //if (inscripcion!=null) removeInscripcion(inscripcion); // Con CASCADE no hace falta
-            //if (carrera!=null) removeCarrera(carrera);
+            // TODO clean
+            cleanDB(carrera,inscripcion);
         });
+
+        // Test email incorrecto
+        assertThrows(InputValidationException.class , () -> {
+            int SEED = 21;
+            // Obtenemos una Carrera
+            Carrera carrera = getValidCarrera(SEED);
+            // Obtenemos una Inscripcion
+            String email = getInvalidEmail();
+            String tarjeta = getValidTarjeta(SEED);
+            carrera=runFicService.addCarrera(carrera);
+            Inscripcion inscripcion = runFicService.addInscripcion(email,tarjeta,carrera.getIdCarrera());
+
+            // Recogemos dorsal
+            runFicService.recogerDorsal(inscripcion.getIdInscripcion(),tarjeta);
+
+            // TODO clean
+            cleanDB(carrera,inscripcion);
+        });
+
 
         // Test numTarjeta incorrecto
-
-        // Test dorsal recogido
-        /*assertThrows(DorsalHaSidoRecogidoException.class , () -> {
+        assertThrows(InputValidationException.class , () -> {
+            int SEED = 22;
             // Obtenemos una Carrera
-            Carrera carrera = createCarrera(getValidCarrera("Santiago"));
-
+            Carrera carrera = getValidCarrera(SEED);
             // Obtenemos una Inscripcion
-            Inscripcion inscripcion = runFicService.addInscripcion(getValidEmail(),getValidTarjeta(),
-                    carrera.getIdCarrera());
+            String email = getValidEmail(SEED);
+            String tarjeta = getInvalidTarjeta();
+            carrera=runFicService.addCarrera(carrera);
+            Inscripcion inscripcion = runFicService.addInscripcion(email,tarjeta,carrera.getIdCarrera());
 
-            // Recogemos dorsal 2 veces ( la segunda debería saltar la excepción )
-            runFicService.recogerDorsal(inscripcion.getIdInscripcion(), inscripcion.getTarjeta());
-            runFicService.recogerDorsal(inscripcion.getIdInscripcion(), inscripcion.getTarjeta());
-        });*/
+            // Recogemos dorsal
+            runFicService.recogerDorsal(inscripcion.getIdInscripcion(),tarjeta);
 
-        /*
-        // NOTA : Este test simula el paso del tiempo real
-        // el test podría fallar si SIMULATION_TEST_TIME es muy pequeño
-        assertThrows(CarreraYaCelebradaException.class , () -> {
-            // Obtenemos una Carrera que se celebrara en un futuro ( con margen SIMULATION_TEST_TIME )
-            Carrera carrera = getValidCarrera();
-            LocalDateTime fechaCelebracion = LocalDateTime.now().plusNanos(1000000*SIMULATION_TEST_TIME);
-            carrera.setFechaCelebracion(fechaCelebracion);
-
-            // Nos inscribimos
-            Inscripcion inscripcion = runFicService.addInscripcion(getValidEmail(),getValidTarjeta(),
-                    carrera.getIdCarrera());
-
-            // Esperamos 2 veces SIMULATION_TEST_TIME
-            Thread.sleep(2*SIMULATION_TEST_TIME);
-
-            // Recogemos dorsal ( debería saltar excepción ya que la carrera debería de haber empezado )
-            runFicService.recogerDorsal(inscripcion.getIdInscripcion(),inscripcion.getTarjeta());
+            // TODO clean
+            cleanDB(carrera,inscripcion);
         });
 
+        // Test dorsal ha sido recogido
+        assertThrows(DorsalHaSidoRecogidoException.class , () -> {
+            int SEED = 23;
+            // Obtenemos una Carrera
+            Carrera carrera = getValidCarrera(SEED);
+            // Obtenemos una Inscripcion
+            String email = getValidEmail(SEED);
+            String tarjeta = getValidTarjeta(SEED);
+            carrera=runFicService.addCarrera(carrera);
+            Inscripcion inscripcion = runFicService.addInscripcion(email,tarjeta,carrera.getIdCarrera());
+
+            // Recogemos dorsal 2 veces ( la segunda debe de dar excepcion)
+            runFicService.recogerDorsal(inscripcion.getIdInscripcion(),tarjeta);
+            runFicService.recogerDorsal(inscripcion.getIdInscripcion(),tarjeta);
+
+            // TODO clean
+            cleanDB(carrera,inscripcion);
+        });
+
+        testRecogerDorsalCarreraYaEmpezada(false);
 
     }
 
-*/
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    private void testRecogerDorsalCarreraYaEmpezada( boolean debug ) {
+        assertThrows(CarreraYaCelebradaException.class , () -> {
+
+            // Sout inicial DEBUG
+            if (debug){
+                System.out.println("DEBUG testRecogerDorsalCarreraYaEmpezada :\n");
+            }
+
+
+            int SEED = 24;
+            // Creamos una Carrera UNCHECKED que se celebro hace 2 horas
+            Carrera carrera = getValidCarrera(SEED,-2);
+            carrera = this.addUncheckedCarrera(carrera);
+
+            // Sout de la carrera UNCHECKED
+            if (debug) {
+                System.out.println("Carrera UNCHECKED :\n"+carrera.toString()+"\n");
+            }
+
+            // Obtenemos una Inscripcion UNCHECKED de hace 1 hora
+            Inscripcion inscripcion = getValidInscripcion(carrera,SEED);
+            inscripcion = this.addUncheckedInscripcion(inscripcion.getEmail(),inscripcion.getTarjeta(),
+                    carrera,-1);
+
+            // Sout de la inscripcion UNCHECKED
+            if (debug) {
+                System.out.println("Inscripcion UNCHECKED :\n"+inscripcion.toString()+"\n");
+            }
+
+
+            // Recogemos dorsal ( debe saltar excepcion)
+            runFicService.recogerDorsal(inscripcion.getIdInscripcion(),inscripcion.getTarjeta());
+
+            // TODO clean
+            cleanDB(carrera,inscripcion);
+
+        });
+    }
+
+    // Metodo usado en el test de inscripcion carrera ya celebrada
+    private Inscripcion addUncheckedInscripcion(String email, String numTarjeta, Carrera carrera , int hoursToInscribe ) {
+
+
+        Inscripcion inscripcionCreada = null;
+
+        try (Connection connection = dataSource.getConnection()) {
+
+            try {
+                // Prepare connection.
+                connection.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
+                connection.setAutoCommit(false);
+
+                // Buscamos la carrera correspondiente
+
+                Long idCarrera =  carrera.getIdCarrera();
+                carrera = carreraDao.find(connection,idCarrera);
+
+                // si OK
+                Inscripcion inscripcion = new Inscripcion(carrera.getIdCarrera(),numTarjeta,email);
+                inscripcion.setFechaInscripcion(inscripcion.getFechaInscripcion().plusHours(hoursToInscribe));
+                inscripcionCreada = inscripcionDao.create(connection,inscripcion);
+
+                // Commit.
+                connection.commit();
+
+            } catch (InstanceNotFoundException  e) {
+                connection.rollback();
+                throw new RuntimeException(e);
+
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+
+            return inscripcionCreada;
+        } catch (RuntimeException | SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+
+    // Metodo usado en el test de inscripcion carrera ya celebrada
+    private Carrera addUncheckedCarrera(Carrera carrera)  {
+
+        carrera.setFechaAlta(LocalDateTime.now());
+
+        try (Connection connection = dataSource.getConnection()) {
+
+            try {
+
+                // Prepare connection.
+                connection.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
+                connection.setAutoCommit(false);
+
+                // Do work.
+                Carrera createdCarrera = carreraDao.create(connection, carrera);
+
+
+                // Commit.
+                connection.commit();
+
+                return createdCarrera;
+
+            } catch (SQLException e) {
+                connection.rollback();
+                throw new RuntimeException(e);
+            } catch (RuntimeException | Error e) {
+                connection.rollback();
+                throw e;
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+
+
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
 
 
     //**************************************************************************************************

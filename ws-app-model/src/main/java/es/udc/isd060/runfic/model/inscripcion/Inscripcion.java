@@ -45,6 +45,14 @@ public class Inscripcion {
     }
 
 
+    // Carlos
+    public static Inscripcion copy ( Inscripcion inscripcion ) {
+        return new Inscripcion(inscripcion.getIdInscripcion(), inscripcion.getIdCarrera(),inscripcion.getDorsal(),
+                inscripcion.getTarjeta(), inscripcion.getEmail(),
+                inscripcion.getFechaInscripcion(), inscripcion.isRecogido());
+    }
+
+
     public Long getIdInscripcion() {
         return idInscripcion;
     }
