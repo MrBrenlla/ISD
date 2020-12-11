@@ -129,7 +129,7 @@ public class Inscripcion {
     }
 
     // Carlos
-    // Igual que equals pero no miramos el dorsal ni si ha sido recogido ( son "la misma" si el reso es igual )
+    // Igual que equals pero no miramos el dorsal ni si ha sido recogido ( son "la misma" si el resto es igual )
     public boolean same(Object o) {
         if (this == o) return true;
         if (!(o instanceof Inscripcion)) return false;

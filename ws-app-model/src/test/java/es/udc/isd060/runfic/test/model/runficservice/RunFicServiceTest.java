@@ -133,6 +133,10 @@ public class RunFicServiceTest {
 
     // Carlos
     private void cleanDB(Carrera carrera , Inscripcion inscripcion ) {
+        // OJO Parece haber un error en el remove o algo extraño ya que no se borran algunos
+        // datos con el assert throws pero SI con funciones independientes
+        // ( en ws-javaexamples se usa assert-throws y funciona correctamente )
+
         if (inscripcion!=null) removeInscripcion(inscripcion); // Con CASCADE no hace falta
         if (carrera!=null) removeCarrera(carrera);
     }
@@ -361,20 +365,27 @@ public class RunFicServiceTest {
             String tarjeta = getValidTarjeta(seed);
             // addInscripcion original
             inscripcion = runFicService.addInscripcion(email,tarjeta, carrera.getIdCarrera());
-            // addInscripcion alternativa
-            //inscripcion = runFicService.addInscripcion(email,tarjeta, carrera);
 
+            // Creamos una copia de la inscripción
             inscripcionOriginal = Inscripcion.copy(inscripcion);
 
             // Recogemos dorsal
+            LocalDateTime startTime= LocalDateTime.now().withNano(0);
             inscripcion = runFicService.recogerDorsal(inscripcion.getIdInscripcion(),tarjeta);
+            LocalDateTime endTime= LocalDateTime.now().withNano(0);
 
-            // Comprobamos que la inscripcion haya sido recogida
+            // Comprobamos que la inscripcion sea creada en el periodo entre mediciones , es decir , puesto que hay
+            // un solo thread ejecutando este código y la unica operación que se ejecuta es la de la de recogerDorsal
+            // correspondiente , COMPROBAMOS , de hecho , que LA INFORMACIÓN GUARDADA en la variable inscripción
+            // ES LA QUE QUEREMOS MEDIR.
+            assertTrue(startTime.isBefore(inscripcion.getFechaInscripcion())|startTime.isEqual(inscripcion.getFechaInscripcion()));
+            assertTrue(endTime.isAfter(inscripcion.getFechaInscripcion())|endTime.isEqual(inscripcion.getFechaInscripcion()));
+
+            // Comprobamos que el dorsal de la inscripcion haya sido recogido
             assertTrue(inscripcion.isRecogido());
 
             // Comprobamos que la inscripcion "sea la misma" que la del dorsal recogido (ver método Inscripcion.same() )
-            // TODO same
-            //assertTrue(inscripcion.same(inscripcionOriginal));
+            assertTrue(inscripcion.same(inscripcionOriginal));
 
 
         }catch (InputValidationException | InstanceNotFoundException |
@@ -407,9 +418,11 @@ public class RunFicServiceTest {
             // Recogemos dorsal idInscripcion incorrecto
             runFicService.recogerDorsal(inscripcion.getIdInscripcion()+1,tarjeta);
 
-            // TODO clean
+            System.out.println("NO SE EJECUTA");
             cleanDB(carrera,inscripcion);
+
         });
+
 
         // Test email incorrecto
         assertThrows(InputValidationException.class , () -> {
