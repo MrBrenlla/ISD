@@ -23,6 +23,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import static es.udc.isd060.runfic.model.util.ModelConstants.RUNFIC_DATA_SOURCE;
@@ -92,17 +93,40 @@ public class RunFicServiceTest {
         return addedCarrera;
     }
 
+
     private void removeCarrera(Carrera carrera) {
+
+        DataSource dataSource = DataSourceLocator.getDataSource(RUNFIC_DATA_SOURCE);
+
         try (Connection connection = dataSource.getConnection()) {
 
-            carreraDao.remove(connection, carrera.getIdCarrera());
-            /* Commit. */
-            connection.commit();
+            try {
 
+                /* Prepare connection. */
+                connection.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
+                connection.setAutoCommit(false);
 
-        } catch (SQLException | InstanceNotFoundException throwables) {
-            throwables.printStackTrace();
+                /* Do work. */
+                carreraDao.remove(connection, carrera.getIdCarrera());
+
+                /* Commit. */
+                connection.commit();
+
+            } catch (InstanceNotFoundException e) {
+                connection.commit();
+                throw new RuntimeException(e);
+            } catch (SQLException e) {
+                connection.rollback();
+                throw new RuntimeException(e);
+            } catch (RuntimeException | Error e) {
+                connection.rollback();
+                throw e;
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
+
     }
 
     private Inscripcion getValidInscripcion(Long idCarrera) {
@@ -112,15 +136,36 @@ public class RunFicServiceTest {
 
 
     private void removeInscripcion(Inscripcion inscripcion) {
+
+        DataSource dataSource = DataSourceLocator.getDataSource(RUNFIC_DATA_SOURCE);
+
         try (Connection connection = dataSource.getConnection()) {
 
-            inscripcionDao.remove(connection, inscripcion.getIdInscripcion());
-            /* Commit. */
-            connection.commit();
+            try {
 
+                /* Prepare connection. */
+                connection.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
+                connection.setAutoCommit(false);
 
-        } catch (SQLException | InstanceNotFoundException throwables) {
-            throwables.printStackTrace();
+                /* Do work. */
+                inscripcionDao.remove(connection, inscripcion.getIdInscripcion());
+
+                /* Commit. */
+                connection.commit();
+
+            } catch (InstanceNotFoundException e) {
+                connection.commit();
+                throw new RuntimeException(e);
+            } catch (SQLException e) {
+                connection.rollback();
+                throw new RuntimeException(e);
+            } catch (RuntimeException | Error e) {
+                connection.rollback();
+                throw e;
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -131,16 +176,29 @@ public class RunFicServiceTest {
     //**************************************************************************************************
 
     @Test
-    public void testAddCarrera() throws InputValidationException, InstanceNotFoundException {
+    public void testAddCarreraAndCheckValues() throws InputValidationException, InstanceNotFoundException {
 
-        Carrera carrera = getValidCarrera();
         Carrera addedCarrera = null;
+        Carrera carrera = null;
 
         try {
-            System.out.println(getValidCarrera());
+            carrera = createCarrera(getValidCarrera("Negreira"));
+            // Create Movie
+            LocalDateTime antes= LocalDateTime.now().withNano(0);
             addedCarrera = runFicService.addCarrera(carrera);
+            LocalDateTime despois= LocalDateTime.now().withNano(0);
+
+            assertTrue(antes.isBefore(addedCarrera.getFechaCelebracion())|antes.isEqual(addedCarrera.getFechaCelebracion()));
+
+            // Find Movie
             Carrera foundCarrera = runFicService.findCarrera(addedCarrera.getIdCarrera());
+
             assertEquals(addedCarrera.getIdCarrera(), foundCarrera.getIdCarrera());
+            assertEquals(foundCarrera.getCiudadCelebracion(),carrera.getCiudadCelebracion());
+            assertEquals(foundCarrera.getDescripcion(),carrera.getDescripcion());
+            assertEquals(foundCarrera.getPrecioInscripcion(),carrera.getPrecioInscripcion());
+            assertEquals(foundCarrera.getPlazasDisponibles(),carrera.getPlazasDisponibles());
+            assertEquals(foundCarrera.getPlazasOcupadas(),carrera.getPlazasOcupadas());
         } finally {
             // Clear Database
             if (addedCarrera!=null) {
@@ -154,30 +212,53 @@ public class RunFicServiceTest {
 
         Carrera carrera = createCarrera(getValidCarrera());
 
-        runFicService.removeCarrera(carrera.getIdCarrera());
+        removeCarrera(carrera);
 
         assertThrows(InstanceNotFoundException.class, () -> runFicService.findCarrera(carrera.getIdCarrera()));
 
     }
 
-    @Test
-    public void testRemoveNonExistentCarrera() {
-        assertThrows(InstanceNotFoundException.class, () -> runFicService.removeCarrera(NON_EXISTENT_CARRERA_ID));
-    }
-
 
     @Test
     public void testFindByDateAndCity() throws InputValidationException {
-        Carrera carrera1 = runFicService.addCarrera(getValidCarrera());
-        Carrera carrera2 = runFicService.addCarrera(getValidCarrera_2());
-        LocalDateTime fecha = LocalDateTime.of(2020, 1, 1, 19, 8);
+        LocalDateTime beforeCreationDate = LocalDateTime.now().withNano(0);
+
+        List<Carrera> carreras = new LinkedList<Carrera>();
+        Carrera carrera1 = createCarrera(getValidCarrera("Santiago"));
+        carreras.add(carrera1);
+
+        LocalDateTime afterCreationDate = LocalDateTime.now().withNano(0);
+
+        Carrera carrera2 = createCarrera(getValidCarrera("Negreira"));
+        carreras.add(carrera2);
+        Carrera carrera3= createCarrera(getValidCarrera("Barcelona"));
+        carreras.add(carrera3);
 
         try {
-            List<Carrera> carreras = runFicService.findCarrera(fecha, "Mallorca");
-            assertEquals(carrera2.getIdCarrera(), carreras.get(carreras.size() - 1).getIdCarrera());
-        }finally {
-            removeCarrera(carrera1);
-            removeCarrera(carrera2);
+            LocalDateTime fecha = LocalDateTime.now().plusDays(45);
+            List<Carrera> foundCarreras = runFicService.findCarrera(fecha);
+
+            assertEquals(carreras.size(), foundCarreras.size());
+
+            foundCarreras = runFicService.findCarrera(fecha);
+            assertEquals(3, foundCarreras.size());
+            assertEquals(carreras.get(0).getIdCarrera(), foundCarreras.get(0).getIdCarrera());
+
+            foundCarreras = runFicService.findCarrera(fecha,"Barcelona");
+            assertEquals(1, foundCarreras.size());
+            assertEquals(3, foundCarreras.get(0).getIdCarrera());
+
+            foundCarreras = runFicService.findCarrera(fecha,"Barcelona");
+            assertEquals(1, foundCarreras.size());
+            assertTrue((foundCarreras.get(0).getFechaCelebracion().compareTo(beforeCreationDate) >= 0));
+
+            foundCarreras = runFicService.findCarrera(LocalDateTime.now().plusDays(80));
+            assertEquals(3, foundCarreras.size());
+        } finally {
+            // Clear Database
+            for (Carrera carrera : carreras) {
+                removeCarrera(carrera);
+            }
         }
     }
 
@@ -254,14 +335,6 @@ public class RunFicServiceTest {
         assertTrue(runFicService.findInscripcion(i.getEmail()).isEmpty());
 
     }
-
-    @Test
-    public void testRemoveNonExistentInscripcion() {
-        assertThrows(InstanceNotFoundException.class, () -> runFicService.removeCarrera(NON_EXISTENT_CARRERA_ID));
-    }
-
-
-
 
     //**************************************************************************************************
     //******************************************** Carlos **********************************************

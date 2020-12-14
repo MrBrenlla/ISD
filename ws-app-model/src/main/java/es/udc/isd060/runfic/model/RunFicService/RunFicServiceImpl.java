@@ -55,6 +55,7 @@ public class RunFicServiceImpl implements RunFicService {
         if (!i.getEmail().contains("@")) throw new InputValidationException("non é un email valido");
     }
 */
+
     private void validateCarrera(Carrera carrera) throws InputValidationException {
         if(carrera.getPrecioInscripcion() < 0.0)
         {
@@ -205,40 +206,6 @@ public class RunFicServiceImpl implements RunFicService {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    @Override
-    public void removeCarrera(Long idCarrera) throws InstanceNotFoundException {
-
-        try (Connection connection = dataSource.getConnection()) {
-
-            try {
-
-                /* Prepare connection. */
-                connection.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
-                connection.setAutoCommit(false);
-
-                /* Do work. */
-                carreraDao.remove(connection, idCarrera);
-
-                /* Commit. */
-                connection.commit();
-
-            } catch (InstanceNotFoundException e) {
-                connection.commit();
-                throw e;
-            } catch (SQLException e) {
-                connection.rollback();
-                throw new RuntimeException(e);
-            } catch (RuntimeException | Error e) {
-                connection.rollback();
-                throw e;
-            }
-
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-
     }
 
     //**************************************************************************************************

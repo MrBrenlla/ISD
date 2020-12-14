@@ -30,7 +30,6 @@ public interface RunFicService {
 
     List<Carrera> findCarrera(LocalDateTime fechaCelebracion, String ciudad);
 
-    void removeCarrera(Long idCarrera) throws InstanceNotFoundException;
 
     //**************************************************************************************************
     //****************************************** Carlos *************************************************

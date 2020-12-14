@@ -43,7 +43,7 @@ public abstract class AbstractSqlCarreraDao implements SqlCarreraDao {
 
         /* Create "queryString". */
         String queryString = "SELECT idCarrera, ciudadCelebracion, descripcion, precioInscripcion, fechaAlta, " +
-                "fechaCelebracion, plazasDisponibles, plazasOcupadas AND fechaCelebracion < ? FROM Carrera";
+                "fechaCelebracion, plazasDisponibles, plazasOcupadas AND fechaCelebracion < ? AND fechaCelebracion > NOW() FROM Carrera";
 
         if(ciudad != null ) {
             queryString += " WHERE ciudadCelebracion = ?";
