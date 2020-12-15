@@ -12,6 +12,9 @@ public class Inscripcion {
     private LocalDateTime fechaInscripcion;
     private boolean recogido;
 
+    // Carlos
+    public static final Integer DORSAL_NULL = -1;
+
     public Inscripcion(Long idInscripcion, Long idCarrera, Integer dorsal, String numTarjeta, String emailUsuario, LocalDateTime fechaInscripcion, boolean recogido) {
         this.idInscripcion = idInscripcion;
         this.idCarrera = idCarrera;
@@ -29,6 +32,24 @@ public class Inscripcion {
         this.email = emailUsuario;
         this.fechaInscripcion = fechaInscripcion;
         this.recogido = recogido;
+    }
+
+    // Carlos
+    public Inscripcion(Long idCarrera, String numTarjeta, String email) {
+        this.idCarrera = idCarrera;
+        this.dorsal = DORSAL_NULL;
+        this.numTarjeta = numTarjeta;
+        this.email = email;
+        this.fechaInscripcion = LocalDateTime.now();
+        this.recogido = false;
+    }
+
+
+    // Carlos
+    public static Inscripcion copy ( Inscripcion inscripcion ) {
+        return new Inscripcion(inscripcion.getIdInscripcion(), inscripcion.getIdCarrera(),inscripcion.getDorsal(),
+                inscripcion.getTarjeta(), inscripcion.getEmail(),
+                inscripcion.getFechaInscripcion(), inscripcion.isRecogido());
     }
 
 
@@ -72,6 +93,11 @@ public class Inscripcion {
         this.dorsal = dorsal;
     }
 
+    // Carlos
+    public void generateDorsal() {
+        this.dorsal = idCarrera.intValue();
+    }
+
     public void setTarjeta(String numTarjeta) {
         this.numTarjeta = numTarjeta;
     }
@@ -97,6 +123,19 @@ public class Inscripcion {
                 getIdCarrera().equals(that.getIdCarrera()) &&
                 getDorsal() == that.getDorsal() &&
                 isRecogido() == that.isRecogido() &&
+                Objects.equals(getTarjeta(), that.getTarjeta()) &&
+                Objects.equals(getEmail(), that.getEmail()) &&
+                Objects.equals(getFechaInscripcion(), that.getFechaInscripcion());
+    }
+
+    // Carlos
+    // Igual que equals pero no miramos el dorsal ni si ha sido recogido ( son "la misma" si el resto es igual )
+    public boolean same(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Inscripcion)) return false;
+        Inscripcion that = (Inscripcion) o;
+        return getIdInscripcion().equals( that.getIdInscripcion()) &&
+                getIdCarrera().equals(that.getIdCarrera()) &&
                 Objects.equals(getTarjeta(), that.getTarjeta()) &&
                 Objects.equals(getEmail(), that.getEmail()) &&
                 Objects.equals(getFechaInscripcion(), that.getFechaInscripcion());

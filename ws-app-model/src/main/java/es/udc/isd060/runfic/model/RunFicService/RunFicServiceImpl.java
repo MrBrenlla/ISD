@@ -1,8 +1,6 @@
 package es.udc.isd060.runfic.model.RunFicService;
 
-import es.udc.isd060.runfic.model.RunFicService.exceptions.CarreraYaCelebradaException;
-import es.udc.isd060.runfic.model.RunFicService.exceptions.DorsalHaSidoRecogidoException;
-import es.udc.isd060.runfic.model.RunFicService.exceptions.NumTarjetaIncorrectoException;
+import es.udc.isd060.runfic.model.RunFicService.exceptions.*;
 import es.udc.isd060.runfic.model.carrera.Carrera;
 import es.udc.isd060.runfic.model.carrera.SqlCarreraDao;
 import es.udc.isd060.runfic.model.carrera.SqlCarreraDaoFactory;
@@ -47,6 +45,8 @@ public class RunFicServiceImpl implements RunFicService {
         validateNumTarjeta(i.getTarjeta());
     }
 
+
+
 /*
     private void validateInscripcion(@org.jetbrains.annotations.NotNull Inscripcion i) throws InputValidationException {
 
@@ -89,7 +89,7 @@ public class RunFicServiceImpl implements RunFicService {
     //****************************************** Brais *************************************************
     //**************************************************************************************************
 
-    public Inscripcion addInscripcion(String email, String tarjeta, long carrera) throws InputValidationException {
+    public Inscripcion addInscripcion(String email, String tarjeta, long carrera) throws InputValidationException, CarreraInexistente,UsuarioInscrito,FueraDePlazo,SinPlazas {
         LocalDateTime hoxe = LocalDateTime.now().withNano(0);
 
         Inscripcion i = new Inscripcion(null, carrera, null, tarjeta, email, hoxe, false);
@@ -107,13 +107,26 @@ public class RunFicServiceImpl implements RunFicService {
                 /* Do work. */
                 Carrera c;
                 try {
-                    c = carreraDao.find(connection, carrera);
+                    c = findCarrera(carrera);
                 }catch (InstanceNotFoundException e){
-                    throw new InputValidationException("Carreira inexistente");
+                    connection.commit();
+                    throw new CarreraInexistente();
                 }
 
-                if (c.getFechaCelebracion().minusDays(1).isBefore(hoxe))
-                    throw new InputValidationException("Data de escripcion sobrepasada");
+                if (c.getPlazasOcupadas() >= c.getPlazasDisponibles()){
+                    connection.commit();
+                    throw new SinPlazas();
+                }
+
+                if (c.getFechaCelebracion().minusDays(1).isBefore(hoxe)) {
+                    connection.commit();
+                    throw new FueraDePlazo();
+                }
+
+                if (inscripcionDao.find(connection,email,carrera)){
+                    connection.commit();
+                    throw new UsuarioInscrito();
+                }
 
                 if (!carreraDao.update(connection, carrera)){
                     connection.rollback();
@@ -132,7 +145,7 @@ public class RunFicServiceImpl implements RunFicService {
             } catch (SQLException e) {
                 connection.rollback();
                 throw new RuntimeException(e);
-            } catch (RuntimeException | Error | InstanceNotFoundException e) {
+            } catch (RuntimeException | Error | InstanceNotFoundException | CarreraInexistente e) {
                 connection.rollback();
                 throw e;
             }
@@ -224,10 +237,11 @@ public class RunFicServiceImpl implements RunFicService {
 
     public Inscripcion recogerDorsal(Long idInscripcion, String numTarjeta) throws InstanceNotFoundException,
             DorsalHaSidoRecogidoException, NumTarjetaIncorrectoException, CarreraYaCelebradaException, InputValidationException {
-        // TODO OPCIONAL check numTarjeta
-        validateNumTarjeta(numTarjeta);
+
+        PropertyValidator.validateCreditCard(numTarjeta);
         try (Connection connection = dataSource.getConnection()) {
             try {
+                /* Prepare connection. */
                 connection.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
                 connection.setAutoCommit(false);
 
@@ -248,7 +262,7 @@ public class RunFicServiceImpl implements RunFicService {
                 }
                 // Todo ok
                 inscripcion.setRecogido(true);
-                //inscripcionDao.update(connection, inscripcion); -- Reparar update - SQL Exception
+                inscripcionDao.update(connection, inscripcion);
                 connection.commit();
                 return inscripcion;
             } catch (InstanceNotFoundException | DorsalHaSidoRecogidoException | NumTarjetaIncorrectoException e) {

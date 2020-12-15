@@ -1,8 +1,6 @@
 package es.udc.isd060.runfic.model.RunFicService;
 
-import es.udc.isd060.runfic.model.RunFicService.exceptions.CarreraYaCelebradaException;
-import es.udc.isd060.runfic.model.RunFicService.exceptions.DorsalHaSidoRecogidoException;
-import es.udc.isd060.runfic.model.RunFicService.exceptions.NumTarjetaIncorrectoException;
+import es.udc.isd060.runfic.model.RunFicService.exceptions.*;
 import es.udc.isd060.runfic.model.carrera.*;
 import es.udc.isd060.runfic.model.inscripcion.Inscripcion;
 import es.udc.ws.util.exceptions.InputValidationException;
@@ -17,7 +15,7 @@ public interface RunFicService {
     //****************************************** Brais *************************************************
     //**************************************************************************************************
 
-    Inscripcion addInscripcion(String email, String tarjeta, long carrera) throws InputValidationException;
+    Inscripcion addInscripcion(String email, String tarjeta, long carrera) throws InputValidationException, CarreraInexistente,UsuarioInscrito,FueraDePlazo,SinPlazas;
 
     List<Inscripcion> findInscripcion(String email);
 
@@ -30,7 +28,10 @@ public interface RunFicService {
 
     List<Carrera> findCarrera(LocalDateTime fechaCelebracion, String ciudad);
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> 83fbadda079ce6f3089d8be42ab26127fd731422
     //**************************************************************************************************
     //****************************************** Carlos *************************************************
     //**************************************************************************************************
@@ -38,5 +39,4 @@ public interface RunFicService {
     Carrera findCarrera(Long idCarrera) throws InstanceNotFoundException;
 
     Inscripcion recogerDorsal(Long idInscripcion, String numTarjeta) throws InstanceNotFoundException, DorsalHaSidoRecogidoException, NumTarjetaIncorrectoException, CarreraYaCelebradaException, InputValidationException;
-
 }
