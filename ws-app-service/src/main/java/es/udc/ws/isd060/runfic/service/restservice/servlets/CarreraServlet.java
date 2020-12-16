@@ -15,6 +15,7 @@ public class CarreraServlet {
     // Nota LOS Métodos que se comentan por CF ( Called For) son llamados por la funcion correspondiente de la capa servicios
     // ( los que estan implementados son llamados por los comentados)
     // VER TEMA 6 ( DIAP. 45 )
+    // un doXXX puede tener más de un CF
     //**************************************************************************************************
     //****************************************** Yago *************************************************
     //**************************************************************************************************
@@ -24,21 +25,20 @@ public class CarreraServlet {
 
     }
 
+    //**************************************************************************************************
+    //****************************************** Carlos y Yago *************************************************
+    //**************************************************************************************************
+
 
     // CF : public List<Carrera> findCarrera (LocalDateTime fechaCelebracion , String nombreCiudad );
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-
-    }
-
-
-    //**************************************************************************************************
-    //****************************************** Carlos *************************************************
-    //**************************************************************************************************
-
     // CF : public Carrera findCarrera ( Integer idCarrera );
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
     }
+
+
+
+
 
 
 

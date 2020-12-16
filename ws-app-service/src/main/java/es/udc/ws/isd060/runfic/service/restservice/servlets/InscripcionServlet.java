@@ -21,25 +21,25 @@ public class InscripcionServlet {
     //****************************************** Brais *************************************************
     //**************************************************************************************************
 
-    // CF : Inscripcion addInscripcion (String email , String numTarjeta , Carrera carrera );
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-
-    }
-
-
     // CF : List<Inscripcion > findInscripcion (String email );
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
     }
 
 
     //**************************************************************************************************
-    //****************************************** Carlos *************************************************
+    //****************************************** Carlos y Brais *************************************************
     //**************************************************************************************************
 
 
+    // CF : Inscripcion addInscripcion (String email , String numTarjeta , Carrera carrera );
     // CF : public Inscripcion recogerDorsal ( Integer codReserva , String numTarjeta );
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+
     }
+
+
+
+
 
 
 }
