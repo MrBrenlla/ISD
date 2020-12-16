@@ -105,26 +105,27 @@ public abstract class AbstractSqlInscripcionDao implements SqlInscripcionDao {
     //******************************************** Carlos **********************************************
     //**************************************************************************************************
 
+    /*
     // FIND alternativo para email y Carrera
     public Inscripcion findAlt(Connection connection, String email, Carrera carrera) throws InstanceNotFoundException {
 
         Inscripcion inscripcion = null;
 
-        /* Create "queryString". */
+        // Create "queryString".
         String queryString = "SELECT idInscripcion, idCarrera, dorsal, numTarjeta"
                 + ", email, fechaInscripcion, recogido FROM Inscripcion" +
                 " WHERE email = ? && idCarrera=?";
         try (PreparedStatement preparedStatement = connection.prepareStatement(queryString)) {
 
-            /* Fill "preparedStatement". */
+            // Fill "preparedStatement".
             int i=1;
             preparedStatement.setString(i++,email);
             preparedStatement.setLong(i++,carrera.getIdCarrera());
 
-            /* Execute query. */
+            // Execute query.
             ResultSet resultSet = preparedStatement.executeQuery();
 
-            /* Get from "resultSet". */
+            // Get from "resultSet"
             if (!resultSet.next()) {
                 throw new InstanceNotFoundException(carrera.getIdCarrera(),
                         Inscripcion.class.getName());
@@ -153,8 +154,7 @@ public abstract class AbstractSqlInscripcionDao implements SqlInscripcionDao {
         return inscripcion;
 
     }
-
-
+*/
     public Inscripcion find(Connection connection, Long idInscripcion) throws InstanceNotFoundException {
         /* Create "queryString". */
         String queryString = "SELECT idInscripcion, idCarrera, dorsal, numTarjeta"
