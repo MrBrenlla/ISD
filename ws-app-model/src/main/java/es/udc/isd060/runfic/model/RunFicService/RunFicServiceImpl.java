@@ -128,9 +128,12 @@ public class RunFicServiceImpl implements RunFicService {
                     throw new UsuarioInscrito();
                 }
 
-                if (!carreraDao.update(connection, carrera)){
+                try{
+                    carreraDao.update(connection, carrera);
+                }
+                catch (InstanceNotFoundException e){
                     connection.rollback();
-                    throw new RuntimeException();
+                    throw new CarreraInexistente();
                 }
 
                 i.setDorsal(c.getPlazasOcupadas() + 1);
@@ -145,7 +148,7 @@ public class RunFicServiceImpl implements RunFicService {
             } catch (SQLException e) {
                 connection.rollback();
                 throw new RuntimeException(e);
-            } catch (RuntimeException | Error | InstanceNotFoundException | CarreraInexistente e) {
+            } catch (RuntimeException | Error e) {
                 connection.rollback();
                 throw e;
             }

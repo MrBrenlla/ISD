@@ -16,7 +16,7 @@ public abstract class AbstractSqlCarreraDao implements SqlCarreraDao {
     //****************************************** Brais *************************************************
     //**************************************************************************************************
     @Override
-    public boolean update(Connection connection, Long idCarrera) throws InstanceNotFoundException {
+    public void update(Connection connection, Long idCarrera) throws InstanceNotFoundException {
 
         Carrera c = find(connection , idCarrera);
 
@@ -27,7 +27,7 @@ public abstract class AbstractSqlCarreraDao implements SqlCarreraDao {
         try (PreparedStatement preparedStatement = connection.prepareStatement(queryString)) {
 
             /* Execute query. */
-            return 1 == preparedStatement.executeUpdate();
+            preparedStatement.executeUpdate();
 
         } catch (SQLException e) {
             throw new RuntimeException(e);

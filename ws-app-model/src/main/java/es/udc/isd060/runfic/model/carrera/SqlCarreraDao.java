@@ -18,7 +18,7 @@ public interface SqlCarreraDao {
     List<Carrera> find(Connection connection, LocalDateTime fechaCelebracion, String ciudad);
 
     // Autor : Brais
-    boolean update(Connection connection, Long idCarrera) throws InstanceNotFoundException;
+    void update(Connection connection, Long idCarrera) throws InstanceNotFoundException;
 
     // Autor : Yago
     void remove(Connection connection, Long idCarrera) throws InstanceNotFoundException;

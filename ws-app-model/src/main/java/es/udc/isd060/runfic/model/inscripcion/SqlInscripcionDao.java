@@ -9,7 +9,7 @@ import java.util.List;
 public interface SqlInscripcionDao {
 
     // Autor : Brais
-    Inscripcion create(Connection connection, Inscripcion inscripcion);// fullCapacityException , inscriptionsAlreadyClosed
+    Inscripcion create(Connection connection, Inscripcion inscripcion);
 
     // Autor : Carlos
     Inscripcion find(Connection connection, Long idInscripcion) throws InstanceNotFoundException;
