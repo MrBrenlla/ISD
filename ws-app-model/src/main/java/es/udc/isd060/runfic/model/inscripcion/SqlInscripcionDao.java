@@ -28,6 +28,6 @@ public interface SqlInscripcionDao {
 
     // Autor : Carlos
     // FIND alternativo para email y Carrera
-    public Inscripcion findAlt(Connection connection, String email, Carrera carrera) throws InstanceNotFoundException;
+    //public Inscripcion findAlt(Connection connection, String email, Carrera carrera) throws InstanceNotFoundException;
 
     }

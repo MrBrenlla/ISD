@@ -180,7 +180,7 @@ public abstract class AbstractSqlInscripcionDao implements SqlInscripcionDao {
             Integer dorsal = resultSet.getInt(i++);
             String  numTarjeta  = resultSet.getString(i++);
             String email = resultSet.getString(i++);
-            Timestamp fechaInscripcionAsTimestamp=resultSet.getTimestamp(i++);
+            Timestamp fechaInscripcionAsTimestamp = resultSet.getTimestamp(i++);
             LocalDateTime fechaInscripcion = fechaInscripcionAsTimestamp.toLocalDateTime();
             boolean recogido = resultSet.getBoolean(i);
 
@@ -198,21 +198,35 @@ public abstract class AbstractSqlInscripcionDao implements SqlInscripcionDao {
     public void update(Connection connection, Inscripcion inscripcion)
             throws InstanceNotFoundException {
 
-        /* Create "queryString". */
-        String queryString = "UPDATE inscripcion"
-                + " SET dorsal  = ?, recogido  = ?"
+
+
+        // Create "queryString".
+        // TODO JOIN? 
+        // Nuesta implementación es genérica -> debemos incluirlo
+        // TODO fechaInscripcion
+        /*String queryString = "UPDATE inscripcion"
+                + " SET idCarrera = ? ,dorsal  = ?, numTarjeta = ? , fechaInscripcion = ? , email = ? ,  recogido  = ?"
+                + " WHERE idInscripcion  = ?";
+         */
+        String queryString = "UPDATE inscripcion "+
+                 " SET idCarrera = ? ,dorsal  = ?, numTarjeta = ? , email = ? ,  recogido  = ?"
                 + " WHERE idInscripcion  = ?";
 
         try (PreparedStatement preparedStatement = connection.prepareStatement(queryString)) {
 
-            /* Fill "preparedStatement". */
+
+            // Fill "preparedStatement".
             int i = 1;
+            preparedStatement.setLong(i++, inscripcion.getIdCarrera());
             preparedStatement.setInt(i++, inscripcion.getDorsal());
+            preparedStatement.setString(i++,inscripcion.getTarjeta());
+            preparedStatement.setString(i++,inscripcion.getEmail());
             preparedStatement.setBoolean(i++, inscripcion.isRecogido());
+
             preparedStatement.setLong(i++, inscripcion.getIdInscripcion());
 
 
-            /* Execute query. */
+            // Execute query.
             int updatedRows = preparedStatement.executeUpdate();
 
             if (updatedRows == 0) {

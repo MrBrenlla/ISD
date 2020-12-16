@@ -462,6 +462,7 @@ public class RunFicServiceTest {
             String email = getValidEmail(seed);
             String tarjeta = getValidTarjeta(seed);
             // addInscripcion original
+            System.out.println("AQUI ABAJO HAY UN PRINT FANTASMA");
             inscripcion = runFicService.addInscripcion(email,tarjeta, carrera.getIdCarrera());
 
             // Creamos una copia de la inscripción
