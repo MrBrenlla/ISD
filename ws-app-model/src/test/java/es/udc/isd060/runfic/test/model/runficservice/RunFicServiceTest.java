@@ -512,13 +512,18 @@ public class RunFicServiceTest {
             String email = getValidEmail(SEED);
             String tarjeta = getValidTarjeta(SEED);
             carrera=runFicService.addCarrera(carrera);
+
+            System.out.println("HOLA");
             Inscripcion inscripcion = runFicService.addInscripcion(email,tarjeta,carrera.getIdCarrera());
+            System.out.println("ADIOS");
 
             // Recogemos dorsal idInscripcion incorrecto
-            runFicService.recogerDorsal(inscripcion.getIdInscripcion()+1,tarjeta);
-
-            System.out.println("NO SE EJECUTA");
-            cleanDB(carrera,inscripcion);
+            try {
+                runFicService.recogerDorsal(inscripcion.getIdInscripcion(), tarjeta);
+            } catch ( Exception e ){
+                cleanDB(carrera,inscripcion);
+                throw  e;
+            }
 
         });
 
@@ -535,10 +540,13 @@ public class RunFicServiceTest {
             Inscripcion inscripcion = runFicService.addInscripcion(email,tarjeta,carrera.getIdCarrera());
 
             // Recogemos dorsal
-            runFicService.recogerDorsal(inscripcion.getIdInscripcion(),tarjeta);
+            try {
+                runFicService.recogerDorsal(inscripcion.getIdInscripcion(), tarjeta);
+            } catch ( Exception e ){
+                cleanDB(carrera,inscripcion);
+                throw  e;
+            }
 
-            // TODO clean
-            cleanDB(carrera,inscripcion);
         });
 
 
@@ -554,10 +562,12 @@ public class RunFicServiceTest {
             Inscripcion inscripcion = runFicService.addInscripcion(email,tarjeta,carrera.getIdCarrera());
 
             // Recogemos dorsal
-            runFicService.recogerDorsal(inscripcion.getIdInscripcion(),tarjeta);
-
-            // TODO clean
-            cleanDB(carrera,inscripcion);
+            try {
+                runFicService.recogerDorsal(inscripcion.getIdInscripcion(), tarjeta);
+            } catch ( Exception e ){
+                cleanDB(carrera,inscripcion);
+                throw  e;
+            }
         });
 
         // Test dorsal ha sido recogido
@@ -572,11 +582,17 @@ public class RunFicServiceTest {
             Inscripcion inscripcion = runFicService.addInscripcion(email,tarjeta,carrera.getIdCarrera());
 
             // Recogemos dorsal 2 veces ( la segunda debe de dar excepcion)
-            runFicService.recogerDorsal(inscripcion.getIdInscripcion(),tarjeta);
-            runFicService.recogerDorsal(inscripcion.getIdInscripcion(),tarjeta);
-
-            // TODO clean
-            cleanDB(carrera,inscripcion);
+            try {
+                runFicService.recogerDorsal(inscripcion.getIdInscripcion(), tarjeta);
+            } catch ( Exception e ) {
+                throw  new RuntimeException(e);
+            }
+            try {
+                runFicService.recogerDorsal(inscripcion.getIdInscripcion(), tarjeta);
+            } catch ( Exception e ){
+                cleanDB(carrera,inscripcion);
+                throw  e;
+            }
         });
 
         testRecogerDorsalCarreraYaEmpezada(false);
