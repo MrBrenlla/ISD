@@ -498,6 +498,7 @@ public class RunFicServiceTest {
 
     }
 
+    /*
 
     // TODO mejorar sintaxis
     @Test
@@ -599,7 +600,7 @@ public class RunFicServiceTest {
 
     }
 
-
+*/
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
