@@ -1,6 +1,10 @@
 package es.udc.ws.isd060.runfic.service.restservice.servlets;
 
 import es.udc.isd060.runfic.model.RunFicService.RunFicServiceFactory;
+import es.udc.isd060.runfic.model.RunFicService.exceptions.CarreraInexistente;
+import es.udc.isd060.runfic.model.RunFicService.exceptions.FueraDePlazo;
+import es.udc.isd060.runfic.model.RunFicService.exceptions.SinPlazas;
+import es.udc.isd060.runfic.model.RunFicService.exceptions.UsuarioInscrito;
 import es.udc.isd060.runfic.model.carrera.Carrera;
 import es.udc.isd060.runfic.model.inscripcion.Inscripcion;
 import es.udc.ws.isd060.runfic.service.restservice.dto.InscripcionToRestInscripcionConversor;
@@ -85,6 +89,22 @@ public class InscripcionServlet extends HttpServlet {
             ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_BAD_REQUEST,
                     JsonToExceptionConversor.toInputValidationException(ex), null);
             return;
+        } catch (FueraDePlazo ex) {
+            ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_BAD_REQUEST,
+                    JsonToExceptionConversor.toFueraDePlazo(ex), null);
+            return;
+        } catch (SinPlazas ex) {
+            ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_BAD_REQUEST,
+                    JsonToExceptionConversor.toSinPlazas(ex), null);
+            return;
+        } catch (UsuarioInscrito ex) {
+            ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_BAD_REQUEST,
+                    JsonToExceptionConversor.toUsuarioInscrito(ex), null);
+            return;
+        } catch (CarreraInexistente ex) {
+            ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_BAD_REQUEST,
+                    JsonToExceptionConversor.toCarreraInexistente(ex), null);
+            return;
         }
         i = InscripcionToRestInscripcionConversor.toRestInscripcionDto(inscripcion);
 
@@ -94,7 +114,6 @@ public class InscripcionServlet extends HttpServlet {
 
         ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_CREATED,
                 JsonToRestInscripcionDtoConversor.toObjectNode(i), headers);
-    }
     }
 
 
@@ -107,10 +126,5 @@ public class InscripcionServlet extends HttpServlet {
     protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
     }
-
-
-
-
-
 
 }
