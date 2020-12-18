@@ -6,20 +6,20 @@ public class RestInscripcionDto {
     private Long idInscripcion;
     private Integer dorsal;
     private Long idCarrera;
-    private String emailUsuario;
-    private String numTarjeta;
+    private String email;
+    private String tarjeta;
     private LocalDateTime fechaInscripcion;
-    private boolean dorsalEsrecogido;
+    private boolean recogido;
 
     public RestInscripcionDto(Long idInscripcion, Integer dorsal, Long idCarrera,
-                              String emailUsuario, String numTarjeta, LocalDateTime fechaInscripcion, boolean dorsalEsrecogido) {
+                              String email, String tarjeta, LocalDateTime fechaInscripcion, boolean recogido) {
         this.idInscripcion = idInscripcion;
         this.dorsal = dorsal;
         this.idCarrera = idCarrera;
-        this.emailUsuario = emailUsuario;
-        this.numTarjeta = numTarjeta;
+        this.email = email;
+        this.tarjeta = tarjeta;
         this.fechaInscripcion = fechaInscripcion;
-        this.dorsalEsrecogido = dorsalEsrecogido;
+        this.recogido = recogido;
     }
 
     public Long getIdInscripcion() {
@@ -34,19 +34,19 @@ public class RestInscripcionDto {
         return idCarrera;
     }
 
-    public String getEmailUsuario() {
-        return emailUsuario;
+    public String getEmail() {
+        return email;
     }
 
-    public String getNumTarjeta() {
-        return numTarjeta;
+    public String getTarjeta() {
+        return tarjeta;
     }
 
     public LocalDateTime getFechaInscripcion() {
         return fechaInscripcion;
     }
 
-    public boolean isDorsalEsrecogido() {
-        return dorsalEsrecogido;
+    public boolean isRecogido() {
+        return recogido;
     }
 }
