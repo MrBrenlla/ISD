@@ -1034,16 +1034,6 @@ public class RunFicServiceTest {
 
     }
 
-
-
-
-
-
-
-
-
-
-
     // Metodo usado en el test de inscripcion carrera ya celebrada
     private Inscripcion addUncheckedInscripcion(String email, String numTarjeta, Carrera carrera , int hoursToInscribe ) {
 
