@@ -8,7 +8,7 @@ import es.udc.ws.isd060.runfic.service.restservice.json.JsonToExceptionConversor
 import es.udc.ws.isd060.runfic.service.restservice.json.JsonToRestCarreraDtoConversor;
 import es.udc.ws.util.exceptions.InputValidationException;
 import es.udc.ws.util.json.exceptions.ParsingException;
-import es.udc.ws.util.servlet.ServletUtils;
+import  es.udc.ws.isd060.runfic.service.restservice.servlets.utils.ServletUtils;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -35,6 +35,7 @@ public class CarreraServlet extends HttpServlet {
     //**************************************************************************************************
 
     // CF : public Carrera addCarrera (Carrera carrera);
+    @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
         String path = ServletUtils.normalizePath(req.getPathInfo());
@@ -79,11 +80,42 @@ public class CarreraServlet extends HttpServlet {
 
     // CF : public List<Carrera> findCarrera (LocalDateTime fechaCelebracion , String nombreCiudad );
     // CF : public Carrera findCarrera ( Integer idCarrera );
+    @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        String path = ServletUtils.normalizePath(req.getPathInfo());
+        if (path == null || path.length() == 0) {
+
+            // CF : public List<Carrera> findCarrera (LocalDateTime fechaCelebracion , String nombreCiudad );
+            String fechaCelebracionString = req.getParameter("fechaCelebracion");
+            LocalDateTime fechaCelebracion = ServletUtils.strToLocalDateTime((req.getParameter("fechaCelebracion"));
+            String nombreCiudad = req.getParameter("ciudadCelebracion");
+            List<Carrera> carreras = RunFicServiceFactory.getService().findCarrera(fechaCelebracion,nombreCiudad);
+            List<RestCarreraDto> movieDtos = CarreraToRestCarreraDtoConversor.toRestMovieDtos(carreras);
+            ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_OK,
+                    JsonToRestCarreraDtoConversor.toArrayNode(movieDtos), null);
+        } else {
+            boolean esCarreraPorIdCarrera = esCarreraPorIdCarrera(); // TODO
+            if ( esCarreraPorIdCarrera){
+                // CF : public List<Carrera> findCarrera (LocalDateTime fechaCelebracion , String nombreCiudad );
+                // TODO
+            } else{
+                ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_BAD_REQUEST,
+                        JsonToExceptionConversor.toInputValidationException(
+                                new InputValidationException("Invalid Request: " + "invalid path " + path)),
+                        null);
+            }
+        }
+
 
     }
 
 
+
+    // Método Auxiliar para determinar que tipo de cf es la peticion doGet
+    private boolean esCarreraPorIdCarrera() {
+        //TODO
+        return false;
+    }
 
 
 

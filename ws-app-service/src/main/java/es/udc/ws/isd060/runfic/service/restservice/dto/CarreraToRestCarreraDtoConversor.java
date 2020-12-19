@@ -32,4 +32,8 @@ public class CarreraToRestCarreraDtoConversor {
     }
 
 
+    public static List<RestCarreraDto> toRestMovieDtos(List<Carrera> carreras) {
+        //TODO
+        return null;
+    }
 }
