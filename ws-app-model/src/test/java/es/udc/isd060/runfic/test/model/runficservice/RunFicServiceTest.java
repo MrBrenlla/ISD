@@ -685,6 +685,9 @@ public class RunFicServiceTest {
             carrera=runFicService.addCarrera(carrera);
             Carrera carreraOriginal = Carrera.copy(carrera);
             carrera=runFicService.findCarrera(carrera.getIdCarrera());
+            System.out.println("Carrera :"+carrera.toString());
+            System.out.println("Carrera Original :"+carreraOriginal.toString());
+            assertTrue(carrera.same(carreraOriginal));
         } catch ( InputValidationException  | InstanceNotFoundException e){
             e.printStackTrace();
         } catch ( Exception e ){
