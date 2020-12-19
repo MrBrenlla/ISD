@@ -76,17 +76,16 @@ public abstract class AbstractSqlInscripcionDao implements SqlInscripcionDao {
     //********************************************* Yago ***********************************************
     //**************************************************************************************************
     @Override
-    public void remove (Connection connection , Long idInscripcion) throws InstanceNotFoundException {
+    public void remove(Connection connection, Long idInscripcion) throws InstanceNotFoundException {
 
         /* Create "queryString". */
-
-        String queryString = "DELETE FROM Inscripcion  WHERE" + " idInscripcion  = ?";
+        String queryString = "DELETE FROM Inscripcion WHERE" + " idInscripcion = ?";
 
         try (PreparedStatement preparedStatement = connection.prepareStatement(queryString)) {
 
             /* Fill "preparedStatement". */
             int i = 1;
-            preparedStatement.setLong(i, idInscripcion);
+            preparedStatement.setLong(i++, idInscripcion);
 
             /* Execute query. */
             int removedRows = preparedStatement.executeUpdate();
@@ -98,6 +97,7 @@ public abstract class AbstractSqlInscripcionDao implements SqlInscripcionDao {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+
     }
 
 

@@ -177,7 +177,8 @@ public class RunFicServiceImpl implements RunFicService {
     public Carrera addCarrera(Carrera carrera) throws InputValidationException {
 
         validateCarrera(carrera);
-        carrera.setFechaAlta(LocalDateTime.now());
+        carrera.setFechaAlta(LocalDateTime.now().withNano(0));
+        carrera.setFechaCelebracion(carrera.getFechaCelebracion().withNano(0));
 
         try (Connection connection = dataSource.getConnection()) {
 
@@ -224,6 +225,39 @@ public class RunFicServiceImpl implements RunFicService {
         }
     }
 
+    @Override
+    public void removeInscripcion(Inscripcion inscripcion) throws InstanceNotFoundException {
+
+        try (Connection connection = dataSource.getConnection()) {
+
+            try {
+
+                /* Prepare connection. */
+                connection.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
+                connection.setAutoCommit(false);
+
+                /* Do work. */
+                inscripcionDao.remove(connection, inscripcion.getIdInscripcion());
+
+                /* Commit. */
+                connection.commit();
+
+            } catch (SQLException e) {
+                connection.rollback();
+                throw new RuntimeException(e);
+            } catch (RuntimeException | Error e) {
+                connection.rollback();
+                throw e;
+            } catch (InstanceNotFoundException throwables) {
+                throwables.printStackTrace();
+            }
+
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
     //**************************************************************************************************
     //****************************************** Carlos *************************************************
     //**************************************************************************************************

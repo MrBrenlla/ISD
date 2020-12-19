@@ -19,6 +19,7 @@ import org.junit.jupiter.api.Test;
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -168,6 +169,9 @@ public class RunFicServiceTest {
         return new Carrera(null,"Mallorca","Descripcion", 2.5f,LocalDateTime.now(),date1,120,0);
     }
 
+    private Carrera getValidCarrera_byDate (String ciudadCelebracion,LocalDateTime date) {
+        return new Carrera(null,ciudadCelebracion,"Descripcion", 5.5f,LocalDateTime.now(),date,100,0);
+    }
 
     private Carrera getValidCarrera() {
         return getValidCarrera("Barcelona");
@@ -231,41 +235,13 @@ public class RunFicServiceTest {
 
     private void removeInscripcion(Inscripcion inscripcion) {
 
-        //DataSource dataSource = DataSourceLocator.getDataSource(RUNFIC_DATA_SOURCE);
-
-        try (Connection connection = dataSource.getConnection()) {
-
-            try {
-
-                /* Prepare connection. */
-                connection.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
-                connection.setAutoCommit(false);
-
-                /* Do work. */
-                inscripcionDao.remove(connection, inscripcion.getIdInscripcion());
-
-                /* Commit. */
-                connection.commit();
-
-            } catch (SQLException e) {
-                connection.rollback();
-                throw new RuntimeException(e);
-            } catch (RuntimeException | Error e) {
-                connection.rollback();
-                throw e;
-            } catch (InstanceNotFoundException throwables) {
-                throwables.printStackTrace();
-            }
-
-
-        } catch (SQLException e ) {
+        try {
+            runFicService.removeInscripcion(inscripcion);
+        } catch (InstanceNotFoundException e) {
             throw new RuntimeException(e);
         }
 
     }
-
-
-
 
 
     //**************************************************************************************************
@@ -275,20 +251,23 @@ public class RunFicServiceTest {
     @Test
     public void testAddCarreraAndCheckValues() throws InputValidationException, InstanceNotFoundException {
 
+
+        Carrera carrera = getValidCarrera("Barcelona");
         Carrera addedCarrera = null;
-        Carrera carrera = null;
 
         try {
-            carrera = createCarrera(getValidCarrera("Negreira"));
-            // Create Movie
             LocalDateTime antes= LocalDateTime.now().withNano(0);
             addedCarrera = runFicService.addCarrera(carrera);
-            LocalDateTime despois= LocalDateTime.now().withNano(0);
+            LocalDateTime despues= LocalDateTime.now().withNano(0);
 
+            assertTrue(antes.isBefore(addedCarrera.getFechaAlta())|antes.isEqual(addedCarrera.getFechaAlta()));
+            assertTrue(despues.isAfter(addedCarrera.getFechaAlta())|despues.isEqual(addedCarrera.getFechaAlta()));
             assertTrue(antes.isBefore(addedCarrera.getFechaCelebracion())|antes.isEqual(addedCarrera.getFechaCelebracion()));
 
             // Find Movie
+            antes= LocalDateTime.now().withNano(0);
             Carrera foundCarrera = runFicService.findCarrera(addedCarrera.getIdCarrera());
+            despues= LocalDateTime.now().withNano(0);
 
             assertEquals(addedCarrera.getIdCarrera(), foundCarrera.getIdCarrera());
             assertEquals(foundCarrera.getCiudadCelebracion(),carrera.getCiudadCelebracion());
@@ -296,6 +275,13 @@ public class RunFicServiceTest {
             assertEquals(foundCarrera.getPrecioInscripcion(),carrera.getPrecioInscripcion());
             assertEquals(foundCarrera.getPlazasDisponibles(),carrera.getPlazasDisponibles());
             assertEquals(foundCarrera.getPlazasOcupadas(),carrera.getPlazasOcupadas());
+
+            assertTrue(antes.isBefore(foundCarrera.getFechaAlta())|antes.isEqual(foundCarrera.getFechaAlta()));
+            assertTrue(despues.isAfter(foundCarrera.getFechaAlta())|despues.isEqual(foundCarrera.getFechaAlta()));
+            assertTrue(antes.isBefore(foundCarrera.getFechaCelebracion())|antes.isEqual(foundCarrera.getFechaCelebracion()));
+
+            assertTrue(addedCarrera.getFechaCelebracion().isEqual(foundCarrera.getFechaCelebracion()));
+
         } finally {
             // Clear Database
             if (addedCarrera!=null) {
@@ -319,39 +305,46 @@ public class RunFicServiceTest {
 
     @Test
     public void testFindByDateAndCity() throws InputValidationException {
-        LocalDateTime beforeCreationDate = LocalDateTime.now().withNano(0);
 
+        //Add carreras
         List<Carrera> carreras = new LinkedList<Carrera>();
-        Carrera carrera1 = createCarrera(getValidCarrera("Santiago"));
+        LocalDateTime fecha = LocalDateTime.now().plusDays(45); //Var. for date search
+        LocalDateTime fecha_2 = LocalDateTime.now().plusDays(10);
+        LocalDateTime fecha_3 = LocalDateTime.now().minusDays(5);
+        LocalDateTime fecha_4 = LocalDateTime.now().plusDays(1);
+
+        Carrera carrera1 = createCarrera(getValidCarrera_byDate("Barcelona",fecha_2));
         carreras.add(carrera1);
-
-        LocalDateTime afterCreationDate = LocalDateTime.now().withNano(0);
-
-        Carrera carrera2 = createCarrera(getValidCarrera("Negreira"));
+        Carrera carrera2 = createCarrera(getValidCarrera_byDate("Palma de Mallorca",fecha_2));
         carreras.add(carrera2);
-        Carrera carrera3= createCarrera(getValidCarrera("Barcelona"));
-        carreras.add(carrera3);
+        Carrera carrera_additional = createCarrera(getValidCarrera_byDate("León",fecha_3));
+        carreras.add(carrera_additional);
 
         try {
-            LocalDateTime fecha = LocalDateTime.now().plusDays(45);
+
             List<Carrera> foundCarreras = runFicService.findCarrera(fecha);
+            assertEquals(carreras.size()-1, foundCarreras.size());
 
-            assertEquals(carreras.size(), foundCarreras.size());
+            //Carreras Out Date - (Ya celebradas)
+            foundCarreras = runFicService.findCarrera(fecha_3);
+            assertEquals(0, foundCarreras.size());
 
-            foundCarreras = runFicService.findCarrera(fecha);
-            assertEquals(3, foundCarreras.size());
-            assertEquals(carreras.get(0).getIdCarrera(), foundCarreras.get(0).getIdCarrera());
+            //Find only by: Date
+            Carrera carrera3 = createCarrera(getValidCarrera_byDate("Tenerife",fecha_4));
+            carreras.add(carrera3);
 
-            foundCarreras = runFicService.findCarrera(fecha,"Barcelona");
+            foundCarreras = runFicService.findCarrera(fecha_4.plusDays(1));
+
             assertEquals(1, foundCarreras.size());
-            assertEquals(3, foundCarreras.get(0).getIdCarrera());
 
-            foundCarreras = runFicService.findCarrera(fecha,"Barcelona");
+            //Find by: Date and City
+            Carrera carrera4 = createCarrera(getValidCarrera_byDate("Gran Canaria",fecha_4));
+            carreras.add(carrera4);
+
+            foundCarreras = runFicService.findCarrera(fecha_4.plusDays(1),"Gran Canaria");
+
             assertEquals(1, foundCarreras.size());
-            assertTrue((foundCarreras.get(0).getFechaCelebracion().compareTo(beforeCreationDate) >= 0));
 
-            foundCarreras = runFicService.findCarrera(LocalDateTime.now().plusDays(80));
-            assertEquals(3, foundCarreras.size());
         } finally {
             // Clear Database
             for (Carrera carrera : carreras) {
@@ -426,14 +419,28 @@ public class RunFicServiceTest {
     public void testRemoveInscripcion() throws InputValidationException, CarreraInexistente,UsuarioInscrito,FueraDePlazo,SinPlazas {
 
         Carrera carrera = createCarrera(getValidCarrera());
-        assertTrue(runFicService.findInscripcion("y@gmail.com").isEmpty());
-        Inscripcion i = runFicService.addInscripcion("y@gmail.com","1234567812345678", carrera.getIdCarrera());
 
+        assertTrue(runFicService.findInscripcion("holabuneas@gmail.com").isEmpty());
+        Inscripcion i = runFicService.addInscripcion("holabuneas@gmail.com","1234567812345678", carrera.getIdCarrera());
+        assertTrue(!runFicService.findInscripcion("holabuneas@gmail.com").isEmpty());
         removeInscripcion(i);
-
-        assertTrue(runFicService.findInscripcion(i.getEmail()).isEmpty());
+        assertTrue(runFicService.findInscripcion("holabuneas@gmail.com").isEmpty());
 
     }
+
+    @Test
+    public void testRemoveNonExistentCarrera()  {
+        Carrera nonExistent_Carrera = new Carrera(-1L,null,null, 0.0f,LocalDateTime.now(),LocalDateTime.now(),0,0);
+        assertThrows(RuntimeException.class, () -> removeCarrera(nonExistent_Carrera));
+    }
+
+    @Test
+    public void testRemoveNonExistentInscripcion() {
+        //inscripcion
+        Inscripcion inscripcion = new Inscripcion(-5L,null,2,"0","pepito@gmail.com",LocalDateTime.now(),false);
+        //assertThrows(InstanceNotFoundException.class, () -> runFicService.removeInscripcion(inscripcion)); - InstanceNotFoundException throwables!
+    }
+
 
     //**************************************************************************************************
     //******************************************** Carlos **********************************************
@@ -498,7 +505,7 @@ public class RunFicServiceTest {
 
     }
 
-
+/*
     // TODO mejorar sintaxis
     @Test
     public void testRecogerDorsalDatosInvalidos(){
@@ -597,7 +604,7 @@ public class RunFicServiceTest {
 
         testRecogerDorsalCarreraYaEmpezada(false);
 
-    }
+    }*/
 
 
 
