@@ -799,6 +799,7 @@ public class RunFicServiceTest {
     }
 
 
+
     // TODO mejorar sintaxis
     @Test
     public void testRecogerDorsalDatosInvalidos(){
@@ -983,8 +984,6 @@ public class RunFicServiceTest {
             }
         });
 
-
-
         // Test carrera ya celebrada
         assertThrows(CarreraYaCelebradaException.class , () -> {
 
@@ -1026,6 +1025,15 @@ public class RunFicServiceTest {
         });
 
     }
+
+
+
+
+
+
+
+
+
 
 
     // Metodo usado en el test de inscripcion carrera ya celebrada

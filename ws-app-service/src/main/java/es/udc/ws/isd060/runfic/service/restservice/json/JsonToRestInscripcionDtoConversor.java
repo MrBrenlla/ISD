@@ -24,7 +24,7 @@ public class JsonToRestInscripcionDtoConversor {
             InscripcionObject.put("IdInscripcion", i.getIdInscripcion());
         }
         InscripcionObject.put("Dorsal",i.getDorsal()).
-                put("email", i.getEmail()).
+                put("Email", i.getEmail()).
                 put("IdCarrera", i.getIdCarrera()).
                 put("Tarjeta", i.getTarjeta()).
                 put("FechaInscripcion", i.getFechaInscripcion().toString()).
@@ -57,13 +57,17 @@ public class JsonToRestInscripcionDtoConversor {
 
                 JsonNode inscripcionIdNode = inscripcionObject.get("IdInscripcion");
                 Long inscripcionId = (inscripcionIdNode != null) ? inscripcionIdNode.longValue() : null;
-
-                String email = inscripcionObject.get("email").textValue().trim();
+                String email = inscripcionObject.get("Email").textValue().trim();
                 String tarjeta = inscripcionObject.get("Tarjeta").textValue().trim();
-                Integer dorsal =  inscripcionObject.get("dorsal").intValue();
-                Long idCarrera = inscripcionObject.get("IdCarrera").longValue();
-                LocalDateTime fecha =  LocalDateTime.parse(inscripcionObject.get("FechaInscripcion").textValue());
-                boolean recogido = inscripcionObject.get("IsRecogido").booleanValue();
+                inscripcionIdNode = inscripcionObject.get("IdCarrera");
+                Long idCarrera = (inscripcionIdNode != null) ? inscripcionIdNode.longValue() : null;
+                inscripcionIdNode = inscripcionObject.get("Dorsal");
+                Integer dorsal = (inscripcionIdNode != null) ? inscripcionIdNode.intValue() : null;
+                inscripcionIdNode = inscripcionObject.get("Fecha");
+                LocalDateTime fecha = (inscripcionIdNode != null) ? LocalDateTime.parse(inscripcionIdNode.textValue()) : null;
+                inscripcionIdNode = inscripcionObject.get("IsRecogido");
+                boolean recogido = (inscripcionIdNode != null) ? inscripcionIdNode.booleanValue() : false;
+                System.out.println("listo");
                 return new RestInscripcionDto(inscripcionId, dorsal, idCarrera, email, tarjeta, fecha, recogido);
             }
         } catch (ParsingException ex) {

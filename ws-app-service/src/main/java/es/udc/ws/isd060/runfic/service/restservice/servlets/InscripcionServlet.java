@@ -67,6 +67,7 @@ public class InscripcionServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String path = ServletUtils.normalizePath(req.getPathInfo());
+        System.out.println(0);
         if (path != null && path.length() > 0) {
             ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_BAD_REQUEST,
                     JsonToExceptionConversor.toInputValidationException(
@@ -74,6 +75,7 @@ public class InscripcionServlet extends HttpServlet {
                     null);
             return;
         }
+        System.out.println(1);
         RestInscripcionDto i;
         try {
             i = JsonToRestInscripcionDtoConversor.toServiceInscripcionDto(req.getInputStream());
@@ -82,9 +84,15 @@ public class InscripcionServlet extends HttpServlet {
                     .toInputValidationException(new InputValidationException(ex.getMessage())), null);
             return;
         }
-        Inscripcion inscripcion
+        System.out.println(2);
+        if(i.getTarjeta()==null||i.getEmail()==null||i.getIdCarrera()==null){
+            ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_BAD_REQUEST, JsonToExceptionConversor
+                    .toInputValidationException(new InputValidationException("Faltan parametros")), null);
+            return;
+        }
+        Inscripcion inscripcion;
         try {
-            inscripcion = RunFicServiceFactory.getService().addInscripcion(i.getEmail(),i.getTarjeta(),i.getIdCarrera(),);
+            inscripcion = RunFicServiceFactory.getService().addInscripcion(i.getEmail(),i.getTarjeta(),i.getIdCarrera());
         } catch (InputValidationException ex) {
             ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_BAD_REQUEST,
                     JsonToExceptionConversor.toInputValidationException(ex), null);
@@ -108,7 +116,7 @@ public class InscripcionServlet extends HttpServlet {
         }
         i = InscripcionToRestInscripcionConversor.toRestInscripcionDto(inscripcion);
 
-        String movieURL = ServletUtils.normalizePath(req.getRequestURL().toString()) + "/" + i.getMovieId();
+        String movieURL = ServletUtils.normalizePath(req.getRequestURL().toString()) + "/" + i.getIdInscripcion();
         Map<String, String> headers = new HashMap<>(1);
         headers.put("Location", movieURL);
 

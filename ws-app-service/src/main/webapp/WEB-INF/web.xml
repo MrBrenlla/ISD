@@ -11,20 +11,20 @@
 
     <!-- REST service -->
     <!-- Fill XXX and uncomment the following lines --> 
-    <!--
+
     <servlet>
-        <display-name>XXXServlet</display-name>
-        <servlet-name>XXXServlet</servlet-name>
+        <display-name>InscripcionServlet</display-name>
+        <servlet-name>InscripcionServlet</servlet-name>
         <servlet-class>
-            es.udc.ws.app.restservice.servlets.XXXServlet
+            es.udc.ws.isd060.runfic.service.restservice.servlets.InscripcionServlet
         </servlet-class>
     </servlet>
 
     <servlet-mapping>
-        <servlet-name>XXXServlet</servlet-name>
-        <url-pattern>/xxx/*</url-pattern>
+        <servlet-name>InscripcionServlet</servlet-name>
+        <url-pattern>/Inscripcion/*</url-pattern>
     </servlet-mapping>
-    -->
+
 
    <!-- Thrift service -->
    <!-- Fill XXX and uncomment the following lines --> 
