@@ -72,15 +72,23 @@ public class CarreraServlet extends HttpServlet {
 
     }
 
-    //**************************************************************************************************
-    //****************************************** Carlos y Yago *************************************************
-    //**************************************************************************************************
-
-
     // CF : public List<Carrera> findCarrera (LocalDateTime fechaCelebracion , String nombreCiudad );
-    // CF : public Carrera findCarrera ( Integer idCarrera );
+    @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-
+        String path = ServletUtils.normalizePath(req.getPathInfo());
+        if (path == null || path.length() == 0) {
+            String fechaCelebracion = req.getParameter("fechaCelebracion");
+            String ciudad = req.getParameter("ciudadCelebracion");
+            List<Carrera> carreras = RunFicServiceFactory.getService().findCarrera(LocalDateTime.parse(fechaCelebracion),ciudad);
+            List<RestCarreraDto> carreraDtos = CarreraToRestCarreraDtoConversor.toRestCarreraDtos(carreras);
+            ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_OK,
+                    JsonToRestCarreraDtoConversor.toArrayNode(carreraDtos), null);
+        } else {
+            ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_BAD_REQUEST,
+                    JsonToExceptionConversor.toInputValidationException(
+                            new InputValidationException("Invalid Request: " + "invalid path " + path)),
+                    null);
+        }
     }
 
 
