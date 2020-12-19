@@ -58,6 +58,26 @@ public class Carrera {
         this.plazasOcupadas = 0;
     }
 
+    /*
+        public Carrera(String ciudadCelebracion, String descripcion, Float precioInscripcion, LocalDateTime fechaAlta, LocalDateTime fechaCelebracion, Integer plazasDisponibles, Integer plazasOcupadas) {
+
+        this.ciudadCelebracion = ciudadCelebracion;
+        this.descripcion = descripcion;
+        this.precioInscripcion = precioInscripcion;
+        this.fechaAlta = fechaAlta;
+        this.fechaCelebracion = fechaCelebracion;
+        this.plazasDisponibles = plazasDisponibles;
+        this.plazasOcupadas = plazasOcupadas;
+    }
+     */
+
+
+    //Carlos
+    public static Carrera copy ( Carrera original ){
+        return new Carrera(original.ciudadCelebracion , original.descripcion,original.precioInscripcion,
+                original.fechaAlta,original.fechaCelebracion, original.plazasDisponibles , original.plazasOcupadas);
+    }
+
     public Long getIdCarrera() {
         return idCarrera;
     }
@@ -154,6 +174,20 @@ public class Carrera {
                 ", plazasDisponibles=" + plazasDisponibles +
                 ", plazasOcupadas=" + plazasOcupadas +
                 '}';
+    }
+
+    // Carlos
+    public boolean same(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Carrera)) return false;
+        Carrera carrera = (Carrera) o;
+        return getIdCarrera().equals(carrera.getIdCarrera()) &&
+                getPlazasDisponibles().equals(carrera.getPlazasDisponibles()) &&
+                Objects.equals(getCiudadCelebracion(), carrera.getCiudadCelebracion()) &&
+                Objects.equals(getDescripcion(), carrera.getDescripcion()) &&
+                Objects.equals(getPrecioInscripcion(), carrera.getPrecioInscripcion()) &&
+                Objects.equals(getFechaAlta(), carrera.getFechaAlta()) &&
+                Objects.equals(getFechaCelebracion(), carrera.getFechaCelebracion());
     }
 }
 
