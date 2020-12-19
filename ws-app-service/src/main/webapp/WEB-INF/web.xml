@@ -10,7 +10,19 @@
     <display-name>WS App Service</display-name>
 
     <!-- REST service -->
-    <!-- Fill XXX and uncomment the following lines --> 
+    <!-- Fill XXX and uncomment the following lines -->
+    <servlet>
+        <display-name>CarreraServlet</display-name>
+        <servlet-name>CarreraServlet</servlet-name>
+        <servlet-class>
+            es.udc.ws.isd060.runfic.service.restservice.servlets.CarreraServlet
+        </servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>CarreraServlet</servlet-name>
+        <url-pattern>/Carrera/*</url-pattern>
+    </servlet-mapping>
 
     <servlet>
         <display-name>InscripcionServlet</display-name>
