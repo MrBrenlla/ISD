@@ -181,13 +181,11 @@ public class Carrera {
         if (this == o) return true;
         if (!(o instanceof Carrera)) return false;
         Carrera carrera = (Carrera) o;
-        return getIdCarrera().equals(carrera.getIdCarrera()) &&
-                getPlazasDisponibles().equals(carrera.getPlazasDisponibles()) &&
+        return  getPlazasDisponibles().equals(carrera.getPlazasDisponibles()) &&
                 Objects.equals(getCiudadCelebracion(), carrera.getCiudadCelebracion()) &&
                 Objects.equals(getDescripcion(), carrera.getDescripcion()) &&
                 Objects.equals(getPrecioInscripcion(), carrera.getPrecioInscripcion()) &&
-                Objects.equals(getFechaAlta(), carrera.getFechaAlta()) &&
-                Objects.equals(getFechaCelebracion(), carrera.getFechaCelebracion());
+                getFechaCelebracion().equals(carrera.getFechaCelebracion());
     }
 }
 
