@@ -87,7 +87,7 @@ public class CarreraServlet extends HttpServlet {
 
             // CF : public List<Carrera> findCarrera (LocalDateTime fechaCelebracion , String nombreCiudad );
             String fechaCelebracionString = req.getParameter("fechaCelebracion");
-            LocalDateTime fechaCelebracion = ServletUtils.strToLocalDateTime((req.getParameter("fechaCelebracion"));
+            LocalDateTime fechaCelebracion = ServletUtils.strToLocalDateTime((req.getParameter("fechaCelebracion")));
             String nombreCiudad = req.getParameter("ciudadCelebracion");
             List<Carrera> carreras = RunFicServiceFactory.getService().findCarrera(fechaCelebracion,nombreCiudad);
             List<RestCarreraDto> movieDtos = CarreraToRestCarreraDtoConversor.toRestMovieDtos(carreras);

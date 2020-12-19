@@ -13,7 +13,7 @@ import es.udc.ws.isd060.runfic.service.restservice.json.JsonToExceptionConversor
 import es.udc.ws.isd060.runfic.service.restservice.json.JsonToRestInscripcionDtoConversor;
 import es.udc.ws.util.exceptions.InputValidationException;
 import es.udc.ws.util.json.exceptions.ParsingException;
-import es.udc.ws.isd060.runfic.service.restservice.servlets.utils;
+import es.udc.ws.util.servlet.ServletUtils;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
