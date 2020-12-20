@@ -226,7 +226,7 @@ public class RunFicServiceImpl implements RunFicService {
     }
 
     @Override
-    public void removeInscripcion(Inscripcion inscripcion) throws InstanceNotFoundException {
+    public void removeInscripcion(Long idInscripcion) throws InstanceNotFoundException {
 
         try (Connection connection = dataSource.getConnection()) {
 
@@ -237,7 +237,7 @@ public class RunFicServiceImpl implements RunFicService {
                 connection.setAutoCommit(false);
 
                 /* Do work. */
-                inscripcionDao.remove(connection, inscripcion.getIdInscripcion());
+                inscripcionDao.remove(connection, idInscripcion);
 
                 /* Commit. */
                 connection.commit();

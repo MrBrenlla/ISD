@@ -452,7 +452,7 @@ public class RunFicServiceTest {
     private void removeInscripcion(Inscripcion inscripcion) {
 
         try {
-            runFicService.removeInscripcion(inscripcion);
+            runFicService.removeInscripcion(inscripcion.getIdInscripcion());
         } catch (InstanceNotFoundException e) {
             throw new RuntimeException(e);
         }
@@ -807,7 +807,6 @@ public class RunFicServiceTest {
         }
 
     }
-
 
     // TODO mejorar sintaxis
     @Test

@@ -12,6 +12,7 @@ import es.udc.ws.isd060.runfic.service.restservice.dto.RestInscripcionDto;
 import es.udc.ws.isd060.runfic.service.restservice.json.JsonToExceptionConversor;
 import es.udc.ws.isd060.runfic.service.restservice.json.JsonToRestInscripcionDtoConversor;
 import es.udc.ws.util.exceptions.InputValidationException;
+import es.udc.ws.util.exceptions.InstanceNotFoundException;
 import es.udc.ws.util.json.exceptions.ParsingException;
 import es.udc.ws.util.servlet.ServletUtils;
 
@@ -133,6 +134,42 @@ public class InscripcionServlet extends HttpServlet {
     // CF : public Inscripcion recogerDorsal ( Integer codReserva , String numTarjeta );
     protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
+    }
+
+    //**************************************************************************************************
+    //****************************************** Yago **************************************************
+    //**************************************************************************************************
+    //removeInscripcion(Inscripcion inscripcion);
+
+    @Override
+    protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        String path = ServletUtils.normalizePath(req.getPathInfo());
+        if (path == null || path.length() == 0) {
+            ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_BAD_REQUEST, JsonToExceptionConversor
+                            .toInputValidationException(new InputValidationException("Invalid Request: " + "invalid inscripcion id")),
+                    null);
+            return;
+        }
+        String inscripcionIdAsString = path.substring(1);
+        Long inscripcionId;
+        try {
+            inscripcionId = Long.valueOf(inscripcionIdAsString);
+        } catch (NumberFormatException ex) {
+            ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_BAD_REQUEST,
+                    JsonToExceptionConversor.toInputValidationException(new InputValidationException(
+                            "Invalid Request: " + "invalid inscripcion id '" + inscripcionIdAsString + "'")),
+                    null);
+
+            return;
+        }
+        try {
+            RunFicServiceFactory.getService().removeInscripcion(inscripcionId);
+        } catch (InstanceNotFoundException ex) {
+            ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_NOT_FOUND,
+                    JsonToExceptionConversor.toInstanceNotFoundException(ex), null);
+            return;
+        }
+        ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_NO_CONTENT, null, null);
     }
 
 }
