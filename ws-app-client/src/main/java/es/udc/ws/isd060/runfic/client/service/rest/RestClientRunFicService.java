@@ -12,6 +12,8 @@ import es.udc.ws.util.exceptions.InstanceNotFoundException;
 import es.udc.ws.util.json.ObjectMapperFactory;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
+import org.apache.http.client.fluent.Request;
+import org.apache.http.entity.ContentType;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -29,8 +31,21 @@ public class RestClientRunFicService implements ClientRunFicService {
     //**************************************************************************************************
     @Override
     public Long addCarrera(ClientCarreraDto carrera) throws InputValidationException {
+        try {
+            HttpResponse response = Request.Post(getEndpointAddress() + "Carrera"). //Add 'Carrera' for call addCarrera and findCarrera methods
+                    bodyStream(toInputStream(carrera), ContentType.create("application/json")).
+                    execute().returnResponse();
 
-        return null;
+            validateStatusCode(HttpStatus.SC_CREATED, response);
+
+            return JsonToClientCarreraDtoConversor.toClientCarreraDto(response.getEntity().getContent()).getIdCarrera();
+
+        } catch (InputValidationException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
     }
 
     @Override
