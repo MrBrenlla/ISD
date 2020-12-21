@@ -35,6 +35,23 @@ public class JsonToClientCarreraDtoConversor {
         return carreraObject;
     }
 
+    public static ClientCarreraDto toClientCarreraDto(InputStream jsonMovie) throws ParsingException {
+        try {
+
+            ObjectMapper objectMapper = ObjectMapperFactory.instance();
+            JsonNode rootNode = objectMapper.readTree(jsonMovie);
+            if (rootNode.getNodeType() != JsonNodeType.OBJECT) {
+                throw new ParsingException("Unrecognized JSON (object expected)");
+            } else {
+                return toClientCarreraDto(rootNode);
+            }
+        } catch (ParsingException ex) {
+            throw ex;
+        } catch (Exception e) {
+            throw new ParsingException(e);
+        }
+    }
+
     public static List<ClientCarreraDto> toClientCarreraDtos(InputStream jsonCarreras) throws ParsingException {
         try {
 
