@@ -22,14 +22,15 @@ public class RunFicServiceClient {
             //**************************************************************************************************
             //****************************************** Yago *************************************************
             //**************************************************************************************************
+
             validateArgs(args, 7, new int[] {3, 5, 6});
 
             // [add] RunFicServiceClient -a String<ciudadCelebracion> String<descripcion> Float<precioInscripcion> LocalDateTime<fechaCelebracion> Integer<plazasDisponibles> Integer<plazasOcupadas>
 
             try {
                 Long idCarrera = clientRunFicService.addCarrera(new ClientCarreraDto(null,
-                        "Mallorca", "Descripcion",2.5f,
-                        LocalDateTime.now(), 120,0));
+                        args[1], args[2], Float.valueOf(args[3]),
+                        LocalDateTime.parse(args[4]), Integer.valueOf(args[5]), Integer.valueOf(args[6])));
 
                 System.out.println("Carrera " + idCarrera + " created sucessfully");
 
