@@ -19,6 +19,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URLEncoder;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -55,8 +56,20 @@ public class RestClientRunFicService implements ClientRunFicService {
 
     @Override
     public List<ClientCarreraDto> findCarrera(LocalDateTime fechaCelebracion, String ciudad) {
+        try {
+            HttpResponse response = Request.Get(getEndpointAddress() + "Carrera?fechaCelebracion="
+                    + URLEncoder.encode(fechaCelebracion.toString(), "UTF-8") + "&ciudadCelebracion="
+                    +URLEncoder.encode(ciudad, "UTF-8")).
+                    execute().returnResponse();
 
-        return null;
+            validateStatusCode(HttpStatus.SC_OK, response);
+
+            return JsonToClientCarreraDtoConversor.toClientCarreraDtos(response.getEntity()
+                    .getContent());
+
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     //**************************************************************************************************
