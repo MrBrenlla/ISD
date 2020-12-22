@@ -1,7 +1,7 @@
 package es.udc.ws.isd060.runfic.service.restservice.servlets;
 
-import es.udc.isd060.runfic.model.RunFicService.RunFicServiceFactory;
-import es.udc.isd060.runfic.model.carrera.Carrera;
+import es.udc.ws.isd060.runfic.model.RunFicService.RunFicServiceFactory;
+import es.udc.ws.isd060.runfic.model.carrera.Carrera;
 import es.udc.ws.isd060.runfic.service.restservice.dto.CarreraToRestCarreraDtoConversor;
 import es.udc.ws.isd060.runfic.service.restservice.dto.RestCarreraDto;
 import es.udc.ws.isd060.runfic.service.restservice.json.JsonToExceptionConversor;
@@ -72,10 +72,14 @@ public class CarreraServlet extends HttpServlet {
 
     }
 
+    //**************************************************************************************************
     // CF : public List<Carrera> findCarrera (LocalDateTime fechaCelebracion , String nombreCiudad );
+    //**Se puede añadir -> // CF : public List<Carrera> findCarrera (Long idCarrera);
+    //***********************************-COMÚN-*************************************************
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String path = ServletUtils.normalizePath(req.getPathInfo());
+        //**************************************YAGO*******************************************************
         if (path == null || path.length() == 0) {
             String fechaCelebracion = req.getParameter("fechaCelebracion");
             String ciudad = req.getParameter("ciudadCelebracion");
@@ -83,11 +87,27 @@ public class CarreraServlet extends HttpServlet {
             List<RestCarreraDto> carreraDtos = CarreraToRestCarreraDtoConversor.toRestCarreraDtos(carreras);
             ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_OK,
                     JsonToRestCarreraDtoConversor.toArrayNode(carreraDtos), null);
-        } else {
-            ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_BAD_REQUEST,
+        }
+        //**************************************************************************************************
+        else {
+
+            //If parámetros nulos -> Mostramos vacío el JSON
+            /*
+            String parameters = path.substring(1);
+            if(parameters == null || parameters="")
+                //Devolver JSON-VACÍO --- **********Implementación addicional - No Obligatoria **********
+            */
+
+
+            //Else -> Hacer Búsqueda por Id (si se requiere) - ***************************************CARLOS*******************************
+            //CF : public List<Carrera> findCarrera (Long idCarrera);
+
+
+            //O también se puede lanzar exception: (Cuando sea necesario)
+            /*ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_BAD_REQUEST,
                     JsonToExceptionConversor.toInputValidationException(
                             new InputValidationException("Invalid Request: " + "invalid path " + path)),
-                    null);
+                    null);*/
         }
     }
 
