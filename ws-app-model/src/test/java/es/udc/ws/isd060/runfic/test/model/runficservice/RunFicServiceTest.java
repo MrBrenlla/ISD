@@ -700,10 +700,20 @@ public class RunFicServiceTest {
 
     }
 
-
+    /*
     @Test
     public void testFindInvalidCarrera(){
 
+        // TESTS DEPENDIENTES
+        try {
+            // getValid
+            testGetValidCarrera();
+
+            // AddCarrera
+            testAddCarreraAndCheckValues();
+        } catch ( Exception e ) {
+            throw  new RuntimeException(e);
+        }
 
         Carrera carrera = this.getInvalidCarrera();
         Carrera carreraOriginal = null;
@@ -713,6 +723,7 @@ public class RunFicServiceTest {
         carreraOriginal=Carrera.copy(carrera);
         carrera = this.addUncheckedCarrera(carrera);
         assertTrue(carrera.same(carrera));
+        cleanDB(carrera);
 
 
 
@@ -721,7 +732,7 @@ public class RunFicServiceTest {
 
         List<Long> invalidIdsToTest = new ArrayList<>();
         invalidIdsToTest.add((long) -1);
-        i
+        invalidIdsToTest.add((long) );
 
         assertThrows(InstanceNotFoundException.class , () -> {
 
@@ -732,7 +743,7 @@ public class RunFicServiceTest {
 
     }
 
-
+*/
 
 
     @Test
@@ -742,6 +753,23 @@ public class RunFicServiceTest {
         Inscripcion inscripcion= null;
         Inscripcion inscripcionOriginal;
         try {
+
+            // OJO : VALIDACION SOLO FUNCIONA SI SE USA EN TODOS LOS TESTS ( Y NO CONTIENE ERRORES )
+            // TESTS DEPENDIENTES
+            try {
+                // getValid
+                testGetValidTarjeta();
+                testGetValidEmail();
+                testGetValidCarrera();
+
+                // addInscripcion
+                testAddInscripcion();
+
+                // addCarrera
+                testAddCarreraAndCheckValues();
+            } catch ( Exception e ) {
+                throw  new RuntimeException(e);
+            }
 
 
             // Añadimos carrera valida a BBDD
