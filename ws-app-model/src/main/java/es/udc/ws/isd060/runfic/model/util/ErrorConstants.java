@@ -1,4 +1,4 @@
-package es.udc.isd060.runfic.model.util;
+package es.udc.ws.isd060.runfic.model.util;
 
 public class ErrorConstants {
 

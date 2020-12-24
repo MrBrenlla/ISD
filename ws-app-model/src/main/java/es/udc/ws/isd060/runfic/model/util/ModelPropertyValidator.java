@@ -1,15 +1,15 @@
-package es.udc.isd060.runfic.model.util;
+package es.udc.ws.isd060.runfic.model.util;
 
-import es.udc.isd060.runfic.model.RunFicService.RunFicService;
-import es.udc.isd060.runfic.model.RunFicService.RunFicServiceFactory;
-import es.udc.isd060.runfic.model.carrera.Carrera;
-import es.udc.isd060.runfic.model.inscripcion.Inscripcion;
+import es.udc.ws.isd060.runfic.model.RunFicService.RunFicService;
+import es.udc.ws.isd060.runfic.model.RunFicService.RunFicServiceFactory;
+import es.udc.ws.isd060.runfic.model.carrera.Carrera;
+import es.udc.ws.isd060.runfic.model.inscripcion.Inscripcion;
 import es.udc.ws.util.exceptions.InputValidationException;
 import es.udc.ws.util.validation.PropertyValidator;
 
 import java.time.LocalDateTime;
 
-import static es.udc.isd060.runfic.model.util.ModelConstants.MAX_PRICE;
+import static es.udc.ws.isd060.runfic.model.util.ModelConstants.MAX_PRICE;
 
 public class ModelPropertyValidator {
 

@@ -1,4 +1,4 @@
-package es.udc.isd060.runfic.model.inscripcion;
+package es.udc.ws.isd060.runfic.model.inscripcion;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
