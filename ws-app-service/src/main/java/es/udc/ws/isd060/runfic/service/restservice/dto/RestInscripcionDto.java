@@ -1,5 +1,7 @@
 package es.udc.ws.isd060.runfic.service.restservice.dto;
 
+import es.udc.ws.isd060.runfic.model.inscripcion.Inscripcion;
+
 import java.time.LocalDateTime;
 
 public class RestInscripcionDto {
@@ -20,6 +22,16 @@ public class RestInscripcionDto {
         this.tarjeta = tarjeta;
         this.fechaInscripcion = fechaInscripcion;
         this.recogido = recogido;
+    }
+
+    public RestInscripcionDto (Inscripcion inscripcion) {
+        this.idInscripcion = inscripcion.getIdInscripcion();
+        this.dorsal = inscripcion.getDorsal();
+        this.idCarrera = inscripcion.getIdCarrera();
+        this.email = inscripcion.getEmail();
+        this.tarjeta = inscripcion.getTarjeta();
+        this.fechaInscripcion= inscripcion.getFechaInscripcion(); // FUNCIONA el = ?
+        this.recogido = inscripcion.isRecogido();
     }
 
     public Long getIdInscripcion() {

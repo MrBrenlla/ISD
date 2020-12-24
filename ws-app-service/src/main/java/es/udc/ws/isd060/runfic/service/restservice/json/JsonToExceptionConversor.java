@@ -76,5 +76,18 @@ public class JsonToExceptionConversor {
         return exceptionObject;
     }
 
+
+    // Carlos
+    public static ObjectNode toCustomException(Exception exception,String exceptionTypeName ){
+
+        ObjectNode exceptionObject = JsonNodeFactory.instance.objectNode();
+
+        exceptionObject.put("errorType", exceptionTypeName);
+        exceptionObject.put("message", exception.getMessage());
+
+        return exceptionObject;
+    }
+
+
 }
 
