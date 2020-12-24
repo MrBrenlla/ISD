@@ -1,16 +1,18 @@
-package es.udc.isd060.runfic.test.model.runficservice;
+package es.udc.ws.isd060.runfic.test.model.runficservice;
 
-import es.udc.isd060.runfic.model.RunFicService.RunFicService;
-import es.udc.isd060.runfic.model.RunFicService.RunFicServiceFactory;
-import es.udc.isd060.runfic.model.RunFicService.exceptions.*;
-import es.udc.isd060.runfic.model.carrera.Carrera;
-import es.udc.isd060.runfic.model.carrera.SqlCarreraDao;
-import es.udc.isd060.runfic.model.carrera.SqlCarreraDaoFactory;
-import es.udc.isd060.runfic.model.inscripcion.Inscripcion;
-import es.udc.isd060.runfic.model.inscripcion.SqlInscripcionDao;
-import es.udc.isd060.runfic.model.inscripcion.SqlInscripcionDaoFactory;
-import es.udc.isd060.runfic.model.util.ErrorConstants;
-import es.udc.isd060.runfic.model.util.ModelPropertyValidator;
+import es.udc.ws.isd060.runfic.model.RunFicService.RunFicService;
+import es.udc.ws.isd060.runfic.model.RunFicService.RunFicServiceFactory;
+import es.udc.ws.isd060.runfic.model.RunFicService.exceptions.*;
+import es.udc.ws.isd060.runfic.model.carrera.Carrera;
+import es.udc.ws.isd060.runfic.model.carrera.SqlCarreraDao;
+import es.udc.ws.isd060.runfic.model.carrera.SqlCarreraDaoFactory;
+import es.udc.ws.isd060.runfic.model.inscripcion.Inscripcion;
+import es.udc.ws.isd060.runfic.model.inscripcion.SqlInscripcionDao;
+import es.udc.ws.isd060.runfic.model.inscripcion.SqlInscripcionDaoFactory;
+import es.udc.ws.isd060.runfic.model.util.ErrorConstants;
+import es.udc.ws.isd060.runfic.model.util.ModelPropertyValidator;
+import es.udc.ws.isd060.runfic.model.RunFicService.exceptions.CarreraYaCelebradaException;
+import es.udc.ws.isd060.runfic.model.RunFicService.exceptions.DorsalHaSidoRecogidoException;
 import es.udc.ws.util.exceptions.InputValidationException;
 import es.udc.ws.util.exceptions.InstanceNotFoundException;
 import es.udc.ws.util.sql.DataSourceLocator;
@@ -29,8 +31,8 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-import static es.udc.isd060.runfic.model.util.ModelConstants.MAX_PRICE;
-import static es.udc.isd060.runfic.model.util.ModelConstants.RUNFIC_DATA_SOURCE;
+import static es.udc.ws.isd060.runfic.model.util.ModelConstants.MAX_PRICE;
+import static es.udc.ws.isd060.runfic.model.util.ModelConstants.RUNFIC_DATA_SOURCE;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class RunFicServiceTest {
@@ -815,35 +817,6 @@ public class RunFicServiceTest {
 
         boolean debug = false;
 
-        // OJO : VALIDACION SOLO FUNCIONA SI SE USA EN TODOS LOS TESTS ( Y NO CONTIENE ERRORES )
-        // TESTS DEPENDIENTES
-        try {
-            // getValid
-            testGetValidTarjeta();
-            testGetValidEmail();
-            testGetValidCarrera();
-
-            //addInscripcion
-            testAddInscripcion();
-            testAddInscripcion_DatosErroneos();
-            testAddInscripcion_CarreraInexistente();
-            testAddInscripcion_FueraDePlazo();
-            testAddInscripcion_SinPlazas();
-            testAddInscripcion_YaInscrito();
-
-            //addCarrera
-            testAddCarreraAndCheckValues();
-            testAddInvalidMovie();
-
-            //recogerDorsal
-            testRecogerDorsalDatosValidos();
-
-
-        } catch ( Exception  e) {
-            throw new RuntimeException(e);
-        }
-
-
         // Test idInscripcion incorrecto
         assertThrows(InstanceNotFoundException.class , () -> {
             int SEED = 20;
@@ -863,45 +836,7 @@ public class RunFicServiceTest {
                 carrera = runFicService.addCarrera(carrera);
             } catch ( Exception e ){
                 System.out.println("Error "+ ErrorConstants.ERR_ADDCARRERA_CARRERA);
-                throw new RuntimeException(e);
-            }
-
-            try {
-                // Nos inscribimos en la carrera
-                 inscripcion = runFicService.addInscripcion(email,tarjeta,carrera.getIdCarrera());
-            } catch ( Exception e){
-                System.out.println("Error "+ErrorConstants.ERR_ADDINSCRIPCION_EMAILTARJETAIDCARRERA);
-                throw new RuntimeException(e);
-            }
-
-
-            try {
-                // Recogemos dorsal
-                System.out.println("Error "+ErrorConstants.ERR_RECOGERDORSAL_IDINSCRIPCION_NUMTARJETA);
-                runFicService.recogerDorsal(inscripcion.getIdInscripcion(), tarjeta);
-            } catch ( Exception e ){
                 cleanDB(carrera,inscripcion);
-                throw  new RuntimeException(e);
-            }
-
-        });
-
-
-        // Test email incorrecto
-        assertThrows(InputValidationException.class , () -> {
-            int SEED = 21;
-            // Obtenemos una Carrera válida
-            Carrera carrera = getValidCarrera(SEED);
-
-            Inscripcion inscripcion = null;
-            String email = getInvalidEmail();
-            String tarjeta = getValidTarjeta(SEED);
-
-            try {
-                // Añadimos la Carrera
-                carrera = runFicService.addCarrera(carrera);
-            } catch ( Exception e ){
-                System.out.println("Error "+ ErrorConstants.ERR_ADDCARRERA_CARRERA);
                 throw new RuntimeException(e);
             }
 
@@ -910,19 +845,23 @@ public class RunFicServiceTest {
                 inscripcion = runFicService.addInscripcion(email,tarjeta,carrera.getIdCarrera());
             } catch ( Exception e){
                 System.out.println("Error "+ErrorConstants.ERR_ADDINSCRIPCION_EMAILTARJETAIDCARRERA);
+                cleanDB(carrera,inscripcion);
                 throw new RuntimeException(e);
             }
 
+            // Recogemos dorsal
             try {
-                // Recogemos dorsal
-                System.out.println("Error "+ErrorConstants.ERR_RECOGERDORSAL_IDINSCRIPCION_NUMTARJETA);
-                runFicService.recogerDorsal(inscripcion.getIdInscripcion(), tarjeta);
-            } catch ( Exception e ){
+                System.out.println("Error " + ErrorConstants.ERR_RECOGERDORSAL_IDINSCRIPCION_NUMTARJETA);
+                runFicService.recogerDorsal(inscripcion.getIdInscripcion()+10000, tarjeta);
+            } finally {
                 cleanDB(carrera,inscripcion);
-                throw  new RuntimeException(e);
             }
 
         });
+
+
+
+
 
 
         // Test numTarjeta incorrecto
@@ -939,24 +878,25 @@ public class RunFicServiceTest {
                 // Añadimos la Carrera
                 carrera = runFicService.addCarrera(carrera);
             } catch ( Exception e ){
-                System.out.println("Error "+ ErrorConstants.ERR_ADDCARRERA_CARRERA);
+                //System.out.println("Error "+ ErrorConstants.ERR_ADDCARRERA_CARRERA);
+                cleanDB(carrera,inscripcion);
+                throw new RuntimeException(e);
+            }
+            System.out.println(carrera.toString());
+            try {
+                // Nos inscribimos en la carrera
+                inscripcion = runFicService.addInscripcion(email,getValidTarjeta(),carrera.getIdCarrera());
+            } catch ( Exception e){
+                System.out.println("Error "+ErrorConstants.ERR_ADDINSCRIPCION_EMAILTARJETAIDCARRERA);
+                cleanDB(carrera,inscripcion);
                 throw new RuntimeException(e);
             }
 
             try {
-                // Nos inscribimos en la carrera
-                inscripcion = runFicService.addInscripcion(email,tarjeta,carrera.getIdCarrera());
-            } catch ( Exception e){
-                System.out.println("Error "+ErrorConstants.ERR_ADDINSCRIPCION_EMAILTARJETAIDCARRERA);
-                throw new RuntimeException(e);
-            }
-            try {
                 // Recogemos dorsal
-                System.out.println("Error "+ErrorConstants.ERR_RECOGERDORSAL_IDINSCRIPCION_NUMTARJETA);
                 runFicService.recogerDorsal(inscripcion.getIdInscripcion(), tarjeta);
-            } catch ( Exception e ){
+            } finally {
                 cleanDB(carrera,inscripcion);
-                throw  new RuntimeException(e);
             }
 
         });
@@ -969,8 +909,24 @@ public class RunFicServiceTest {
             // Obtenemos una Inscripcion
             String email = getValidEmail(SEED);
             String tarjeta = getValidTarjeta(SEED);
-            carrera=runFicService.addCarrera(carrera);
-            Inscripcion inscripcion = runFicService.addInscripcion(email,tarjeta,carrera.getIdCarrera());
+            Inscripcion inscripcion = null;
+            try {
+                // Añadimos la Carrera
+                carrera = runFicService.addCarrera(carrera);
+            } catch ( Exception e ){
+                cleanDB(carrera,inscripcion);
+                throw new RuntimeException(e);
+            }
+
+            try {
+                // Nos inscribimos en la carrera
+                inscripcion = runFicService.addInscripcion(email,tarjeta,carrera.getIdCarrera());
+            } catch ( Exception e){
+                System.out.println("Error "+ErrorConstants.ERR_ADDINSCRIPCION_EMAILTARJETAIDCARRERA);
+                cleanDB(carrera,inscripcion);
+                throw new RuntimeException(e);
+            }
+
 
             // Recogemos dorsal 2 veces ( la segunda debe de dar excepcion)
 
@@ -986,15 +942,14 @@ public class RunFicServiceTest {
             try {
                 // Recogemos dorsal 2 vez
                 runFicService.recogerDorsal(inscripcion.getIdInscripcion(), tarjeta);
-            } catch ( Exception e ){
+            } finally {
                 cleanDB(carrera,inscripcion);
-                throw  e;
             }
+
         });
 
 
         // Test carrera ya celebrada
-
         assertThrows(CarreraYaCelebradaException.class , () -> {
 
             // Sout inicial DEBUG
@@ -1035,6 +990,7 @@ public class RunFicServiceTest {
         });
 
     }
+
 
     // Metodo usado en el test de inscripcion carrera ya celebrada
     private Inscripcion addUncheckedInscripcion(String email, String numTarjeta, Carrera carrera , int hoursToInscribe ) {
