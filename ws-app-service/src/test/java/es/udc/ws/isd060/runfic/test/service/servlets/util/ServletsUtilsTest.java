@@ -43,8 +43,7 @@ public class ServletsUtilsTest {
     @Test
     public void testValidatePathInvalidPath(){
 
-        // TODO ARREGLAR [/,//,///,etc.]
-        // NO ES NECESARIO PARA LA PRÁCTICA
+        // TODO ARREGLAR [/,//,///,etc.] PERO NO ES NECESARIO PARA LA PRÁCTICA (CONFIRMADO POR PROFESOR)
 
         assertThrows(RuntimeException.class, () -> { ServletUtils.validateSubpath(null,1);});
         assertThrows(RuntimeException.class, () -> { ServletUtils.validateSubpath(null,2);});

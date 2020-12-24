@@ -33,7 +33,7 @@ public class InscripcionServletAlt extends InscripcionServlet {
 
 
 
-    // NOTA : recogerDorsal pasa los parámetros por es cuerpo
+    // NOTA : recogerDorsal pasa los parámetros por el cuerpo
 
     // CF : Inscripcion addInscripcion (String email , String numTarjeta , Carrera carrera );
     // CF : public Inscripcion recogerDorsal ( Integer codReserva , String numTarjeta );
@@ -107,8 +107,7 @@ public class InscripcionServletAlt extends InscripcionServlet {
 
     }
 
-    private void writeRecogerDorsalCustomExceptionResponse(DorsalHaSidoRecogidoException e, HttpServletResponse httpServletResponse, int scForbidden) {
-    }
+
 
     private void writeRecogerDorsalCustomExceptionResponse(Exception exception,HttpServletResponse httpServletResponse , Integer httpServletResponseType
                                                            , String exceptionTypeName) {
