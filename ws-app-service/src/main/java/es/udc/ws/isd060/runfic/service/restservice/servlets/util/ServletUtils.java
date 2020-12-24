@@ -14,8 +14,8 @@ public class ServletUtils extends es.udc.ws.util.servlet.ServletUtils {
 
     public final static int SUBPATH_TYPE_NULL =-1;
 
-    public final static String  CARRERA_SUBPATH = "Carrera";
-    public final static String  INSCRIPCION_SUBPATH = "Inscripcion";
+    public final static String  CARRERA_SUBPATH = "ws-app-service/Carrera";
+    public final static String  INSCRIPCION_SUBPATH = "ws-app-service/Inscripcion";
 
 
     // OVERLOADED post subpath
@@ -24,7 +24,6 @@ public class ServletUtils extends es.udc.ws.util.servlet.ServletUtils {
     public final static  Integer POST_SUBPATH_TYPE_RECOGERDORSAL=11;
 
     public final static  String POST_SUBPATH_RECOGERDORSAL="dorsal";
-
 
     // TODO cambiar "subpath" por "path"
 
@@ -140,7 +139,7 @@ public class ServletUtils extends es.udc.ws.util.servlet.ServletUtils {
         try {
             validateSubpath(subpath, 2);
         } catch (RuntimeException e) {
-            //System.out.println(splittedSubpath[1]);
+            System.out.println(splittedSubpath[1]);
                 if (ServletUtils.normalizePath(splittedSubpath[1]).equals(INSCRIPCION_SUBPATH+"/"+POST_SUBPATH_RECOGERDORSAL)) {
                     // POST http://XXX/ws-runfic-service/inscripcion/recogerdorsal
                     // CF : public Inscripcion recogerDorsal ( Integer codReserva , String numTarjeta );

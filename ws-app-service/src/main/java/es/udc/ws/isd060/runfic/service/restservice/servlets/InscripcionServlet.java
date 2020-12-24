@@ -69,19 +69,19 @@ public class InscripcionServlet extends HttpServlet {
     // CF : public Inscripcion recogerDorsal ( Integer codReserva , String numTarjeta );
     @Override
     protected void doPost(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws ServletException, IOException {
-        String path = es.udc.ws.isd060.runfic.service.restservice.servlets.util.ServletUtils.normalizePath(httpServletRequest.getPathInfo());
+        String path = ServletUtils.normalizePath(httpServletRequest.getRequestURI());
         int subpathType = ServletUtils.determineSubpathTypePostInscripcion(path);
 
-        if ( subpathType == es.udc.ws.isd060.runfic.service.restservice.servlets.util.ServletUtils.POST_SUBPATH_TYPE_ADDINSCRIPCION ){
+        if ( subpathType == ServletUtils.POST_SUBPATH_TYPE_ADDINSCRIPCION ){
             // CF : Inscripcion addInscripcion (String email , String numTarjeta , Carrera carrera );
             doPostAddInscripcion(httpServletRequest,httpServletResponse);
-        } else if ( subpathType == es.udc.ws.isd060.runfic.service.restservice.servlets.util.ServletUtils.POST_SUBPATH_TYPE_RECOGERDORSAL) {
+        } else if ( subpathType == ServletUtils.POST_SUBPATH_TYPE_RECOGERDORSAL) {
             // CF : public Inscripcion recogerDorsal ( Integer codReserva , String numTarjeta );
             System.out.println("HOLA RECOGERDORSAL");
             doPostRecogerDorsal(httpServletRequest,httpServletResponse);
-        } else if ( subpathType == es.udc.ws.isd060.runfic.service.restservice.servlets.util.ServletUtils.POST_SUBPATH_TYPE_NULL ) {
+        } else if ( subpathType == ServletUtils.POST_SUBPATH_TYPE_NULL ) {
             // BAD REQUEST
-            es.udc.ws.isd060.runfic.service.restservice.servlets.util.ServletUtils.writeServiceResponse(httpServletResponse, HttpServletResponse.SC_BAD_REQUEST,
+            ServletUtils.writeServiceResponse(httpServletResponse, HttpServletResponse.SC_BAD_REQUEST,
                     JsonToExceptionConversor.toInputValidationException(
                             new InputValidationException("Invalid Request: " + "invalid path " + path)),
                     null);
@@ -99,8 +99,8 @@ public class InscripcionServlet extends HttpServlet {
 
     // CF : Inscripcion addInscripcion (String email , String numTarjeta , Carrera carrera );
     protected void doPostAddInscripcion(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+
         String path = ServletUtils.normalizePath(req.getPathInfo());
-        System.out.println(0);
         if (path != null && path.length() > 0) {
             ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_BAD_REQUEST,
                     JsonToExceptionConversor.toInputValidationException(
@@ -108,7 +108,7 @@ public class InscripcionServlet extends HttpServlet {
                     null);
             return;
         }
-        System.out.println(1);
+
         RestInscripcionDto i;
         try {
             i = JsonToRestInscripcionDtoConversor.toServiceInscripcionDto(req.getInputStream());
@@ -117,7 +117,7 @@ public class InscripcionServlet extends HttpServlet {
                     .toInputValidationException(new InputValidationException(ex.getMessage())), null);
             return;
         }
-        System.out.println(2);
+
         if(i.getTarjeta()==null||i.getEmail()==null||i.getIdCarrera()==null){
             ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_BAD_REQUEST, JsonToExceptionConversor
                     .toInputValidationException(new InputValidationException("Faltan parametros")), null);
@@ -231,8 +231,8 @@ public class InscripcionServlet extends HttpServlet {
     private  void writeRecogerDorsalOkResponse ( Inscripcion inscripcion , HttpServletRequest httpServletRequest ,
                                                  HttpServletResponse httpServletResponse ) {
         RestInscripcionDto restInscripcionDto = new RestInscripcionDto(inscripcion);
-        String requestPath = es.udc.ws.isd060.runfic.service.restservice.servlets.util.ServletUtils.normalizePath(httpServletRequest.getRequestURL().toString());
-        String inscripcionUrl = es.udc.ws.isd060.runfic.service.restservice.servlets.util.ServletUtils.normalizePath(httpServletRequest.getRequestURL().toString()) +
+        String requestPath = ServletUtils.normalizePath(httpServletRequest.getRequestURL().toString());
+        String inscripcionUrl = ServletUtils.normalizePath(httpServletRequest.getRequestURL().toString()) +
                 "/" + inscripcion.getIdInscripcion().toString();
 
         Map<String, String> headers = new HashMap<>(1);

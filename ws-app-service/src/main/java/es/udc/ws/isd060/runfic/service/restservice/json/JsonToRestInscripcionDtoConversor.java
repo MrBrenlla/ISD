@@ -67,7 +67,6 @@ public class JsonToRestInscripcionDtoConversor {
                 LocalDateTime fecha = (inscripcionIdNode != null) ? LocalDateTime.parse(inscripcionIdNode.textValue()) : null;
                 inscripcionIdNode = inscripcionObject.get("IsRecogido");
                 boolean recogido = (inscripcionIdNode != null) ? inscripcionIdNode.booleanValue() : false;
-                System.out.println("listo");
                 return new RestInscripcionDto(inscripcionId, dorsal, idCarrera, email, tarjeta, fecha, recogido);
             }
         } catch (ParsingException ex) {
