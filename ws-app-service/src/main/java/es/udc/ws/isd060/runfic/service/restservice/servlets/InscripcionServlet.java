@@ -67,6 +67,7 @@ public class InscripcionServlet extends HttpServlet {
 
     // CF : Inscripcion addInscripcion (String email , String numTarjeta , Carrera carrera );
     // CF : public Inscripcion recogerDorsal ( Integer codReserva , String numTarjeta );
+    @Override
     protected void doPost(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws ServletException, IOException {
         String path = es.udc.ws.isd060.runfic.service.restservice.servlets.util.ServletUtils.normalizePath(httpServletRequest.getPathInfo());
         int subpathType = ServletUtils.determineSubpathTypePostInscripcion(path);
@@ -95,10 +96,9 @@ public class InscripcionServlet extends HttpServlet {
 
 
     // TU CODIGO TAL Y COMO LO TENÍAS PERO COMENTADO
-    /*
+
     // CF : Inscripcion addInscripcion (String email , String numTarjeta , Carrera carrera );
-    @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doPostAddInscripcion(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String path = ServletUtils.normalizePath(req.getPathInfo());
         System.out.println(0);
         if (path != null && path.length() > 0) {
@@ -156,12 +156,8 @@ public class InscripcionServlet extends HttpServlet {
         ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_CREATED,
                 JsonToRestInscripcionDtoConversor.toObjectNode(i), headers);
     }
-*/
 
-    // CF : Inscripcion addInscripcion (String email , String numTarjeta , Carrera carrera );
-    private void doPostAddInscripcion(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
-        // INSERTAR AQUI EL CÓDIGO DE ADD INSCRIPCION ADAPTADO
-    }
+
 
     // AÑADIR FUNCIONES EXTRA SI SON NECESARIAS
 
