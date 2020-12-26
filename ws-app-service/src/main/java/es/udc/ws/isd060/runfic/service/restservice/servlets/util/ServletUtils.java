@@ -1,5 +1,10 @@
 package es.udc.ws.isd060.runfic.service.restservice.servlets.util;
 
+import es.udc.ws.isd060.runfic.service.restservice.json.JsonToExceptionConversor;
+import es.udc.ws.util.exceptions.InputValidationException;
+
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.regex.PatternSyntaxException;
 
 public class ServletUtils extends es.udc.ws.util.servlet.ServletUtils {
@@ -23,7 +28,7 @@ public class ServletUtils extends es.udc.ws.util.servlet.ServletUtils {
     public final static  Integer POST_SUBPATH_TYPE_ADDINSCRIPCION=10;
     public final static  Integer POST_SUBPATH_TYPE_RECOGERDORSAL=11;
 
-    public final static  String POST_SUBPATH_RECOGERDORSAL="dorsal";
+    public final static  String POST_SUBPATH_RECOGERDORSAL="Dorsal";
 
     // TODO cambiar "subpath" por "path"
 
@@ -185,6 +190,21 @@ public class ServletUtils extends es.udc.ws.util.servlet.ServletUtils {
         }
         else return false;
 
+    }
+
+    public static  void writeCustomExceptionResponse(Exception exception, HttpServletResponse httpServletResponse , Integer httpServletResponseType
+            , String exceptionTypeName) {
+        try {
+            es.udc.ws.util.servlet.ServletUtils.writeServiceResponse(httpServletResponse, httpServletResponseType,
+                    JsonToExceptionConversor.toCustomException(exception,exceptionTypeName),null);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    public static void badRequestExceptionResponse( HttpServletResponse httpServletResponse ,
+                                              Exception exception) throws IOException {
+        es.udc.ws.util.servlet.ServletUtils.writeServiceResponse(httpServletResponse, HttpServletResponse.SC_BAD_REQUEST, JsonToExceptionConversor
+                .toInputValidationException(new InputValidationException(exception.getMessage())), null);
     }
 
 

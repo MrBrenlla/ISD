@@ -17,7 +17,6 @@ import es.udc.ws.util.json.exceptions.ParsingException;
 
 
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -76,7 +75,7 @@ public class InscripcionServletAlt extends InscripcionServlet {
         // Obtenemos Instancia de RunFicService
         RunFicService runFicService =RunFicServiceFactory.getService();
         // Guardamos en unas variables los datos de restRecogerDorsalDto
-        Long idInscripcion = restRecogerdorsalDto.getIdInscripcion();
+        Long idInscripcion = restRecogerdorsalDto.getCodRecogerDorsal();
         String numTarjeta = restRecogerdorsalDto.getNumTarjeta();
         // Resultado de recogerDorsal
         Inscripcion inscripcion = null;

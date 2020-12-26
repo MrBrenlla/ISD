@@ -1,5 +1,7 @@
 package es.udc.ws.isd060.runfic.service.restservice.dto;
 
+import es.udc.ws.isd060.runfic.model.carrera.Carrera;
+
 import java.time.LocalDateTime;
 
 public class RestCarreraDto {
@@ -20,6 +22,16 @@ public class RestCarreraDto {
         this.fechaCelebracion = fechaCelebracion;
         this.plazasDisponibles = plazasDisponibles;
         this.plazasOcupadas = plazasOcupadas;
+    }
+
+    public RestCarreraDto( Carrera carrera ) {
+        this.idCarrera = carrera.getIdCarrera();
+        this.ciudadCelebracion = carrera.getCiudadCelebracion();
+        this.descripcion = carrera.getDescripcion();
+        this.precioInscripcion = carrera.getPrecioInscripcion();
+        this.fechaCelebracion = carrera.getFechaCelebracion();
+        this.plazasDisponibles = carrera.getPlazasDisponibles();
+        this.plazasOcupadas = carrera.getPlazasOcupadas();
     }
 
     public Long getIdCarrera() {
@@ -50,5 +62,16 @@ public class RestCarreraDto {
         return plazasOcupadas;
     }
 
-
+    @Override
+    public String toString() {
+        return "RestCarreraDto{" +
+                "idCarrera=" + idCarrera +
+                ", ciudadCelebracion='" + ciudadCelebracion + '\'' +
+                ", descripcion='" + descripcion + '\'' +
+                ", precioInscripcion=" + precioInscripcion +
+                ", fechaCelebracion=" + fechaCelebracion +
+                ", plazasDisponibles=" + plazasDisponibles +
+                ", plazasOcupadas=" + plazasOcupadas +
+                '}';
+    }
 }

@@ -11,16 +11,16 @@ import java.io.InputStream;
 import java.util.Objects;
 
 public class RestRecogerdorsalDto {
-    private Long idInscripcion;
+    private Long codRecogerDorsal;
     private String numTarjeta;
 
-    public RestRecogerdorsalDto(Long idInscripcion, String numTarjeta) {
-        this.idInscripcion = idInscripcion;
+    public RestRecogerdorsalDto(Long codRecogerDorsal, String numTarjeta) {
+        this.codRecogerDorsal = codRecogerDorsal;
         this.numTarjeta = numTarjeta;
     }
 
-    public Long getIdInscripcion() {
-        return idInscripcion;
+    public Long getCodRecogerDorsal() {
+        return codRecogerDorsal;
     }
 
     public String getNumTarjeta() {
@@ -32,18 +32,18 @@ public class RestRecogerdorsalDto {
         if (this == o) return true;
         if (!(o instanceof RestRecogerdorsalDto)) return false;
         RestRecogerdorsalDto that = (RestRecogerdorsalDto) o;
-        return idInscripcion.equals(that.idInscripcion) && numTarjeta.equals(that.numTarjeta);
+        return codRecogerDorsal.equals(that.codRecogerDorsal) && numTarjeta.equals(that.numTarjeta);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(idInscripcion, numTarjeta);
+        return Objects.hash(codRecogerDorsal, numTarjeta);
     }
 
     @Override
     public String toString() {
         return "RestRecogerdorsalDto{" +
-                "idInscripcion=" + idInscripcion +
+                "idInscripcion=" + codRecogerDorsal +
                 ", numTarjeta='" + numTarjeta + '\'' +
                 '}';
     }
@@ -61,8 +61,8 @@ public class RestRecogerdorsalDto {
             } else {
                 ObjectNode recogerdorsalObject = (ObjectNode) rootNode;
 
-                JsonNode idInscripcionNode = recogerdorsalObject.get("idInscripcion");
-                 this.idInscripcion = (idInscripcionNode != null) ? idInscripcionNode.longValue() : null;
+                JsonNode idInscripcionNode = recogerdorsalObject.get("codRecogerDorsal");
+                 this.codRecogerDorsal = (idInscripcionNode != null) ? idInscripcionNode.longValue() : null;
 
                  this.numTarjeta = recogerdorsalObject.get("numTarjeta").textValue().trim();
 

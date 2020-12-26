@@ -61,4 +61,17 @@ public class RestInscripcionDto {
     public boolean isRecogido() {
         return recogido;
     }
+
+    @Override
+    public String toString() {
+        return "RestInscripcionDto{" +
+                "idInscripcion=" + idInscripcion +
+                ", dorsal=" + dorsal +
+                ", idCarrera=" + idCarrera +
+                ", email='" + email + '\'' +
+                ", tarjeta='" + tarjeta + '\'' +
+                ", fechaInscripcion=" + fechaInscripcion +
+                ", recogido=" + recogido +
+                '}';
+    }
 }
