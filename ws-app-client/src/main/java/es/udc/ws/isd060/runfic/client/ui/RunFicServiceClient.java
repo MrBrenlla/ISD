@@ -3,6 +3,7 @@ package es.udc.ws.isd060.runfic.client.ui;
 import es.udc.ws.isd060.runfic.client.service.ClientRunFicService;
 import es.udc.ws.isd060.runfic.client.service.ClientRunFicServiceFactory;
 import es.udc.ws.isd060.runfic.client.service.dto.ClientCarreraDto;
+import es.udc.ws.isd060.runfic.client.service.dto.ClientInscripcionDto;
 import es.udc.ws.util.exceptions.InputValidationException;
 import es.udc.ws.util.exceptions.InstanceNotFoundException;
 
@@ -44,12 +45,26 @@ public class RunFicServiceClient {
             //****************************************** Brais *************************************************
             //**************************************************************************************************
             //addInscripcion
+        } else if("-i".equalsIgnoreCase(args[0])) {
+            validateArgs(args, 4,new int[] {1});
 
-        } else if("-r".equalsIgnoreCase(args[0])) {
+            // [inscribirse] RunFicServiceClient -i Long<IdCarrera> String<email> String<tarjeta>
+
+            try {
+                Long idIncripcion = clientRunFicService.addInscripcion(new ClientInscripcionDto(null,null,Long.valueOf(args[1]),args[2],args[3],null,false ));
+                System.out.println("Inscripcion " + idIncripcion + " created sucessfully");
+
+            } catch (NumberFormatException | InputValidationException ex) {
+                ex.printStackTrace(System.err);
+            } catch (Exception ex) {
+                ex.printStackTrace(System.err);
+            }
             //**************************************************************************************************
             //****************************************** Yago *************************************************
             //**************************************************************************************************
-            validateArgs(args, 2, new int[] {1});
+        } else if("-r".equalsIgnoreCase(args[0])) {
+
+            validateArgs(args, 2, new int[]{1});
 
             // [remove] RunFicServiceClient -r Long<idInscripcion>
 
@@ -64,16 +79,14 @@ public class RunFicServiceClient {
             } catch (Exception ex) {
                 ex.printStackTrace(System.err);
             }
-
-        } else if("-u".equalsIgnoreCase(args[0])) {
-            //UPDATE
-        } else if("-f".equalsIgnoreCase(args[0])) {
             //**************************************************************************************************
             //****************************************** Yago *************************************************
             //**************************************************************************************************
+        }else if("-f".equalsIgnoreCase(args[0])) {
+
             validateArgs(args, 3, new int[] {});
 
-            // [find]-ByDateandCity RunFicServiceClient -f LocalDateTime<fechaCelebracion> String<ciudadCelebracion>
+            // [find-ByDateandCity] RunFicServiceClient -f LocalDateTime<fechaCelebracion> String<ciudadCelebracion>
 
             try {
                 List<ClientCarreraDto> carreras = clientRunFicService.findCarrera(LocalDateTime.parse(args[1]),args[2]);
@@ -97,11 +110,37 @@ public class RunFicServiceClient {
             //****************************************** Brais *************************************************
             //**************************************************************************************************
             //findInscripcion
-        }
-        else if("-g".equalsIgnoreCase(args[0])) {
+
+        }else if("-fi".equalsIgnoreCase(args[0])) {
+
+            validateArgs(args, 2, new int[] {});
+
+            // [findInscripcion] RunFicServiceClient -fi String<email>
+
+            try {
+                List<ClientInscripcionDto> ins = clientRunFicService.findIscripcion(args[1]);
+                System.out.println("Found " + ins.size() +
+                        " Inscriptions(s) with email '" + args[1] +"'");
+                for (int i = 0; i < ins.size(); i++) {
+                    ClientInscripcionDto inscripcionDto = ins.get(i);
+                    System.out.println("Id: " + inscripcionDto.getIdInscripcion() +
+                            ", IdCarrera: " + inscripcionDto.getIdCarrera() +
+                            ", Dorsal: " + inscripcionDto.getDorsal() +
+                            ", Tarjrta: " + inscripcionDto.getTarjeta() +
+                            ", fecha de inscripción: " + inscripcionDto.getFechaInscripcion() +
+                            ", Recogido: " + inscripcionDto.isRecogido());
+                }
+            } catch (Exception ex) {
+                ex.printStackTrace(System.err);
+            }
+
+
+
             //**************************************************************************************************
             //****************************************** Carlos *************************************************
             //**************************************************************************************************
+        } else if("-g".equalsIgnoreCase(args[0])) {
+        } else if("-R".equalsIgnoreCase(args[0])) {
         }
 
     }

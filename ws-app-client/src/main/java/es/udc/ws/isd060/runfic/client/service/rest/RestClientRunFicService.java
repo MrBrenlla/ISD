@@ -4,8 +4,10 @@ import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import es.udc.ws.isd060.runfic.client.service.ClientRunFicService;
 import es.udc.ws.isd060.runfic.client.service.dto.ClientCarreraDto;
+import es.udc.ws.isd060.runfic.client.service.dto.ClientInscripcionDto;
 import es.udc.ws.isd060.runfic.client.service.rest.json.JsonToClientCarreraDtoConversor;
 import es.udc.ws.isd060.runfic.client.service.rest.json.JsonToClientExceptionConversor;
+import es.udc.ws.isd060.runfic.client.service.rest.json.JsonToClientInscripcionDtoConversor;
 import es.udc.ws.util.configuration.ConfigurationParametersManager;
 import es.udc.ws.util.exceptions.InputValidationException;
 import es.udc.ws.util.exceptions.InstanceNotFoundException;
@@ -75,6 +77,40 @@ public class RestClientRunFicService implements ClientRunFicService {
     //**************************************************************************************************
     //****************************************** Brais *************************************************
     //**************************************************************************************************
+    @Override
+    public Long addInscripcion(ClientInscripcionDto inscripcion) throws InputValidationException {
+        try {
+            HttpResponse response = Request.Post(getEndpointAddress() + "Inscripcion").
+                    bodyStream(toInputStream(inscripcion), ContentType.create("application/json")).
+                    execute().returnResponse();
+
+            validateStatusCode(HttpStatus.SC_CREATED, response);
+
+            return JsonToClientInscripcionDtoConversor.toClientInscripcionDto(response.getEntity().getContent()).getIdCarrera();
+
+        } catch (InputValidationException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+
+    @Override
+    public List<ClientInscripcionDto> findIscripcion(String email) {
+        try {
+            HttpResponse response = Request.Get(getEndpointAddress() + "Inscripcion?email="
+                    +URLEncoder.encode(email, "UTF-8")).
+                    execute().returnResponse();
+            validateStatusCode(HttpStatus.SC_OK, response);
+
+            return JsonToClientInscripcionDtoConversor.toClientInscripcionDtos(response.getEntity()
+                    .getContent());
+
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     //**************************************************************************************************
     //****************************************** Carlos *************************************************
@@ -101,6 +137,23 @@ public class RestClientRunFicService implements ClientRunFicService {
             ObjectMapper objectMapper = ObjectMapperFactory.instance();
             objectMapper.writer(new DefaultPrettyPrinter()).writeValue(outputStream,
                     JsonToClientCarreraDtoConversor.toObjectNode(carrera));
+
+            return new ByteArrayInputStream(outputStream.toByteArray());
+
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+
+    private InputStream toInputStream(ClientInscripcionDto i) {
+
+        try {
+
+            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+            ObjectMapper objectMapper = ObjectMapperFactory.instance();
+            objectMapper.writer(new DefaultPrettyPrinter()).writeValue(outputStream,
+                    JsonToClientInscripcionDtoConversor.toObjectNode(i));
 
             return new ByteArrayInputStream(outputStream.toByteArray());
 

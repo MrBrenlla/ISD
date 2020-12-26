@@ -48,4 +48,16 @@ public class ClientInscripcionDto {
     public boolean isRecogido() { return recogido; }
     public void setRecogido(boolean recogido) { this.recogido = recogido; }
 
+    @Override
+    public String toString() {
+        return "Inscripcion{" +
+                "idInscripcion=" + idInscripcion +
+                ", idCarrera=" + idCarrera +
+                ", dorsal=" + dorsal +
+                ", numTarjeta='" + tarjeta + '\'' +
+                ", emailUsuario='" + email + '\'' +
+                ", fechaInscripcion=" + fechaInscripcion +
+                ", dorsalEsRecogido=" + recogido +
+                '}';
+    }
 }

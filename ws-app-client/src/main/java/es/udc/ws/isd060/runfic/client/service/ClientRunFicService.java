@@ -1,6 +1,7 @@
 package es.udc.ws.isd060.runfic.client.service;
 
 import es.udc.ws.isd060.runfic.client.service.dto.ClientCarreraDto;
+import es.udc.ws.isd060.runfic.client.service.dto.ClientInscripcionDto;
 import es.udc.ws.util.exceptions.InputValidationException;
 import es.udc.ws.util.exceptions.InstanceNotFoundException;
 
@@ -11,7 +12,9 @@ public interface ClientRunFicService {
     //**************************************************************************************************
     //****************************************** Brais *************************************************
     //**************************************************************************************************
+    public Long addInscripcion(ClientInscripcionDto inscripcion) throws InputValidationException;
 
+    public List<ClientInscripcionDto> findIscripcion(String email);
 
     //**************************************************************************************************
     //****************************************** Yago *************************************************

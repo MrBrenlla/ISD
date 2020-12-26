@@ -45,10 +45,10 @@ public class JsonToRestInscripcionDtoConversor {
         return InscripcionNode;
     }
 
-    public static RestInscripcionDto toServiceInscripcionDto(InputStream jsonMovie) throws ParsingException {
+    public static RestInscripcionDto toServiceInscripcionDto(InputStream json) throws ParsingException {
         try {
             ObjectMapper objectMapper = ObjectMapperFactory.instance();
-            JsonNode rootNode = objectMapper.readTree(jsonMovie);
+            JsonNode rootNode = objectMapper.readTree(json);
 
             if (rootNode.getNodeType() != JsonNodeType.OBJECT) {
                 throw new ParsingException("Unrecognized JSON (object expected)");
