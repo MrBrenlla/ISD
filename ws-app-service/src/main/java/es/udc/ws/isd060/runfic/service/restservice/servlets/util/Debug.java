@@ -4,6 +4,9 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 
+//**************************************************************************************************
+//**************************************** NO SE USA ***********************************************
+//**************************************************************************************************
 public class Debug {
     public static final String DEFAULT_DEBUG_FILE = "C:\\software\\ws-javaexamples-3.4.0\\debug\\debug.txt";
     public static final String DEFAULT_INSCRIPCION_DEBUG_FILE = "C:\\software\\ws-javaexamples-3.4.0\\debug\\debugSales.txt";

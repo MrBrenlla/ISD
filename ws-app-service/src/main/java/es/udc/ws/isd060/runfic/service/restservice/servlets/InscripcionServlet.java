@@ -79,7 +79,6 @@ public class InscripcionServlet extends HttpServlet {
             doPostAddInscripcion(httpServletRequest,httpServletResponse);
         } else if ( subpathType == ServletUtils.POST_SUBPATH_TYPE_RECOGERDORSAL) {
             // CF : public Inscripcion recogerDorsal ( Integer codReserva , String numTarjeta );
-            System.out.println("HOLA RECOGERDORSAL");
             doPostRecogerDorsal(httpServletRequest,httpServletResponse);
         } else if ( subpathType == ServletUtils.POST_SUBPATH_TYPE_NULL ) {
             // BAD REQUEST
@@ -106,7 +105,7 @@ public class InscripcionServlet extends HttpServlet {
         if (path == null | path.length() <= 0) {
             ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_BAD_REQUEST,
                     JsonToExceptionConversor.toInputValidationException(
-                            new InputValidationException("Invalid Request BRAIS" + "invalid path " + path)),
+                            new InputValidationException("Invalid Request " + "invalid path " + path)),
                     null);
             return;
         }
@@ -231,7 +230,6 @@ public class InscripcionServlet extends HttpServlet {
         Map<String, String> headers = new HashMap<>(1);
         headers.put("Location", inscripcionUrl);
 
-
         try {
             es.udc.ws.util.servlet.ServletUtils.writeServiceResponse(httpServletResponse, HttpServletResponse.SC_CREATED,
                     JsonToRestInscripcionDtoConversor.toObjectNode(restInscripcionDto), headers);
@@ -242,15 +240,6 @@ public class InscripcionServlet extends HttpServlet {
     }
 
 
-
-
-    //**************************************************************************************************
-    //****************************************** Carlos ************************************************
-    //**************************************************************************************************
-    // CF : public Inscripcion recogerDorsal ( Integer codReserva , String numTarjeta );
-    protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-
-    }
 
     //**************************************************************************************************
     //****************************************** Yago **************************************************

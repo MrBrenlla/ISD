@@ -27,7 +27,6 @@ import java.util.List;
 import java.util.Map;
 
 public class CarreraServlet extends HttpServlet {
-    // TODO all
 
     // Nota LOS Métodos que se comentan por CF ( Called For) son llamados por la funcion correspondiente de la capa servicios
     // ( los que estan implementados son llamados por los comentados)

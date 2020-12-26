@@ -11,6 +11,9 @@ import java.io.IOException;
 
 import static es.udc.ws.isd060.runfic.service.restservice.servlets.util.ServletUtils.CARRERA_SUBPATH;
 
+//**************************************************************************************************
+//**************************************** NO SE USA ***********************************************
+//**************************************************************************************************
 public class CarreraServletAlt extends CarreraServlet {
 
     private final static  Integer GET_TYPE_NULL=-1;
