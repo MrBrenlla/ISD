@@ -94,7 +94,7 @@ public class CarreraServlet extends HttpServlet {
             ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_OK,
                     JsonToRestCarreraDtoConversor.toArrayNode(carreraDtos), null);
         }
-        //**************************************************************************************************
+        //***************************************CARLOS***********************************************
         else {
             // http://XXX/ws-runfic-service/carreras[ALGO MAS]
             char charAt0;
@@ -138,7 +138,7 @@ public class CarreraServlet extends HttpServlet {
             */
 
 
-            //Else -> Hacer Búsqueda por Id (si se requiere) - ***************************************CARLOS*******************************
+            //Else -> Hacer Búsqueda por Id (si se requiere) -
             //CF : public List<Carrera> findCarrera (Long idCarrera);
 
 

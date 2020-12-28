@@ -19,8 +19,9 @@ public class ServletUtils extends es.udc.ws.util.servlet.ServletUtils {
 
     public final static int SUBPATH_TYPE_NULL =-1;
 
-    public final static String  CARRERA_SUBPATH = "ws-app-service/Carrera";
-    public final static String  INSCRIPCION_SUBPATH = "ws-app-service/Inscripcion";
+    public final static String  WS_APP_SERVICE_SUBPATH = "ws-app-service";
+    public final static String  CARRERA_SUBPATH = ServletUtils.WS_APP_SERVICE_SUBPATH+"/"+"Carrera";
+    public final static String  INSCRIPCION_SUBPATH = ServletUtils.WS_APP_SERVICE_SUBPATH+"/"+"Inscripcion";
 
 
     // OVERLOADED post subpath

@@ -24,10 +24,12 @@ public interface RunFicService {
     //**************************************************************************************************
     Carrera addCarrera(Carrera carrera) throws InputValidationException;
 
+    // Hay Que Borrarlo , no se expone en la interfaz
     List<Carrera> findCarrera(LocalDateTime fechaCelebracion);
 
     List<Carrera> findCarrera(LocalDateTime fechaCelebracion, String ciudad);
 
+    // Hay Que Borrarlo , no se expone en la interfaz ( Para los tests Puedes Usar una variable RunFicServiceImpl)
     void removeInscripcion(Long idInscripcion)  throws InstanceNotFoundException;
 
     //**************************************************************************************************
@@ -36,5 +38,7 @@ public interface RunFicService {
 
     Carrera findCarrera(Long idCarrera) throws InstanceNotFoundException;
 
-    Inscripcion recogerDorsal(Long idInscripcion, String numTarjeta) throws InstanceNotFoundException, DorsalHaSidoRecogidoException, NumTarjetaIncorrectoException, CarreraYaCelebradaException, InputValidationException;
+    Inscripcion recogerDorsal(Long idInscripcion, String numTarjeta) throws InstanceNotFoundException,
+            DorsalHaSidoRecogidoException, NumTarjetaIncorrectoException, CarreraYaCelebradaException,
+            InputValidationException;
 }

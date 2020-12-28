@@ -1,5 +1,10 @@
 package es.udc.ws.isd060.runfic.client.service.dto;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import es.udc.ws.util.json.ObjectMapperFactory;
+
+import java.io.InputStream;
 import java.time.LocalDateTime;
 
 public class ClientInscripcionDto {

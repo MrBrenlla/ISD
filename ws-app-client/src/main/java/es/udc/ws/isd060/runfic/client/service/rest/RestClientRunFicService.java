@@ -2,12 +2,16 @@ package es.udc.ws.isd060.runfic.client.service.rest;
 
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import es.udc.ws.isd060.runfic.client.responses.OperationalErrorException;
 import es.udc.ws.isd060.runfic.client.service.ClientRunFicService;
 import es.udc.ws.isd060.runfic.client.service.dto.ClientCarreraDto;
 import es.udc.ws.isd060.runfic.client.service.dto.ClientInscripcionDto;
 import es.udc.ws.isd060.runfic.client.service.rest.json.JsonToClientCarreraDtoConversor;
 import es.udc.ws.isd060.runfic.client.service.rest.json.JsonToClientExceptionConversor;
 import es.udc.ws.isd060.runfic.client.service.rest.json.JsonToClientInscripcionDtoConversor;
+import es.udc.ws.isd060.runfic.model.RunFicService.exceptions.CarreraYaCelebradaException;
+import es.udc.ws.isd060.runfic.model.RunFicService.exceptions.DorsalHaSidoRecogidoException;
+import es.udc.ws.isd060.runfic.model.RunFicService.exceptions.NumTarjetaIncorrectoException;
 import es.udc.ws.util.configuration.ConfigurationParametersManager;
 import es.udc.ws.util.exceptions.InputValidationException;
 import es.udc.ws.util.exceptions.InstanceNotFoundException;
@@ -29,9 +33,17 @@ public class RestClientRunFicService implements ClientRunFicService {
     private final static String ENDPOINT_ADDRESS_PARAMETER = "RestClientRunFicService.endpointAddress";
     private String endpointAddress;
 
+    private final String CARRERA_PATH_NAME = "Carrera";
+    private final String INSCRIPCION_PATH_NAME = "Inscripcion";
+    private final String RECOGERDORSAL_PATH_NAME = "Dorsal";
+
+    // Nota LOS Métodos que se comentan por CT ( Called To) son los que envían la petición a la URL indicacda
+
     //**************************************************************************************************
     //****************************************** Yago *************************************************
     //**************************************************************************************************
+
+    // CT : POST http://XXX/ws-runfic-service/Carrera
     @Override
     public Long addCarrera(ClientCarreraDto carrera) throws InputValidationException {
         try {
@@ -51,11 +63,13 @@ public class RestClientRunFicService implements ClientRunFicService {
 
     }
 
+    // Hay Que Borrarlo , no se expone en la interfaz
     @Override
     public void removeInscripcion(Long idInscripcion)  throws InstanceNotFoundException {
 
     }
 
+    // CT : GET http://XXX/ws-runfic-service/Carrera?fechaCelebracion=[fechaCelebracion]&ciudadCelebracion[ciudad]
     @Override
     public List<ClientCarreraDto> findCarrera(LocalDateTime fechaCelebracion, String ciudad) {
         try {
@@ -77,6 +91,8 @@ public class RestClientRunFicService implements ClientRunFicService {
     //**************************************************************************************************
     //****************************************** Brais *************************************************
     //**************************************************************************************************
+
+    // CT : POST http://XXX/ws-runfic-service/Inscripcion
     @Override
     public Long addInscripcion(ClientInscripcionDto inscripcion) throws InputValidationException {
         try {
@@ -96,6 +112,7 @@ public class RestClientRunFicService implements ClientRunFicService {
 
     }
 
+    // CT : GET http://XXX/ws-runfic-service/Inscripcion?email=[email]
     @Override
     public List<ClientInscripcionDto> findIscripcion(String email) {
         try {
@@ -116,7 +133,55 @@ public class RestClientRunFicService implements ClientRunFicService {
     //****************************************** Carlos *************************************************
     //**************************************************************************************************
 
+    // CT : GET http://XXX/ws-runfic-service/Carrera/[UN LONG]
+    @Override
+    public ClientCarreraDto findCarrera(Long idCarrera) throws InstanceNotFoundException {
+        try {
+            HttpResponse httpResponse = Request.Get(getEndpointAddress() + this.CARRERA_PATH_NAME + "/" + idCarrera)
+                    .execute().returnResponse();
 
+            validateStatusCode(HttpStatus.SC_OK, httpResponse);
+
+            ClientCarreraDto clientCarreraDto = JsonToClientCarreraDtoConversor
+                    .toClientCarreraDto(httpResponse.getEntity().getContent());
+
+            return clientCarreraDto;
+
+        } catch (InstanceNotFoundException e) {
+            throw e;
+        } catch ( Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    // CT : POST http://XXX/ws-runfic-service/Inscripcion/Dorsal
+    @Override
+    public ClientInscripcionDto recogerDorsal(Long idInscripcion, String numTarjeta) throws OperationalErrorException,
+            InstanceNotFoundException, InputValidationException {
+        ClientInscripcionDto result;
+        try {
+            HttpResponse httpResponse = Request.Get(getEndpointAddress() + this.INSCRIPCION_PATH_NAME + "/" +
+                    this.RECOGERDORSAL_PATH_NAME)
+                    .execute().returnResponse();
+
+            validateStatusCode(HttpStatus.SC_OK, httpResponse);
+
+            ClientInscripcionDto clientInscripcionDto = JsonToClientInscripcionDtoConversor
+                    .toClientInscripcionDto(httpResponse.getEntity().getContent());
+
+            result = clientInscripcionDto;
+
+        } catch ( DorsalHaSidoRecogidoException | CarreraYaCelebradaException  e) {
+            throw new OperationalErrorException(e);
+        } catch(NumTarjetaIncorrectoException e){
+            throw new InstanceNotFoundException(String.class,"NumTarjeta");
+        } catch ( InstanceNotFoundException | InputValidationException e){
+            throw e;
+        }catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        return result;
+    }
 
 
     //**************************************************************************************************
