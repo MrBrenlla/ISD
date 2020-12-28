@@ -102,7 +102,7 @@ public class InscripcionServlet extends HttpServlet {
     protected void doPostAddInscripcion(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
         String path = ServletUtils.normalizePath(req.getPathInfo());
-        if (path == null | path.length() <= 0) {
+        if (path != null && path.length() > 0) {
             ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_BAD_REQUEST,
                     JsonToExceptionConversor.toInputValidationException(
                             new InputValidationException("Invalid Request " + "invalid path " + path)),
