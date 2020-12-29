@@ -1,6 +1,5 @@
-package es.udc.isd060.runfic.model.RunFicServiceService;
+package es.udc.ws.isd060.runfic.model.RunFicServiceService;
 
-import es.udc.isd060.runfic.model.RunFicService.RunFicService;
 import es.udc.ws.util.configuration.ConfigurationParametersManager;
 
 public class RunFicServiceServiceFactory {

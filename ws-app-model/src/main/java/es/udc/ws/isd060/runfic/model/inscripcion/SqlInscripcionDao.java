@@ -1,7 +1,6 @@
-package es.udc.isd060.runfic.model.inscripcion;
+package es.udc.ws.isd060.runfic.model.inscripcion;
 
 
-import es.udc.isd060.runfic.model.carrera.Carrera;
 import es.udc.ws.util.exceptions.InstanceNotFoundException;
 import java.sql.Connection;
 import java.util.List;

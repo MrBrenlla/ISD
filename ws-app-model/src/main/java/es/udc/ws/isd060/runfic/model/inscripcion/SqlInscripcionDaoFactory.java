@@ -1,4 +1,4 @@
-package es.udc.isd060.runfic.model.inscripcion;
+package es.udc.ws.isd060.runfic.model.inscripcion;
 
 import es.udc.ws.util.configuration.ConfigurationParametersManager;
 

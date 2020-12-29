@@ -1,16 +1,16 @@
-package es.udc.isd060.runfic.test.model.runficservice;
+package es.udc.ws.isd060.runfic.test.model.runficservice;
 
-import es.udc.isd060.runfic.model.RunFicService.RunFicService;
-import es.udc.isd060.runfic.model.RunFicService.RunFicServiceFactory;
-import es.udc.isd060.runfic.model.RunFicService.exceptions.*;
-import es.udc.isd060.runfic.model.carrera.Carrera;
-import es.udc.isd060.runfic.model.carrera.SqlCarreraDao;
-import es.udc.isd060.runfic.model.carrera.SqlCarreraDaoFactory;
-import es.udc.isd060.runfic.model.inscripcion.Inscripcion;
-import es.udc.isd060.runfic.model.inscripcion.SqlInscripcionDao;
-import es.udc.isd060.runfic.model.inscripcion.SqlInscripcionDaoFactory;
-import es.udc.isd060.runfic.model.util.ErrorConstants;
-import es.udc.isd060.runfic.model.util.ModelPropertyValidator;
+import es.udc.ws.isd060.runfic.model.RunFicService.RunFicService;
+import es.udc.ws.isd060.runfic.model.RunFicService.RunFicServiceFactory;
+import es.udc.ws.isd060.runfic.model.RunFicService.exceptions.*;
+import es.udc.ws.isd060.runfic.model.carrera.Carrera;
+import es.udc.ws.isd060.runfic.model.carrera.SqlCarreraDao;
+import es.udc.ws.isd060.runfic.model.carrera.SqlCarreraDaoFactory;
+import es.udc.ws.isd060.runfic.model.inscripcion.Inscripcion;
+import es.udc.ws.isd060.runfic.model.inscripcion.SqlInscripcionDao;
+import es.udc.ws.isd060.runfic.model.inscripcion.SqlInscripcionDaoFactory;
+import es.udc.ws.isd060.runfic.model.util.ErrorConstants;
+import es.udc.ws.isd060.runfic.model.util.ModelPropertyValidator;
 import es.udc.ws.util.exceptions.InputValidationException;
 import es.udc.ws.util.exceptions.InstanceNotFoundException;
 import es.udc.ws.util.sql.DataSourceLocator;
@@ -23,14 +23,13 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-import static es.udc.isd060.runfic.model.util.ModelConstants.MAX_PRICE;
-import static es.udc.isd060.runfic.model.util.ModelConstants.RUNFIC_DATA_SOURCE;
+import static es.udc.ws.isd060.runfic.model.util.ModelConstants.MAX_PRICE;
+import static es.udc.ws.isd060.runfic.model.util.ModelConstants.RUNFIC_DATA_SOURCE;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class RunFicServiceTest {
@@ -808,6 +807,7 @@ public class RunFicServiceTest {
 
     }
 
+    /*
     // TODO mejorar sintaxis
     @Test
     public void testRecogerDorsalDatosInvalidos(){
@@ -1034,7 +1034,7 @@ public class RunFicServiceTest {
 
         });
 
-    }
+    }*/
 
     // Metodo usado en el test de inscripcion carrera ya celebrada
     private Inscripcion addUncheckedInscripcion(String email, String numTarjeta, Carrera carrera , int hoursToInscribe ) {

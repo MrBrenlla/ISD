@@ -1,8 +1,8 @@
-package es.udc.isd060.runfic.model.RunFicService;
+package es.udc.ws.isd060.runfic.model.RunFicService;
 
-import es.udc.isd060.runfic.model.RunFicService.exceptions.*;
-import es.udc.isd060.runfic.model.carrera.*;
-import es.udc.isd060.runfic.model.inscripcion.Inscripcion;
+import es.udc.ws.isd060.runfic.model.RunFicService.exceptions.*;
+import es.udc.ws.isd060.runfic.model.carrera.*;
+import es.udc.ws.isd060.runfic.model.inscripcion.Inscripcion;
 import es.udc.ws.util.exceptions.InputValidationException;
 import es.udc.ws.util.exceptions.InstanceNotFoundException;
 import java.util.List;

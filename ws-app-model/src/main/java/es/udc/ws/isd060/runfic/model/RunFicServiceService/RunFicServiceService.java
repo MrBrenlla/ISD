@@ -1,7 +1,7 @@
-package es.udc.isd060.runfic.model.RunFicServiceService;
+package es.udc.ws.isd060.runfic.model.RunFicServiceService;
 
-import es.udc.isd060.runfic.model.carrera.Carrera;
-import es.udc.isd060.runfic.model.inscripcion.Inscripcion;
+import es.udc.ws.isd060.runfic.model.carrera.Carrera;
+import es.udc.ws.isd060.runfic.model.inscripcion.Inscripcion;
 
 import java.time.LocalDateTime;
 import java.util.List;

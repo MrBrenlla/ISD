@@ -1,4 +1,4 @@
-package es.udc.isd060.runfic.model.carrera;
+package es.udc.ws.isd060.runfic.model.carrera;
 
 import es.udc.ws.util.configuration.ConfigurationParametersManager;
 
