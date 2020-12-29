@@ -166,7 +166,7 @@ public class RunFicServiceClient {
                 }
             }
 
-
+            // TODO Mejorar respuesta ( No es necesario para la práctica)
         System.out.println("    OPERACION REALIZADA : "+args[0]+"\n");
 
         }

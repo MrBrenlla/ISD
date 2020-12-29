@@ -1,4 +1,4 @@
-//1.-
+﻿//1.-
 
 
 
@@ -22,7 +22,7 @@
 mvn exec:java -Dexec.mainClass="es.udc.ws.isd060.runfic.client.ui.RunFicServiceClient" -Dexec.args="-i 1 'user1@udc.es' '0123456789111111'"             // regId=1 creado
 mvn exec:java -Dexec.mainClass="es.udc.ws.isd060.runfic.client.ui.RunFicServiceClient" -Dexec.args="-i 1 'user2@udc.es' '0123456789222222'"             // regId=2 creado
 mvn exec:java -Dexec.mainClass="es.udc.ws.isd060.runfic.client.ui.RunFicServiceClient" -Dexec.args="-i 2 'user2@udc.es' '0123456789222222'"             // regId=3 creado
-mvn exec:java -Dexec.mainClass="es.udc.ws.isd060.runfic.client.ui.RunFicServiceClient" -Dexec.args="-i 2 'user1@udc.es' '0123456789111111'"           // regId=4 creado
+mvn exec:java -Dexec.mainClass="es.udc.ws.isd060.runfic.client.ui.RunFicServiceClient" -Dexec.args="-i 2 'user1@udc.es' '0123456789111111'"             // regId=4 creado
 mvn exec:java -Dexec.mainClass="es.udc.ws.isd060.runfic.client.ui.RunFicServiceClient" -Dexec.args="-i 1 'user3@udc.es' '0123456789333333'"             // Falla (no hay plazas)
 mvn exec:java -Dexec.mainClass="es.udc.ws.isd060.runfic.client.ui.RunFicServiceClient" -Dexec.args="-i 4 'user3@udc.es' '0123456789333333'"             // Falla (fuera de plazo)
 mvn exec:java -Dexec.mainClass="es.udc.ws.isd060.runfic.client.ui.RunFicServiceClient" -Dexec.args="-i 2 'user1@udc.es' '0123456789111111'"             // Falla (usuario ya inscrito)
@@ -45,9 +45,16 @@ mvn exec:java -Dexec.mainClass="es.udc.ws.isd060.runfic.client.ui.RunFicServiceC
 
 //6.-
 
-
-
+mvn exec:java -Dexec.mainClass="es.udc.ws.isd060.runfic.client.ui.RunFicServiceClient" -Dexec.args="-R 1 '0123456789222222' "     // Falla (tarjeta no coincide)
+mvn exec:java -Dexec.mainClass="es.udc.ws.isd060.runfic.client.ui.RunFicServiceClient" -Dexec.args="-R 1 '0123456789111111' "     // Dorsal entregado 
+mvn exec:java -Dexec.mainClass="es.udc.ws.isd060.runfic.client.ui.RunFicServiceClient" -Dexec.args="-R 1 '0123456789111111' "     // Falla (ya entregado) 
+mvn exec:java -Dexec.mainClass="es.udc.ws.isd060.runfic.client.ui.RunFicServiceClient" -Dexec.args="-R 1 '0123456789'"            // Falla (tarjeta inválida) 
+mvn exec:java -Dexec.mainClass="es.udc.ws.isd060.runfic.client.ui.RunFicServiceClient" -Dexec.args="-R 9 '0123456789111111'"      // Falla (inscripción no existe)
 
 
 
 //7.-
+
+mvn exec:java -Dexec.mainClass="es.udc.ws.isd060.runfic.client.ui.RunFicServiceClient" -Dexec.args="-fr 2 "     // Plazas libres=98 (si se ejecutó el paso 4a) o 100 (si se ejecutó el 4b)  
+mvn exec:java -Dexec.mainClass="es.udc.ws.isd060.runfic.client.ui.RunFicServiceClient" -Dexec.args="-fr 9 "     // Falla (no se encuentra)
+

@@ -14,6 +14,9 @@ public interface ClientRunFicService {
     //****************************************** Brais *************************************************
     //**************************************************************************************************
 
+    // NOTA : Los Comentarios están suponiendo una implementación REST en HTML usando JSON (La que se nos pide para la it-2)
+    // En el caso de existir nuevas implementaciones de la interfaz estás también estarán indicadas en los comentarios
+
     // CT : POST http://XXX/ws-runfic-service/Inscripcion
     public Long addInscripcion(ClientInscripcionDto inscripcion) throws InputValidationException;
 
