@@ -13,6 +13,15 @@ public class RestInscripcionDto {
     private LocalDateTime fechaInscripcion;
     private boolean recogido;
 
+    public RestInscripcionDto( Long idInscripcion,Long idCarrera, String email, String tarjeta){
+        this.idInscripcion = idInscripcion;
+        this.dorsal = null;
+        this.idCarrera = idCarrera;
+        this.email = email;
+        this.tarjeta = tarjeta;
+        this.fechaInscripcion = null;
+        this.recogido = false;
+    }
     public RestInscripcionDto(Long idInscripcion, Integer dorsal, Long idCarrera,
                               String email, String tarjeta, LocalDateTime fechaInscripcion, boolean recogido) {
         this.idInscripcion = idInscripcion;

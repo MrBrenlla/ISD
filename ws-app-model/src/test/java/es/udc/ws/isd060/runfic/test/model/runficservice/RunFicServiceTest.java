@@ -1004,6 +1004,8 @@ public class RunFicServiceTest {
             assertTrue(runFicService.findInscripcion("b@gmail.com").isEmpty());
             final Long id = carrera.getIdCarrera();
             assertThrows(FueraDePlazo.class, () -> runFicService.addInscripcion("b@gmail.com", "1234567812345678", id));
+        } catch (InputValidationException e) {
+            e.printStackTrace();
         } finally {
             if (carrera != null) removeCarrera(carrera);
         }
@@ -1015,7 +1017,11 @@ public class RunFicServiceTest {
         Inscripcion i = null;
         Carrera carrera = null;
 
-        assertTrue(runFicService.findInscripcion("b@gmail.com").isEmpty());
+        try {
+            assertTrue(runFicService.findInscripcion("b@gmail.com").isEmpty());
+        } catch (InputValidationException e) {
+            e.printStackTrace();
+        }
 
         try {
 

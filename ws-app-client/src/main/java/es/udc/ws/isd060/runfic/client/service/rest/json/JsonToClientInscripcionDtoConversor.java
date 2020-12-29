@@ -89,10 +89,10 @@ public class JsonToClientInscripcionDtoConversor {
             String tarjeta =iObject.get("Tarjeta").textValue().trim();
             Long idC = iObject.get("IdCarrera").longValue();
             int dorsal = iObject.get("Dorsal").intValue();
-            boolean recogido= iObject.get("Recogido").booleanValue();
+            boolean recogido= iObject.get("IsRecogido").booleanValue();
             LocalDateTime fecha= LocalDateTime.parse(iObject.get("FechaInscripcion").textValue());
 
-            return new ClientInscripcionDto(InsId,dorsal,idC,email,tarjeta,fecha,recogido);
+            return new ClientInscripcionDto(InsId,dorsal,idC,email,tarjeta,fecha,false);
         }
     }
 

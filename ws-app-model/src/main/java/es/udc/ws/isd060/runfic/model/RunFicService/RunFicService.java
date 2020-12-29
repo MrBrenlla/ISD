@@ -17,7 +17,7 @@ public interface RunFicService {
 
     Inscripcion addInscripcion(String email, String tarjeta, long carrera) throws InputValidationException, CarreraInexistente,UsuarioInscrito,FueraDePlazo,SinPlazas;
 
-    List<Inscripcion> findInscripcion(String email);
+    List<Inscripcion> findInscripcion(String email) throws InputValidationException;
 
     //**************************************************************************************************
     //****************************************** Yago *************************************************

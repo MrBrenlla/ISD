@@ -46,11 +46,17 @@ public class InscripcionServlet extends HttpServlet {
 
         String path = ServletUtils.normalizePath(req.getPathInfo());
         if (path == null || path.length() == 0) {
-            String email = req.getParameter("email");
-            List<Inscripcion> inscripcions = RunFicServiceFactory.getService().findInscripcion(email);
-            List<RestInscripcionDto> movieDtos = InscripcionToRestInscripcionConversor.toRestInscripcionDto(inscripcions);
+            String email = req.getParameter("Email");
+            List<Inscripcion> inscripcions = null;
+            try {
+                inscripcions = RunFicServiceFactory.getService().findInscripcion(email);
+            } catch (InputValidationException e) {
+                ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_BAD_REQUEST,
+                    JsonToExceptionConversor.toInputValidationException(e), null);
+            }
+            List<RestInscripcionDto> inscriptionsDtos = InscripcionToRestInscripcionConversor.toRestInscripcionDto(inscripcions);
             ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_OK,
-                    JsonToRestInscripcionDtoConversor.toArrayNode(movieDtos), null);
+                    JsonToRestInscripcionDtoConversor.toArrayNode(inscriptionsDtos), null);
         } else {
             ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_BAD_REQUEST,
                     JsonToExceptionConversor.toInputValidationException(
@@ -150,9 +156,9 @@ public class InscripcionServlet extends HttpServlet {
         }
         i = InscripcionToRestInscripcionConversor.toRestInscripcionDto(inscripcion);
 
-        String movieURL = ServletUtils.normalizePath(req.getRequestURL().toString()) + "/" + i.getIdInscripcion();
+        String inscripcionURL = ServletUtils.normalizePath(req.getRequestURL().toString()) + "/" + i.getIdInscripcion();
         Map<String, String> headers = new HashMap<>(1);
-        headers.put("Location", movieURL);
+        headers.put("Location", inscripcionURL);
 
         ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_CREATED,
                 JsonToRestInscripcionDtoConversor.toObjectNode(i), headers);

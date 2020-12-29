@@ -159,7 +159,9 @@ public class RunFicServiceImpl implements RunFicService {
     }
 
 
-    public List<Inscripcion> findInscripcion(String email) {
+    public List<Inscripcion> findInscripcion(String email) throws InputValidationException {
+
+        validateEmail(email);
 
         try (Connection connection = dataSource.getConnection()) {
             return inscripcionDao.find(connection, email);
