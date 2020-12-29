@@ -1,5 +1,10 @@
 package es.udc.ws.isd060.runfic.client.service.dto;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import es.udc.ws.util.json.ObjectMapperFactory;
+
+import java.io.InputStream;
 import java.time.LocalDateTime;
 
 public class ClientInscripcionDto {
@@ -48,4 +53,16 @@ public class ClientInscripcionDto {
     public boolean isRecogido() { return recogido; }
     public void setRecogido(boolean recogido) { this.recogido = recogido; }
 
+    @Override
+    public String toString() {
+        return "Inscripcion{" +
+                "idInscripcion=" + idInscripcion +
+                ", idCarrera=" + idCarrera +
+                ", dorsal=" + dorsal +
+                ", numTarjeta='" + tarjeta + '\'' +
+                ", emailUsuario='" + email + '\'' +
+                ", fechaInscripcion=" + fechaInscripcion +
+                ", dorsalEsRecogido=" + recogido +
+                '}';
+    }
 }

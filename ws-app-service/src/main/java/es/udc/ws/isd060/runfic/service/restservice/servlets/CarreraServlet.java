@@ -1,27 +1,32 @@
 package es.udc.ws.isd060.runfic.service.restservice.servlets;
 
 import es.udc.ws.isd060.runfic.model.RunFicService.RunFicServiceFactory;
+
 import es.udc.ws.isd060.runfic.model.carrera.Carrera;
 import es.udc.ws.isd060.runfic.service.restservice.dto.CarreraToRestCarreraDtoConversor;
 import es.udc.ws.isd060.runfic.service.restservice.dto.RestCarreraDto;
 import es.udc.ws.isd060.runfic.service.restservice.json.JsonToExceptionConversor;
 import es.udc.ws.isd060.runfic.service.restservice.json.JsonToRestCarreraDtoConversor;
+import es.udc.ws.isd060.runfic.service.restservice.servlets.util.Debug;
 import es.udc.ws.util.exceptions.InputValidationException;
+import es.udc.ws.util.exceptions.InstanceNotFoundException;
 import es.udc.ws.util.json.exceptions.ParsingException;
-import es.udc.ws.util.servlet.ServletUtils;
+import es.udc.ws.isd060.runfic.service.restservice.servlets.util.ServletUtils;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.rmi.RemoteException;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class CarreraServlet extends HttpServlet {
-    // TODO all
 
     // Nota LOS Métodos que se comentan por CF ( Called For) son llamados por la funcion correspondiente de la capa servicios
     // ( los que estan implementados son llamados por los comentados)
@@ -29,6 +34,7 @@ public class CarreraServlet extends HttpServlet {
     // un doXXX puede tener más de un CF
     // Aclaracion en \docs\DiagramaServlets.dia
 
+    public static final String DEFAULT_CARRERA_DEBUG_FILE_PATH = "C:\\debug\\carrera";
 
     //**************************************************************************************************
     //****************************************** Yago *************************************************
@@ -36,7 +42,6 @@ public class CarreraServlet extends HttpServlet {
 
     // CF : public Carrera addCarrera (Carrera carrera);
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-
         String path = ServletUtils.normalizePath(req.getPathInfo());
         if (path != null && path.length() > 0) {
             ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_BAD_REQUEST,
@@ -74,10 +79,11 @@ public class CarreraServlet extends HttpServlet {
 
     //**************************************************************************************************
     // CF : public List<Carrera> findCarrera (LocalDateTime fechaCelebracion , String nombreCiudad );
-    //**Se puede añadir -> // CF : public List<Carrera> findCarrera (Long idCarrera);
+    //**Se debe añadir -> // CF : public List<Carrera> findCarrera (Long idCarrera);
     //***********************************-COMÚN-*************************************************
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        //*************************************************************************************************
         String path = ServletUtils.normalizePath(req.getPathInfo());
         //**************************************YAGO*******************************************************
         if (path == null || path.length() == 0) {
@@ -88,8 +94,41 @@ public class CarreraServlet extends HttpServlet {
             ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_OK,
                     JsonToRestCarreraDtoConversor.toArrayNode(carreraDtos), null);
         }
-        //**************************************************************************************************
+        //***************************************CARLOS***********************************************
         else {
+            // http://XXX/ws-runfic-service/carreras[ALGO MAS]
+            char charAt0;
+            try {
+                charAt0 = path.charAt(0);
+            } catch (IndexOutOfBoundsException e){
+                // No debería pasar
+                throw new RuntimeException(e);
+            }
+            if (charAt0 == '/'){
+                // http://XXX/ws-runfic-service/carreras/[ALGO MAS]
+                Long idCarrera;
+                try {
+                     idCarrera = Long.valueOf(path.substring(1));
+                } catch ( NumberFormatException e ) {
+                    // http://XXX/ws-runfic-service/carreras/[ALGO QUE NO ES UN LONG]
+                    // BAD REQUEST
+                    ServletUtils.badRequestExceptionResponse(resp,e);
+                    return;
+                } catch ( IndexOutOfBoundsException e){
+                    // No debería pasar
+                    throw  new RuntimeException(e);
+                }
+                // http://XXX/ws-runfic-service/carreras/[UN LONG]
+                // CF : public List<Carrera> findCarrera (Long idCarrera);
+                doGetFindById(req,resp,idCarrera);
+            } else {
+                // http://XXX/ws-runfic-service/carreras[BASURA]
+                // BAD REQUEST
+                ServletUtils.badRequestExceptionResponse(resp,
+                        new InputValidationException("Invalid Request: " + "invalid path " + path));
+                return;
+            }
+
 
             //If parámetros nulos -> Mostramos vacío el JSON
             /*
@@ -99,7 +138,7 @@ public class CarreraServlet extends HttpServlet {
             */
 
 
-            //Else -> Hacer Búsqueda por Id (si se requiere) - ***************************************CARLOS*******************************
+            //Else -> Hacer Búsqueda por Id (si se requiere) -
             //CF : public List<Carrera> findCarrera (Long idCarrera);
 
 
@@ -113,7 +152,28 @@ public class CarreraServlet extends HttpServlet {
 
 
 
+    //**************************************************************************************************
+    //****************************************** Carlos ************************************************
+    //**************************************************************************************************
 
+    // CF : public List<Carrera> findCarrera (Long idCarrera);
+    private void doGetFindById(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse ,
+                               Long idCarrera) throws IOException {
+        Carrera carrera = null;
+        try {
+            carrera = RunFicServiceFactory.getService().findCarrera(idCarrera);
+        } catch ( InstanceNotFoundException e){
+            // Id no encontrado
+            ServletUtils.writeCustomExceptionResponse(e,httpServletResponse,HttpServletResponse.SC_NOT_FOUND,
+                    "InstanceNotFoundException");
+        }
+        //[else]
+        // OK RESPONSE
+        RestCarreraDto restCarreraDto = new RestCarreraDto(carrera);
+        es.udc.ws.util.servlet.ServletUtils.writeServiceResponse(httpServletResponse, HttpServletResponse.SC_OK,
+                JsonToRestCarreraDtoConversor.toObjectNode(restCarreraDto), null);
+
+    }
 
 
 

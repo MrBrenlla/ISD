@@ -1,19 +1,21 @@
 package es.udc.ws.isd060.runfic.service.restservice.servlets;
 
+import es.udc.ws.isd060.runfic.model.RunFicService.RunFicService;
 import es.udc.ws.isd060.runfic.model.RunFicService.RunFicServiceFactory;
-import es.udc.ws.isd060.runfic.model.RunFicService.exceptions.CarreraInexistente;
-import es.udc.ws.isd060.runfic.model.RunFicService.exceptions.FueraDePlazo;
-import es.udc.ws.isd060.runfic.model.RunFicService.exceptions.SinPlazas;
-import es.udc.ws.isd060.runfic.model.RunFicService.exceptions.UsuarioInscrito;
+
+import es.udc.ws.isd060.runfic.model.RunFicService.exceptions.*;
 import es.udc.ws.isd060.runfic.model.inscripcion.Inscripcion;
 import es.udc.ws.isd060.runfic.service.restservice.dto.InscripcionToRestInscripcionConversor;
 import es.udc.ws.isd060.runfic.service.restservice.dto.RestInscripcionDto;
+import es.udc.ws.isd060.runfic.service.restservice.dto.RestRecogerdorsalDto;
 import es.udc.ws.isd060.runfic.service.restservice.json.JsonToExceptionConversor;
 import es.udc.ws.isd060.runfic.service.restservice.json.JsonToRestInscripcionDtoConversor;
 import es.udc.ws.util.exceptions.InputValidationException;
 import es.udc.ws.util.exceptions.InstanceNotFoundException;
 import es.udc.ws.util.json.exceptions.ParsingException;
-import es.udc.ws.util.servlet.ServletUtils;
+
+// Es una clase que extiende del ServletUtils original por lo que tiene todos sus métodos aparte de algunos nuestros
+import es.udc.ws.isd060.runfic.service.restservice.servlets.util.ServletUtils;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -25,13 +27,14 @@ import java.util.List;
 import java.util.Map;
 
 public class InscripcionServlet extends HttpServlet {
-    // TODO all
 
     // Nota LOS Métodos que se comentan por CF ( Called For) son llamados por la funcion correspondiente de la capa servicios
     // ( los que estan implementados son llamados por los comentados)
     // VER TEMA 6 ( DIAP. 45 )
     // un doXXX puede tener más de un CF
     // Aclaracion en \docs\DiagramaServlets.dia
+
+    public static final String DEFAULT_INSCRIPCION_DEBUG_FILE = "C:\\software\\ws-javaexamples-3.4.0\\debug\\debugSales.txt";
 
     //**************************************************************************************************
     //****************************************** Brais *************************************************
@@ -43,11 +46,17 @@ public class InscripcionServlet extends HttpServlet {
 
         String path = ServletUtils.normalizePath(req.getPathInfo());
         if (path == null || path.length() == 0) {
-            String email = req.getParameter("email");
-            List<Inscripcion> inscripcions = RunFicServiceFactory.getService().findInscripcion(email);
-            List<RestInscripcionDto> movieDtos = InscripcionToRestInscripcionConversor.toRestInscripcionDto(inscripcions);
+            String email = req.getParameter("Email");
+            List<Inscripcion> inscripcions = null;
+            try {
+                inscripcions = RunFicServiceFactory.getService().findInscripcion(email);
+            } catch (InputValidationException e) {
+                ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_BAD_REQUEST,
+                    JsonToExceptionConversor.toInputValidationException(e), null);
+            }
+            List<RestInscripcionDto> inscriptionsDtos = InscripcionToRestInscripcionConversor.toRestInscripcionDto(inscripcions);
             ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_OK,
-                    JsonToRestInscripcionDtoConversor.toArrayNode(movieDtos), null);
+                    JsonToRestInscripcionDtoConversor.toArrayNode(inscriptionsDtos), null);
         } else {
             ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_BAD_REQUEST,
                     JsonToExceptionConversor.toInputValidationException(
@@ -59,23 +68,54 @@ public class InscripcionServlet extends HttpServlet {
 
 
     //**************************************************************************************************
-    //****************************************** Brais *************************************************
+    //****************************************** Brais y Carlos ****************************************
     //**************************************************************************************************
 
 
+
     // CF : Inscripcion addInscripcion (String email , String numTarjeta , Carrera carrera );
+    // CF : public Inscripcion recogerDorsal ( Integer codReserva , String numTarjeta );
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String path = ServletUtils.normalizePath(req.getPathInfo());
-        System.out.println(0);
-        if (path != null && path.length() > 0) {
-            ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_BAD_REQUEST,
+    protected void doPost(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws ServletException, IOException {
+        String path = ServletUtils.normalizePath(httpServletRequest.getRequestURI());
+        int subpathType = ServletUtils.determineSubpathTypePostInscripcion(path);
+
+        if ( subpathType == ServletUtils.POST_SUBPATH_TYPE_ADDINSCRIPCION ){
+            // CF : Inscripcion addInscripcion (String email , String numTarjeta , Carrera carrera );
+            doPostAddInscripcion(httpServletRequest,httpServletResponse);
+        } else if ( subpathType == ServletUtils.POST_SUBPATH_TYPE_RECOGERDORSAL) {
+            // CF : public Inscripcion recogerDorsal ( Integer codReserva , String numTarjeta );
+            doPostRecogerDorsal(httpServletRequest,httpServletResponse);
+        } else if ( subpathType == ServletUtils.POST_SUBPATH_TYPE_NULL ) {
+            // BAD REQUEST
+            ServletUtils.writeServiceResponse(httpServletResponse, HttpServletResponse.SC_BAD_REQUEST,
                     JsonToExceptionConversor.toInputValidationException(
                             new InputValidationException("Invalid Request: " + "invalid path " + path)),
                     null);
             return;
         }
-        System.out.println(1);
+
+    }
+
+    //**************************************************************************************************
+    //****************************************** Brais *************************************************
+    //**************************************************************************************************
+
+
+    // TU CODIGO TAL Y COMO LO TENÍAS PERO COMENTADO
+
+    // CF : Inscripcion addInscripcion (String email , String numTarjeta , Carrera carrera );
+    protected void doPostAddInscripcion(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+
+        String path = ServletUtils.normalizePath(req.getPathInfo());
+        if (path != null && path.length() > 0) {
+            ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_BAD_REQUEST,
+                    JsonToExceptionConversor.toInputValidationException(
+                            new InputValidationException("Invalid Request " + "invalid path " + path)),
+                    null);
+            return;
+        }
+
         RestInscripcionDto i;
         try {
             i = JsonToRestInscripcionDtoConversor.toServiceInscripcionDto(req.getInputStream());
@@ -84,9 +124,9 @@ public class InscripcionServlet extends HttpServlet {
                     .toInputValidationException(new InputValidationException(ex.getMessage())), null);
             return;
         }
-        System.out.println(2);
+
         if(i.getTarjeta()==null||i.getEmail()==null||i.getIdCarrera()==null){
-            ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_BAD_REQUEST, JsonToExceptionConversor
+           ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_BAD_REQUEST, JsonToExceptionConversor
                     .toInputValidationException(new InputValidationException("Faltan parametros")), null);
             return;
         }
@@ -116,9 +156,9 @@ public class InscripcionServlet extends HttpServlet {
         }
         i = InscripcionToRestInscripcionConversor.toRestInscripcionDto(inscripcion);
 
-        String movieURL = ServletUtils.normalizePath(req.getRequestURL().toString()) + "/" + i.getIdInscripcion();
+        String inscripcionURL = ServletUtils.normalizePath(req.getRequestURL().toString()) + "/" + i.getIdInscripcion();
         Map<String, String> headers = new HashMap<>(1);
-        headers.put("Location", movieURL);
+        headers.put("Location", inscripcionURL);
 
         ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_CREATED,
                 JsonToRestInscripcionDtoConversor.toObjectNode(i), headers);
@@ -126,14 +166,86 @@ public class InscripcionServlet extends HttpServlet {
 
 
 
+    // AÑADIR FUNCIONES EXTRA SI SON NECESARIAS
 
     //**************************************************************************************************
-    //****************************************** Carlos ************************************************
+    //****************************************** Carlos *************************************************
     //**************************************************************************************************
+
+
+
     // CF : public Inscripcion recogerDorsal ( Integer codReserva , String numTarjeta );
-    protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    private void doPostRecogerDorsal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse)
+            throws ServletException, IOException {
+        // NOTA : recogerDorsal pasa los parámetros por el cuerpo
+        //TODO ORDEN EXCEPCIONES
+        RestRecogerdorsalDto restRecogerdorsalDto ;
+        try {
+            // Generamos el dto a partir del inputStream de la request
+            restRecogerdorsalDto = new RestRecogerdorsalDto(httpServletRequest.getInputStream());
+        } catch (ParsingException ex) {
+            // BAD REQUEST
+            ServletUtils.badRequestExceptionResponse(httpServletResponse,ex);
+            return;
+        }
+        // Obtenemos Instancia de RunFicService
+        RunFicService runFicService =RunFicServiceFactory.getService();
+        // Guardamos en unas variables los datos de restRecogerDorsalDto
+        Long idInscripcion = restRecogerdorsalDto.getCodRecogerDorsal();
+        String numTarjeta = restRecogerdorsalDto.getNumTarjeta();
+        // Resultado de recogerDorsal
+        Inscripcion inscripcion = null;
+        try {
+            inscripcion = runFicService.recogerDorsal(idInscripcion,numTarjeta);
+        } catch (InputValidationException ex) {
+            // BAD REQUEST
+            ServletUtils.badRequestExceptionResponse(httpServletResponse,ex);
+            return;
+        } catch (DorsalHaSidoRecogidoException e) {
+            ServletUtils.writeCustomExceptionResponse(e,httpServletResponse,
+                    HttpServletResponse.SC_FORBIDDEN,"DorsalHaSidoRecogidoException");
+        } catch (InstanceNotFoundException e) {
+           ServletUtils.writeCustomExceptionResponse(e,httpServletResponse,
+                    HttpServletResponse.SC_NOT_FOUND,"InstanceNotFoundException");
+        } catch (CarreraYaCelebradaException e) {
+            ServletUtils.writeCustomExceptionResponse(e,httpServletResponse,
+                    HttpServletResponse.SC_GONE,"CarreraYaCelebradaException");
+        } catch (NumTarjetaIncorrectoException e) {
+            ServletUtils.writeCustomExceptionResponse(e,httpServletResponse,
+                    HttpServletResponse.SC_NOT_FOUND,"NumTarjetaIncorrectoException");
+        } catch ( Exception e) {
+            // No debería pasar
+            throw new RuntimeException(e);
+        }
+
+        // SI OK
+        writeRecogerDorsalOkResponse(inscripcion,httpServletRequest,httpServletResponse);
 
     }
+
+
+
+
+    private  void writeRecogerDorsalOkResponse ( Inscripcion inscripcion , HttpServletRequest httpServletRequest ,
+                                                 HttpServletResponse httpServletResponse ) {
+        RestInscripcionDto restInscripcionDto = new RestInscripcionDto(inscripcion);
+        String requestPath = ServletUtils.normalizePath(httpServletRequest.getRequestURL().toString());
+        String inscripcionUrl = ServletUtils.normalizePath(httpServletRequest.getRequestURL().toString()) +
+                "/" + inscripcion.getIdInscripcion().toString();
+
+        Map<String, String> headers = new HashMap<>(1);
+        headers.put("Location", inscripcionUrl);
+
+        try {
+            es.udc.ws.util.servlet.ServletUtils.writeServiceResponse(httpServletResponse, HttpServletResponse.SC_CREATED,
+                    JsonToRestInscripcionDtoConversor.toObjectNode(restInscripcionDto), headers);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+
+
 
     //**************************************************************************************************
     //****************************************** Yago **************************************************
@@ -145,7 +257,7 @@ public class InscripcionServlet extends HttpServlet {
         String path = ServletUtils.normalizePath(req.getPathInfo());
         if (path == null || path.length() == 0) {
             ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_BAD_REQUEST, JsonToExceptionConversor
-                            .toInputValidationException(new InputValidationException("Invalid Request: " + "invalid inscripcion id")),
+                            .toInputValidationException(new InputValidationException("Invalid Request: CARLOS 1" + "invalid inscripcion id")),
                     null);
             return;
         }
@@ -156,7 +268,7 @@ public class InscripcionServlet extends HttpServlet {
         } catch (NumberFormatException ex) {
             ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_BAD_REQUEST,
                     JsonToExceptionConversor.toInputValidationException(new InputValidationException(
-                            "Invalid Request: " + "invalid inscripcion id '" + inscripcionIdAsString + "'")),
+                            "Invalid Request: CARLOS 2" + "invalid inscripcion id '" + inscripcionIdAsString + "'")),
                     null);
 
             return;

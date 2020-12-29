@@ -45,30 +45,25 @@ public class JsonToRestInscripcionDtoConversor {
         return InscripcionNode;
     }
 
-    public static RestInscripcionDto toServiceInscripcionDto(InputStream jsonMovie) throws ParsingException {
+    public static RestInscripcionDto toServiceInscripcionDto(InputStream json) throws ParsingException {
         try {
             ObjectMapper objectMapper = ObjectMapperFactory.instance();
-            JsonNode rootNode = objectMapper.readTree(jsonMovie);
+            JsonNode rootNode = objectMapper.readTree(json);
 
             if (rootNode.getNodeType() != JsonNodeType.OBJECT) {
                 throw new ParsingException("Unrecognized JSON (object expected)");
             } else {
                 ObjectNode inscripcionObject = (ObjectNode) rootNode;
 
+
                 JsonNode inscripcionIdNode = inscripcionObject.get("IdInscripcion");
                 Long inscripcionId = (inscripcionIdNode != null) ? inscripcionIdNode.longValue() : null;
                 String email = inscripcionObject.get("Email").textValue().trim();
+                System.out.println(email);
                 String tarjeta = inscripcionObject.get("Tarjeta").textValue().trim();
                 inscripcionIdNode = inscripcionObject.get("IdCarrera");
                 Long idCarrera = (inscripcionIdNode != null) ? inscripcionIdNode.longValue() : null;
-                inscripcionIdNode = inscripcionObject.get("Dorsal");
-                Integer dorsal = (inscripcionIdNode != null) ? inscripcionIdNode.intValue() : null;
-                inscripcionIdNode = inscripcionObject.get("Fecha");
-                LocalDateTime fecha = (inscripcionIdNode != null) ? LocalDateTime.parse(inscripcionIdNode.textValue()) : null;
-                inscripcionIdNode = inscripcionObject.get("IsRecogido");
-                boolean recogido = (inscripcionIdNode != null) ? inscripcionIdNode.booleanValue() : false;
-                System.out.println("listo");
-                return new RestInscripcionDto(inscripcionId, dorsal, idCarrera, email, tarjeta, fecha, recogido);
+                return new RestInscripcionDto(inscripcionId, idCarrera, email, tarjeta);
             }
         } catch (ParsingException ex) {
             throw ex;

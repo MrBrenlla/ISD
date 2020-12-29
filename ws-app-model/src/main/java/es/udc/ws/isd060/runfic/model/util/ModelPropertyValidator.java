@@ -1,5 +1,7 @@
 package es.udc.ws.isd060.runfic.model.util;
 
+import es.udc.ws.isd060.runfic.model.RunFicService.RunFicService;
+import es.udc.ws.isd060.runfic.model.RunFicService.RunFicServiceFactory;
 import es.udc.ws.isd060.runfic.model.carrera.Carrera;
 import es.udc.ws.isd060.runfic.model.inscripcion.Inscripcion;
 import es.udc.ws.util.exceptions.InputValidationException;

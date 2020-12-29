@@ -1,0 +1,53 @@
+//1.-
+
+
+
+
+
+//2.-
+
+
+
+
+
+//3.-
+
+
+
+
+
+
+//4.-
+
+mvn exec:java -Dexec.mainClass="es.udc.ws.isd060.runfic.client.ui.RunFicServiceClient" -Dexec.args="-i 1 'user1@udc.es' '0123456789111111'"             // regId=1 creado
+mvn exec:java -Dexec.mainClass="es.udc.ws.isd060.runfic.client.ui.RunFicServiceClient" -Dexec.args="-i 1 'user2@udc.es' '0123456789222222'"             // regId=2 creado
+mvn exec:java -Dexec.mainClass="es.udc.ws.isd060.runfic.client.ui.RunFicServiceClient" -Dexec.args="-i 2 'user2@udc.es' '0123456789222222'"             // regId=3 creado
+mvn exec:java -Dexec.mainClass="es.udc.ws.isd060.runfic.client.ui.RunFicServiceClient" -Dexec.args="-i 2 'user1@udc.es' '0123456789111111'"           // regId=4 creado
+mvn exec:java -Dexec.mainClass="es.udc.ws.isd060.runfic.client.ui.RunFicServiceClient" -Dexec.args="-i 1 'user3@udc.es' '0123456789333333'"             // Falla (no hay plazas)
+mvn exec:java -Dexec.mainClass="es.udc.ws.isd060.runfic.client.ui.RunFicServiceClient" -Dexec.args="-i 4 'user3@udc.es' '0123456789333333'"             // Falla (fuera de plazo)
+mvn exec:java -Dexec.mainClass="es.udc.ws.isd060.runfic.client.ui.RunFicServiceClient" -Dexec.args="-i 2 'user1@udc.es' '0123456789111111'"             // Falla (usuario ya inscrito)
+mvn exec:java -Dexec.mainClass="es.udc.ws.isd060.runfic.client.ui.RunFicServiceClient" -Dexec.args="-i 2 'user4' '0123456789444444'"                    // Falla (email inválido)
+mvn exec:java -Dexec.mainClass="es.udc.ws.isd060.runfic.client.ui.RunFicServiceClient" -Dexec.args="-i 2 'user4@udc.es' '0123456789'"                   // Falla (tarjeta inválida)
+mvn exec:java -Dexec.mainClass="es.udc.ws.isd060.runfic.client.ui.RunFicServiceClient" -Dexec.args="-i 9 'user4@udc.es' '0123456789444444'"             // Falla (carrera no existe)
+
+
+
+
+//5.-
+
+mvn exec:java -Dexec.mainClass="es.udc.ws.isd060.runfic.client.ui.RunFicServiceClient" -Dexec.args="-fi 'user1@udc.es'"         // Devuelve inscripciones con id 1 (dorsal=1) e id 4 (dorsal=2)
+mvn exec:java -Dexec.mainClass="es.udc.ws.isd060.runfic.client.ui.RunFicServiceClient" -Dexec.args="-fi 'user6@udc.es'"         // Lista vacía
+mvn exec:java -Dexec.mainClass="es.udc.ws.isd060.runfic.client.ui.RunFicServiceClient" -Dexec.args="-fi 'user1'"                // Falla (email inválido)
+
+
+
+
+
+//6.-
+
+
+
+
+
+
+//7.-
