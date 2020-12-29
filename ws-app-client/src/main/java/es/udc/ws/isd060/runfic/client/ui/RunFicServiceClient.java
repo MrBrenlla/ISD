@@ -23,14 +23,15 @@ public class RunFicServiceClient {
             //****************************************** Yago *************************************************
             //**************************************************************************************************
 
-            validateArgs(args, 7, new int[] {3, 5, 6});
+            validateArgs(args, 6, new int[] {3, 5});
 
-            // [add] RunFicServiceClient -a String<ciudadCelebracion> String<descripcion> Float<precioInscripcion> LocalDateTime<fechaCelebracion> Integer<plazasDisponibles> Integer<plazasOcupadas>
+            // [add] RunFicServiceClient -a String<ciudadCelebracion> String<descripcion> Float<precioInscripcion> LocalDateTime<fechaCelebracion> Integer<plazasDisponibles>
+            // [add] RunFicServiceClient -a String<ciudadCelebracion> String<descripcion> Float<precioInscripcion> LocalDateTime<fechaCelebracion> Integer<plazasDisponibles>
 
             try {
                 Long idCarrera = clientRunFicService.addCarrera(new ClientCarreraDto(null,
                         args[1], args[2], Float.valueOf(args[3]),
-                        LocalDateTime.parse(args[4]), Integer.valueOf(args[5]), Integer.valueOf(args[6])));
+                        LocalDateTime.parse(args[4]), Integer.valueOf(args[5])));//0
 
                 System.out.println("Carrera " + idCarrera + " created sucessfully");
 
@@ -86,8 +87,8 @@ public class RunFicServiceClient {
                             ", descripcion: " + carreraDto.getDescripcion() +
                             ", precioInscripcion: " + carreraDto.getPrecioInscripcion() +
                             ", fechaCelebracion: " + carreraDto.getFechaCelebracion() +
-                            ", plazasDisponibles: " + carreraDto.getPlazasDisponibles() +
-                            ", plazasOcupadas: " + carreraDto.getPlazasOcupadas());
+                            ", plazasDisponibles: " + carreraDto.getPlazasDisponibles()+
+                            ", plazasLibres: " + carreraDto.getPlazasLibres());
                 }
             } catch (Exception ex) {
                 ex.printStackTrace(System.err);
@@ -128,7 +129,7 @@ public class RunFicServiceClient {
 
     public static void printUsage() {
         System.err.println("Usage:\n" +
-                "    [add]RunFicServiceClient -a <ciudadCelebracion> <descripcion> <precioInscripcion> <fechaCelebracion> <plazasDisponibles> <plazasOcupadas>\n" +
+                "    [add]RunFicServiceClient -a <ciudadCelebracion> <descripcion> <precioInscripcion> <fechaCelebracion> <plazasDisponibles>\n" +
                 "    [remove] RunFicServiceClient -r <idInscripcion>\n" +
                 "    [find]   RunFicServiceClient -f <fechaCelebracion> <ciudadCelebracion>\n");
     }

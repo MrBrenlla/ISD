@@ -9,20 +9,19 @@ public class ClientCarreraDto {
     private Float  precioInscripcion;
     private LocalDateTime fechaCelebracion;
     private Integer plazasDisponibles;
-    private Integer plazasOcupadas;
+    private Integer plazasLibres;
 
     public ClientCarreraDto() {
 
     }
 
-    public ClientCarreraDto(Long idCarrera, String ciudadCelebracion, String descripcion, Float precioInscripcion, LocalDateTime fechaCelebracion, Integer plazasDisponibles, Integer plazasOcupadas) {
+    public ClientCarreraDto(Long idCarrera, String ciudadCelebracion, String descripcion, Float precioInscripcion, LocalDateTime fechaCelebracion, Integer plazasDisponibles) {
         this.idCarrera = idCarrera;
         this.ciudadCelebracion = ciudadCelebracion;
         this.descripcion = descripcion;
         this.precioInscripcion = precioInscripcion;
         this.fechaCelebracion = fechaCelebracion;
         this.plazasDisponibles = plazasDisponibles;
-        this.plazasOcupadas = plazasOcupadas;
     }
 
     public Long getIdCarrera() {
@@ -53,15 +52,15 @@ public class ClientCarreraDto {
     }
     public void setPlazasDisponibles(Integer plazasDisponibles) { this.plazasDisponibles = plazasDisponibles; }
 
-    public Integer getPlazasOcupadas() {
-        return plazasOcupadas;
+    public Integer getPlazasLibres() {
+        return plazasLibres;
     }
-    public void setPlazasOcupadas(Integer plazasOcupadas) { this.plazasOcupadas = plazasOcupadas; }
+    public void setPlazasLibres(Integer plazasLibres) { this.plazasLibres = plazasLibres; }
 
     @Override
     public String toString() {
         return "CarreraDto [idCarrera=" + idCarrera + ", ciudadCelebracion=" + ciudadCelebracion
                 + ", descripcion=" + descripcion + " precioInscripcion= " + precioInscripcion + " fechaCelebracion= "
-                + fechaCelebracion + ", plazasDisponibles=" + plazasDisponibles + ", plazasOcupadas=" + plazasOcupadas + "]";
+                + fechaCelebracion + ", plazasDisponibles=" + plazasDisponibles + "]";
     }
 }

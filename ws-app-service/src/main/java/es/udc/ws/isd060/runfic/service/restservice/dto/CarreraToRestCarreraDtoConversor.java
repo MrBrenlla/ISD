@@ -1,6 +1,6 @@
 package es.udc.ws.isd060.runfic.service.restservice.dto;
 
-import es.udc.isd060.runfic.model.carrera.Carrera;
+import es.udc.ws.isd060.runfic.model.carrera.Carrera;
 
 import java.util.ArrayList;
 import java.util.List;

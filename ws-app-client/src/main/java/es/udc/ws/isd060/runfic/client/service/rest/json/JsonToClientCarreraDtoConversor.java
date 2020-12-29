@@ -29,9 +29,7 @@ public class JsonToClientCarreraDtoConversor {
                 put("descripcion", carrera.getDescripcion()).
                 put("precioInscripcion", carrera.getPrecioInscripcion()).
                 put("fechaCelebracion", carrera.getFechaCelebracion().toString()).
-                put("plazasDisponibles", carrera.getPlazasDisponibles()).
-                put("plazasOcupadas", carrera.getPlazasOcupadas());
-
+                put("plazasDisponibles", carrera.getPlazasDisponibles());
         return carreraObject;
     }
 
@@ -90,9 +88,11 @@ public class JsonToClientCarreraDtoConversor {
                 float precioInscripcion = carreraObject.get("precioInscripcion").floatValue();
                 LocalDateTime fechaCelebracion = LocalDateTime.parse(carreraObject.get("fechaCelebracion").textValue());
                 Integer plazasDisponibles = carreraObject.get("plazasDisponibles").intValue();
-                Integer plazasOcupadas = carreraObject.get("plazasOcupadas").intValue();
+                Integer plazasLibres = carreraObject.get("plazasDisponibles").intValue() - carreraObject.get("plazasOcupadas").intValue();
 
-                return new ClientCarreraDto(carreraId, ciudadCelebracion, descripcion, precioInscripcion, fechaCelebracion,plazasDisponibles, plazasOcupadas);
+                ClientCarreraDto clientcarreraDto = new ClientCarreraDto(carreraId, ciudadCelebracion, descripcion, precioInscripcion, fechaCelebracion,plazasDisponibles);
+                clientcarreraDto.setPlazasLibres(plazasLibres);
+                return clientcarreraDto;
             }
     }
 }

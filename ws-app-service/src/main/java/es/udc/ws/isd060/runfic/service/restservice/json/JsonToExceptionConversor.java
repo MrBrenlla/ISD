@@ -4,10 +4,10 @@ package es.udc.ws.isd060.runfic.service.restservice.json;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-import es.udc.isd060.runfic.model.RunFicService.exceptions.CarreraInexistente;
-import es.udc.isd060.runfic.model.RunFicService.exceptions.FueraDePlazo;
-import es.udc.isd060.runfic.model.RunFicService.exceptions.SinPlazas;
-import es.udc.isd060.runfic.model.RunFicService.exceptions.UsuarioInscrito;
+import es.udc.ws.isd060.runfic.model.RunFicService.exceptions.CarreraInexistente;
+import es.udc.ws.isd060.runfic.model.RunFicService.exceptions.FueraDePlazo;
+import es.udc.ws.isd060.runfic.model.RunFicService.exceptions.SinPlazas;
+import es.udc.ws.isd060.runfic.model.RunFicService.exceptions.UsuarioInscrito;
 import es.udc.ws.util.exceptions.InputValidationException;
 import es.udc.ws.util.exceptions.InstanceNotFoundException;
 

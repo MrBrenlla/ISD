@@ -51,7 +51,18 @@ public class RestClientRunFicService implements ClientRunFicService {
 
     @Override
     public void removeInscripcion(Long idInscripcion)  throws InstanceNotFoundException {
+        try {
 
+            HttpResponse response = Request.Delete(getEndpointAddress() + "Inscripcion/" + idInscripcion).
+                    execute().returnResponse();
+
+            validateStatusCode(HttpStatus.SC_NO_CONTENT, response);
+
+        } catch (InstanceNotFoundException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override

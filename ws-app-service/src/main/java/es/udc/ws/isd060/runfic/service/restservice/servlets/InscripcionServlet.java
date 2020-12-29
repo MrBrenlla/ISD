@@ -1,12 +1,11 @@
 package es.udc.ws.isd060.runfic.service.restservice.servlets;
 
-import es.udc.isd060.runfic.model.RunFicService.RunFicServiceFactory;
-import es.udc.isd060.runfic.model.RunFicService.exceptions.CarreraInexistente;
-import es.udc.isd060.runfic.model.RunFicService.exceptions.FueraDePlazo;
-import es.udc.isd060.runfic.model.RunFicService.exceptions.SinPlazas;
-import es.udc.isd060.runfic.model.RunFicService.exceptions.UsuarioInscrito;
-import es.udc.isd060.runfic.model.carrera.Carrera;
-import es.udc.isd060.runfic.model.inscripcion.Inscripcion;
+import es.udc.ws.isd060.runfic.model.RunFicService.RunFicServiceFactory;
+import es.udc.ws.isd060.runfic.model.RunFicService.exceptions.CarreraInexistente;
+import es.udc.ws.isd060.runfic.model.RunFicService.exceptions.FueraDePlazo;
+import es.udc.ws.isd060.runfic.model.RunFicService.exceptions.SinPlazas;
+import es.udc.ws.isd060.runfic.model.RunFicService.exceptions.UsuarioInscrito;
+import es.udc.ws.isd060.runfic.model.inscripcion.Inscripcion;
 import es.udc.ws.isd060.runfic.service.restservice.dto.InscripcionToRestInscripcionConversor;
 import es.udc.ws.isd060.runfic.service.restservice.dto.RestInscripcionDto;
 import es.udc.ws.isd060.runfic.service.restservice.json.JsonToExceptionConversor;

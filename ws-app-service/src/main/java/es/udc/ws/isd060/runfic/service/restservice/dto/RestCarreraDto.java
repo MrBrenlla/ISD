@@ -19,7 +19,7 @@ public class RestCarreraDto {
         this.precioInscripcion = precioInscripcion;
         this.fechaCelebracion = fechaCelebracion;
         this.plazasDisponibles = plazasDisponibles;
-        this.plazasOcupadas = plazasOcupadas;
+        this.plazasOcupadas = (plazasOcupadas != null) ? plazasOcupadas : null;
     }
 
     public Long getIdCarrera() {

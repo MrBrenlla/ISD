@@ -10,6 +10,7 @@ import es.udc.ws.isd060.runfic.service.restservice.dto.RestCarreraDto;
 import es.udc.ws.util.json.ObjectMapperFactory;
 import es.udc.ws.util.json.exceptions.ParsingException;
 
+import java.awt.*;
 import java.io.InputStream;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -27,9 +28,9 @@ public class JsonToRestCarreraDtoConversor {
                 put("descripcion", carrera.getDescripcion()).
                 put("precioInscripcion", carrera.getPrecioInscripcion()).
                 put("fechaCelebracion", carrera.getFechaCelebracion().toString()).
-                put("plazasDisponibles", carrera.getPlazasDisponibles()).
-                put("plazasOcupadas", carrera.getPlazasOcupadas());
-
+                put("plazasDisponibles", carrera.getPlazasDisponibles());
+            System.out.println("ENTRAMOOOOS//////////////// - -- - - -  -  11");
+            carreraObject.put("plazasOcupadas", carrera.getPlazasOcupadas());
         return carreraObject;
     }
 
@@ -63,7 +64,14 @@ public class JsonToRestCarreraDtoConversor {
                 float precioInscripcion = carreraObject.get("precioInscripcion").floatValue();
                 LocalDateTime fechaCelebracion = LocalDateTime.parse(carreraObject.get("fechaCelebracion").textValue());
                 Integer plazasDisponibles = carreraObject.get("plazasDisponibles").intValue();
-                Integer plazasOcupadas = carreraObject.get("plazasOcupadas").intValue();
+                Integer plazasOcupadas;
+                if(carreraObject.has("plazasOcupadas"))
+                {
+                    System.out.println("ENTRAMOOOOS//////////////// - -- - - -  -");
+                    plazasOcupadas = carreraObject.get("plazasOcupadas").intValue();
+                }
+                else
+                    plazasOcupadas = null;
 
                 return new RestCarreraDto(carreraId, ciudadCelebracion, descripcion, precioInscripcion, fechaCelebracion,plazasDisponibles, plazasOcupadas);
             }
