@@ -25,7 +25,7 @@ public class OperationalErrorException extends Exception implements ConsoleOutpu
 
     @Override
     public void consoleOutput() {
-        System.out.println("ERROR :"+parameters.toString()
+        System.out.println("ERROR :"+parameters[0].toString()+" "+ parameters[1].toString()
                 +"\n"+causedBy.getMessage()+"\n");
     }
 }

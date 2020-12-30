@@ -38,6 +38,7 @@ public class JsonToClientExceptionConversor {
         return new InputValidationException(message);
     }
 
+
     public static Exception fromNotFoundErrorCode(InputStream ex) throws ParsingException {
         try {
             ObjectMapper objectMapper = ObjectMapperFactory.instance();
@@ -58,6 +59,7 @@ public class JsonToClientExceptionConversor {
             throw new ParsingException(e);
         }
     }
+
 
     private static InstanceNotFoundException toInstanceNotFoundException(JsonNode rootNode) {
         String instanceId = rootNode.get("instanceId").textValue();

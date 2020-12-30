@@ -1,0 +1,5 @@
+idInscripcion,idCarrera,dorsal,numTarjeta,fechaInscripcion,email,recogido
+1,1,1,0123456789111111,"2020-12-30 17:17:22",user1@udc.es,0
+2,1,2,0123456789222222,"2020-12-30 17:17:32",user2@udc.es,0
+3,2,1,0123456789222222,"2020-12-30 17:17:46",user2@udc.es,0
+4,2,2,0123456789111111,"2020-12-30 17:17:56",user1@udc.es,0

@@ -7,8 +7,11 @@ import es.udc.ws.isd060.runfic.client.service.dto.ClientInscripcionDto;
 import es.udc.ws.isd060.runfic.client.responses.ConsoleOutput;
 import es.udc.ws.isd060.runfic.client.responses.InvalidArgumentException;
 import es.udc.ws.isd060.runfic.client.responses.OperationalErrorException;
+import es.udc.ws.isd060.runfic.model.RunFicService.exceptions.CarreraYaCelebradaException;
+import es.udc.ws.isd060.runfic.model.RunFicService.exceptions.DorsalHaSidoRecogidoException;
 import es.udc.ws.util.exceptions.InputValidationException;
 import es.udc.ws.util.exceptions.InstanceNotFoundException;
+import es.udc.ws.util.json.exceptions.ParsingException;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -107,7 +110,7 @@ public class RunFicServiceClient {
 
             } else if ("-fi".equalsIgnoreCase(args[0])) {
 
-                validateArgs(args, 2, new int[]{});
+                //validateArgs(args, 2, new int[]{});
 
                 // [findInscripcion] RunFicServiceClient -fi String<email>
 
@@ -125,7 +128,7 @@ public class RunFicServiceClient {
                                 ", Recogido: " + inscripcionDto.isRecogido());
                     }
                 } catch (Exception ex) {
-                    ex.printStackTrace(System.err);
+                    ex.printStackTrace();
                 }
 
 
@@ -135,29 +138,23 @@ public class RunFicServiceClient {
             } else if ("-fr".equalsIgnoreCase(args[0])) {
                 // -findRace <raceId>
                 // CF : public Carrera findCarrera(Long idCarrera) throws InstanceNotFoundException;
-                validateArgs(args, 1, new int[]{});
+                //validateArgs(args, 1, new int[]{});
                 try {
                     executeFindRace(args, clientRunFicService);
-                } catch (OperationalErrorException | NumberFormatException e) {
-                    ((ConsoleOutput) e).consoleOutput();
                 } catch (Exception e) {
-                    throw new RuntimeException(e);
+                    e.printStackTrace();
                 }
             } else if ("-R".equalsIgnoreCase(args[0])) {
                 //  -deliverNumber <id|code> <creditCardNumber>
                 // CF : public Inscripcion recogerDorsal ( Integer codReserva , String numTarjeta );
-                validateArgs(args, 2, new int[]{});
+                //validateArgs(args, 2, new int[]{});
                 try {
                     executeDeliverNumber(args, clientRunFicService);
-                } catch (OperationalErrorException | NumberFormatException e) {
-                    ((ConsoleOutput) e).consoleOutput();
                 } catch (Exception e) {
-                    throw new RuntimeException(e);
+                    e.printStackTrace();
                 }
             }
 
-            // TODO Mejorar respuesta ( No es necesario para la práctica)
-        System.out.println("    OPERACION REALIZADA : "+args[0]+"\n");
 
         }
 
@@ -166,33 +163,31 @@ public class RunFicServiceClient {
     //**************************************************************************************************
 
     private static void executeDeliverNumber(String[] args , ClientRunFicService clientRunFicService)
-            throws InvalidArgumentException, OperationalErrorException {
+            throws InputValidationException, InstanceNotFoundException, CarreraYaCelebradaException, DorsalHaSidoRecogidoException {
         long codReserva ;
         String numTarjeta ;
 
         try {
             // Intentamos parsear el código de la reserva
             codReserva = Long.valueOf(args[1]);
-        } catch (NumberFormatException e) {
-            throw new InvalidArgumentException("codReserva", args[1]);
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new InputValidationException("codReserva");
         }
 
         try {
             // Intentamos obtener el Numero de la tarjeta
             numTarjeta=validateNumTarjeta(args[2]);
-        } catch ( InputValidationException e){
-            throw new InvalidArgumentException("numTarjeta",args[2]);
-        } catch ( Exception e) {
-            throw new RuntimeException(e);
+        } catch ( Exception e){
+            throw e;
         }
 
         try {
             // Intentamos llamar a recogerDorsal
-            clientRunFicService.recogerDorsal(codReserva, numTarjeta);
-        }  catch (InputValidationException | OperationalErrorException e) {
-            throw new OperationalErrorException(e,args);
+            ClientInscripcionDto inscripcionDto = clientRunFicService.recogerDorsal(codReserva, numTarjeta);
+            System.out.println("El dorsal "+inscripcionDto.getDorsal()+" ha sido recogido\n");
+        }  catch (InstanceNotFoundException | InputValidationException | CarreraYaCelebradaException
+                | DorsalHaSidoRecogidoException e) {
+            throw e;
         } catch ( Exception e) {
             throw new RuntimeException(e);
         }
@@ -200,23 +195,27 @@ public class RunFicServiceClient {
     }
 
     private static void executeFindRace(String[] args, ClientRunFicService clientRunFicService)
-            throws InvalidArgumentException, OperationalErrorException {
+            throws  InstanceNotFoundException {
         long idCarrera ;
 
+        // TODO DEVOLVER PLAZAS LIBRES
+        // TODO INSTANCE NOT FOUND
         try {
             // Intentamos parsear el id de la carrera
             idCarrera = Long.valueOf(args[1]);
         } catch (NumberFormatException e) {
-            throw new InvalidArgumentException("idCarrera", args[1]);
+            throw new InstanceNotFoundException(Long.class,"idCarrera");
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
 
         try {
             // Intentamos llamar a recogerDorsal
-            clientRunFicService.findCarrera(idCarrera);
+            ClientCarreraDto carrera = clientRunFicService.findCarrera(idCarrera);
+            System.out.println("Plazas Disponibles:"+carrera.getPlazasLibres()+
+                    " para la carrera con id : "+carrera.getIdCarrera()+"\n");
         }  catch (InstanceNotFoundException e) {
-            throw new OperationalErrorException(e,args);
+            throw e;
         } catch ( Exception e) {
             throw new RuntimeException(e);
         }

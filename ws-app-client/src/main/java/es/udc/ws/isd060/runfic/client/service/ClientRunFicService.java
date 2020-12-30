@@ -3,6 +3,8 @@ package es.udc.ws.isd060.runfic.client.service;
 import es.udc.ws.isd060.runfic.client.responses.OperationalErrorException;
 import es.udc.ws.isd060.runfic.client.service.dto.ClientCarreraDto;
 import es.udc.ws.isd060.runfic.client.service.dto.ClientInscripcionDto;
+import es.udc.ws.isd060.runfic.model.RunFicService.exceptions.CarreraYaCelebradaException;
+import es.udc.ws.isd060.runfic.model.RunFicService.exceptions.DorsalHaSidoRecogidoException;
 import es.udc.ws.util.exceptions.InputValidationException;
 import es.udc.ws.util.exceptions.InstanceNotFoundException;
 
@@ -39,10 +41,11 @@ public interface ClientRunFicService {
     //**************************************************************************************************
 
     // CT : GET http://XXX/ws-runfic-service/Carrera/[UN LONG]
-    public ClientCarreraDto findCarrera(Long idCarrera) throws InstanceNotFoundException;
+    public ClientCarreraDto findCarrera(Long idCarrera) throws InstanceNotFoundException, InputValidationException;
 
     // CT : POST http://XXX/ws-runfic-service/Inscripcion/Dorsal
-    public ClientInscripcionDto recogerDorsal(Long idInscripcion, String numTarjeta) throws InputValidationException, OperationalErrorException, InstanceNotFoundException;
+    public ClientInscripcionDto recogerDorsal(Long idInscripcion, String numTarjeta) throws InstanceNotFoundException,
+            InputValidationException, CarreraYaCelebradaException, DorsalHaSidoRecogidoException;
 
 
 }

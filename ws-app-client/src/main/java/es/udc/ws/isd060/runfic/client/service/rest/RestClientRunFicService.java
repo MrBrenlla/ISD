@@ -2,13 +2,14 @@ package es.udc.ws.isd060.runfic.client.service.rest;
 
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import es.udc.ws.isd060.runfic.client.responses.OperationalErrorException;
 import es.udc.ws.isd060.runfic.client.service.ClientRunFicService;
 import es.udc.ws.isd060.runfic.client.service.dto.ClientCarreraDto;
 import es.udc.ws.isd060.runfic.client.service.dto.ClientInscripcionDto;
+import es.udc.ws.isd060.runfic.client.service.dto.ClientRecogerdorsalDto;
 import es.udc.ws.isd060.runfic.client.service.rest.json.JsonToClientCarreraDtoConversor;
 import es.udc.ws.isd060.runfic.client.service.rest.json.JsonToClientExceptionConversor;
 import es.udc.ws.isd060.runfic.client.service.rest.json.JsonToClientInscripcionDtoConversor;
+import es.udc.ws.isd060.runfic.client.service.rest.json.JsonToClientRecogerDorsalDtoConversor;
 import es.udc.ws.isd060.runfic.model.RunFicService.exceptions.CarreraYaCelebradaException;
 import es.udc.ws.isd060.runfic.model.RunFicService.exceptions.DorsalHaSidoRecogidoException;
 import es.udc.ws.isd060.runfic.model.RunFicService.exceptions.NumTarjetaIncorrectoException;
@@ -33,9 +34,10 @@ public class RestClientRunFicService implements ClientRunFicService {
     private final static String ENDPOINT_ADDRESS_PARAMETER = "RestClientRunFicService.endpointAddress";
     private String endpointAddress;
 
-    private final String CARRERA_PATH_NAME = "Carrera";
-    private final String INSCRIPCION_PATH_NAME = "Inscripcion";
-    private final String RECOGERDORSAL_PATH_NAME = "Dorsal";
+
+    public final  String  CARRERA_SUBPATH = "Carrera";
+    public final  String  INSCRIPCION_SUBPATH = "Inscripcion";
+    public final  String  RECOGERDORSAL_SUBPATH = "Dorsal";
 
     // Nota LOS Métodos que se comentan por CT ( Called To) son los que envían la petición a la URL indicacda
 
@@ -129,9 +131,9 @@ public class RestClientRunFicService implements ClientRunFicService {
 
     // CT : GET http://XXX/ws-runfic-service/Carrera/[UN LONG]
     @Override
-    public ClientCarreraDto findCarrera(Long idCarrera) throws InstanceNotFoundException {
+    public ClientCarreraDto findCarrera(Long idCarrera) throws InstanceNotFoundException, InputValidationException {
         try {
-            HttpResponse httpResponse = Request.Get(getEndpointAddress() + this.CARRERA_PATH_NAME + "/" + idCarrera)
+            HttpResponse httpResponse = Request.Get(getEndpointAddress() + "Carrera/" + idCarrera)
                     .execute().returnResponse();
 
             validateStatusCode(HttpStatus.SC_OK, httpResponse);
@@ -139,9 +141,10 @@ public class RestClientRunFicService implements ClientRunFicService {
             ClientCarreraDto clientCarreraDto = JsonToClientCarreraDtoConversor
                     .toClientCarreraDto(httpResponse.getEntity().getContent());
 
-            return clientCarreraDto;
+            return JsonToClientCarreraDtoConversor.toClientCarreraDto(httpResponse.getEntity()
+                    .getContent());
 
-        } catch (InstanceNotFoundException e) {
+        } catch (InstanceNotFoundException | InputValidationException e) {
             throw e;
         } catch ( Exception e) {
             throw new RuntimeException(e);
@@ -150,12 +153,12 @@ public class RestClientRunFicService implements ClientRunFicService {
 
     // CT : POST http://XXX/ws-runfic-service/Inscripcion/Dorsal
     @Override
-    public ClientInscripcionDto recogerDorsal(Long idInscripcion, String numTarjeta) throws OperationalErrorException,
-            InstanceNotFoundException, InputValidationException {
-        ClientInscripcionDto result;
+    public ClientInscripcionDto recogerDorsal(Long idInscripcion, String numTarjeta) throws InstanceNotFoundException,
+            InputValidationException, CarreraYaCelebradaException, DorsalHaSidoRecogidoException {
         try {
-            HttpResponse httpResponse = Request.Get(getEndpointAddress() + this.INSCRIPCION_PATH_NAME + "/" +
-                    this.RECOGERDORSAL_PATH_NAME)
+            ClientRecogerdorsalDto clientRecogerdorsalDto = new ClientRecogerdorsalDto(idInscripcion,numTarjeta);
+            HttpResponse httpResponse = Request.Post(getEndpointAddress() + "Inscripcion/Dorsal" )
+                    . bodyStream(toInputStream(clientRecogerdorsalDto), ContentType.create("application/json"))
                     .execute().returnResponse();
 
             validateStatusCode(HttpStatus.SC_OK, httpResponse);
@@ -163,10 +166,11 @@ public class RestClientRunFicService implements ClientRunFicService {
             ClientInscripcionDto clientInscripcionDto = JsonToClientInscripcionDtoConversor
                     .toClientInscripcionDto(httpResponse.getEntity().getContent());
 
-            result = clientInscripcionDto;
+            return JsonToClientInscripcionDtoConversor.toClientInscripcionDto(httpResponse.getEntity()
+                    .getContent());
 
         } catch ( DorsalHaSidoRecogidoException | CarreraYaCelebradaException  e) {
-            throw new OperationalErrorException(e);
+            throw e;
         } catch(NumTarjetaIncorrectoException e){
             throw new InstanceNotFoundException(String.class,"NumTarjeta");
         } catch ( InstanceNotFoundException | InputValidationException e){
@@ -174,8 +178,8 @@ public class RestClientRunFicService implements ClientRunFicService {
         }catch (Exception e) {
             throw new RuntimeException(e);
         }
-        return result;
     }
+
 
 
     //**************************************************************************************************
@@ -221,6 +225,22 @@ public class RestClientRunFicService implements ClientRunFicService {
         }
 
     }
+
+    private InputStream toInputStream(ClientRecogerdorsalDto clientRecogerdorsalDto) {
+        try {
+
+            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+            ObjectMapper objectMapper = ObjectMapperFactory.instance();
+            objectMapper.writer(new DefaultPrettyPrinter()).writeValue(outputStream,
+                    JsonToClientRecogerDorsalDtoConversor.toObjectNode(clientRecogerdorsalDto));
+
+            return new ByteArrayInputStream(outputStream.toByteArray());
+
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 
     private void validateStatusCode(int successCode, HttpResponse response) throws Exception {
 

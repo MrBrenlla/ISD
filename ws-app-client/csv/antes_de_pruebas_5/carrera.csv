@@ -1,0 +1,5 @@
+idCarrera,ciudadCelebracion,descripcion,precioInscripcion,fechaAlta,fechaCelebracion,plazasDisponibles,plazasOcupadas
+1,"A Coruña","10Km. Campus Elviña",10,"2020-12-30 17:15:59","2021-08-15 11:00:00",2,2
+2,Santiago,"5Km. Plaza Obradoiro",5,"2020-12-30 17:16:08","2021-08-25 11:00:00",100,2
+3,"A Coruña","7Km. Playa Riazor",7,"2020-12-30 17:16:16","2021-10-15 11:00:00",200,0
+4,"A Coruña","20Km. Obelisco",20,"2020-12-30 17:16:25","2020-11-25 10:00:00",300,0
