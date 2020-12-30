@@ -1,5 +1,9 @@
 package es.udc.ws.isd060.runfic.client.responses;
 
+//**************************************************************************************************
+//**************************************** NO SE USA ***********************************************
+//**************************************************************************************************
+
 public class InvalidArgumentException extends Exception implements ConsoleOutput {
 
     private String expectedArgumentType;

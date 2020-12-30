@@ -89,10 +89,12 @@ public class InscripcionServlet extends HttpServlet {
             doPostRecogerDorsal(httpServletRequest,httpServletResponse);
         } else if ( subpathType == ServletUtils.POST_SUBPATH_TYPE_NULL ) {
             // BAD REQUEST
-            ServletUtils.writeServiceResponse(httpServletResponse, HttpServletResponse.SC_BAD_REQUEST,
+            ServletUtils.badRequestExceptionResponse(httpServletResponse,
+                    new InputValidationException("Invalid Request: " + "invalid path " + path));
+            /*ServletUtils.writeServiceResponse(httpServletResponse, HttpServletResponse.SC_BAD_REQUEST,
                     JsonToExceptionConversor.toInputValidationException(
                             new InputValidationException("Invalid Request: " + "invalid path " + path)),
-                    null);
+                    null);*/
             return;
         }
 
