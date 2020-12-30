@@ -43,7 +43,7 @@ public class RestRecogerdorsalDto {
     @Override
     public String toString() {
         return "RestRecogerdorsalDto{" +
-                "idInscripcion=" + codRecogerDorsal +
+                "codRecogerDorsal=" + codRecogerDorsal +
                 ", numTarjeta='" + numTarjeta + '\'' +
                 '}';
     }

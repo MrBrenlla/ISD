@@ -1,0 +1,17 @@
+//  http://XXX/ws-runfic-service/[carrera]
+	// GET [idCarrera]
+	InputValidationException -> SC_BAD_REQUEST
+        InstanceNotFoundException -> SC_NOT_FOUND
+	TODO OK -> SC_OK
+
+//  http://XXX/ws-runfic-service/[inscripcion]
+
+//  http://XXX/ws-runfic-service/[inscripcion]/[dorsal]
+	// POST
+	InputValidationException -> SC_BAD_REQUEST
+	DorsalHaSidoRecogidoException-> SC_FORBIDDEN
+	InstanceNotFoundException -> SC_NOT_FOUND
+	CarreraYaCelebradaException -> SC_GONE
+	NumTarjetaIncorrectoException -> SC_BAD_REQUEST
+	TODO OK -> SC_OK
+
