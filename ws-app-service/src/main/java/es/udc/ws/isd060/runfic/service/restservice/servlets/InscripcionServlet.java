@@ -40,6 +40,7 @@ public class InscripcionServlet extends HttpServlet {
     //****************************************** Brais *************************************************
     //**************************************************************************************************
 
+    // TODO CÓDIGOS DE ERROR CORRECTOS (SOLO DEVUELVES SC_BAD_REQUEST EN EXCEPCIONES)
     // CF : List<Inscripcion > findInscripcion (String email );
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -104,6 +105,7 @@ public class InscripcionServlet extends HttpServlet {
 
     // TU CODIGO TAL Y COMO LO TENÍAS PERO COMENTADO
 
+    // TODO CÓDIGOS DE ERROR CORRECTOS (SOLO DEVUELVES SC_BAD_REQUEST EN EXCEPCIONES)
     // CF : Inscripcion addInscripcion (String email , String numTarjeta , Carrera carrera );
     protected void doPostAddInscripcion(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
@@ -249,6 +251,8 @@ public class InscripcionServlet extends HttpServlet {
     //**************************************************************************************************
     //****************************************** Yago **************************************************
     //**************************************************************************************************
+
+    // NO ES NECESARIO , NO SE EXPONE EN CAPA SERVICIOS (PERO FUNCIONA)
     //removeInscripcion(Inscripcion inscripcion);
 
     @Override
@@ -256,7 +260,7 @@ public class InscripcionServlet extends HttpServlet {
         String path = ServletUtils.normalizePath(req.getPathInfo());
         if (path == null || path.length() == 0) {
             ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_BAD_REQUEST, JsonToExceptionConversor
-                            .toInputValidationException(new InputValidationException("Invalid Request: CARLOS 1" + "invalid inscripcion id")),
+                            .toInputValidationException(new InputValidationException("Invalid Request: " + "invalid inscripcion id")),
                     null);
             return;
         }
@@ -267,7 +271,7 @@ public class InscripcionServlet extends HttpServlet {
         } catch (NumberFormatException ex) {
             ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_BAD_REQUEST,
                     JsonToExceptionConversor.toInputValidationException(new InputValidationException(
-                            "Invalid Request: CARLOS 2" + "invalid inscripcion id '" + inscripcionIdAsString + "'")),
+                            "Invalid Request: " + "invalid inscripcion id '" + inscripcionIdAsString + "'")),
                     null);
 
             return;

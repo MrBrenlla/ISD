@@ -55,6 +55,6 @@ mvn exec:java -Dexec.mainClass="es.udc.ws.isd060.runfic.client.ui.RunFicServiceC
 
 //7.-
 
-mvn exec:java -Dexec.mainClass="es.udc.ws.isd060.runfic.client.ui.RunFicServiceClient" -Dexec.args="-fr 2 "     // Plazas libres=98 (si se ejecutó el paso 4a) o 100 (si se ejecutó el 4b)  
+mvn exec:java -Dexec.mainClass="es.udc.ws.isd060.runfic.client.ui.RunFicServiceClient" -Dexec.args="-fr 2 "     // Plazas libres=98 (si se ejecutó el paso 4a)   
 mvn exec:java -Dexec.mainClass="es.udc.ws.isd060.runfic.client.ui.RunFicServiceClient" -Dexec.args="-fr 9 "     // Falla (no se encuentra)
 
