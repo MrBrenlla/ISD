@@ -110,7 +110,7 @@ public class RestClientRunFicService implements ClientRunFicService {
     @Override
     public List<ClientInscripcionDto> findIscripcion(String email) {
         try {
-            HttpResponse response = Request.Get(getEndpointAddress() + "Inscripcion?email="
+            HttpResponse response = Request.Get(getEndpointAddress() + "Inscripcion?Email="
                     +URLEncoder.encode(email, "UTF-8")).
                     execute().returnResponse();
             validateStatusCode(HttpStatus.SC_OK, response);
