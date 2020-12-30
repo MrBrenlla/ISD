@@ -89,10 +89,23 @@ public class CarreraServlet extends HttpServlet {
         if (path == null || path.length() == 0) {
             String fechaCelebracion = req.getParameter("fechaCelebracion");
             String ciudad = req.getParameter("ciudadCelebracion");
-            List<Carrera> carreras = RunFicServiceFactory.getService().findCarrera(LocalDateTime.parse(fechaCelebracion),ciudad);
-            List<RestCarreraDto> carreraDtos = CarreraToRestCarreraDtoConversor.toRestCarreraDtos(carreras);
-            ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_OK,
-                    JsonToRestCarreraDtoConversor.toArrayNode(carreraDtos), null);
+            if(ciudad == null || ciudad.trim().isEmpty()) //Check if both mandatory arguments are not null
+            {
+                try {
+                    throw new InputValidationException("CiudadCelebración cannot be null");
+                } catch (InputValidationException e) {
+                    e.printStackTrace();
+                    ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_BAD_REQUEST,
+                            JsonToExceptionConversor.toInputValidationException(e), null);
+                }
+            }
+            else
+            {
+                List<Carrera> carreras = RunFicServiceFactory.getService().findCarrera(LocalDateTime.parse(fechaCelebracion),ciudad);
+                List<RestCarreraDto> carreraDtos = CarreraToRestCarreraDtoConversor.toRestCarreraDtos(carreras);
+                ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_OK,
+                        JsonToRestCarreraDtoConversor.toArrayNode(carreraDtos), null);
+            }
         }
         //***************************************CARLOS***********************************************
         else {

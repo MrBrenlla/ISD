@@ -61,6 +61,6 @@ public class ClientCarreraDto {
     public String toString() {
         return "CarreraDto [idCarrera=" + idCarrera + ", ciudadCelebracion=" + ciudadCelebracion
                 + ", descripcion=" + descripcion + " precioInscripcion= " + precioInscripcion + " fechaCelebracion= "
-                + fechaCelebracion + ", plazasDisponibles=" + plazasDisponibles + "]";
+                + fechaCelebracion + ", plazasDisponibles=" + plazasDisponibles + ", plazasLibres=" + plazasLibres + "]";
     }
 }

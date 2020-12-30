@@ -29,8 +29,7 @@ public class JsonToRestCarreraDtoConversor {
                 put("precioInscripcion", carrera.getPrecioInscripcion()).
                 put("fechaCelebracion", carrera.getFechaCelebracion().toString()).
                 put("plazasDisponibles", carrera.getPlazasDisponibles());
-            System.out.println("ENTRAMOOOOS//////////////// - -- - - -  -  11");
-            carreraObject.put("plazasOcupadas", carrera.getPlazasOcupadas());
+        carreraObject.put("plazasOcupadas", carrera.getPlazasOcupadas());
         return carreraObject;
     }
 
@@ -67,7 +66,6 @@ public class JsonToRestCarreraDtoConversor {
                 Integer plazasOcupadas;
                 if(carreraObject.has("plazasOcupadas"))
                 {
-                    System.out.println("ENTRAMOOOOS//////////////// - -- - - -  -");
                     plazasOcupadas = carreraObject.get("plazasOcupadas").intValue();
                 }
                 else

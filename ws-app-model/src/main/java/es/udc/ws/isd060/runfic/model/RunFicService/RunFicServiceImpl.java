@@ -57,29 +57,36 @@ public class RunFicServiceImpl implements RunFicService {
 */
 
     private void validateCarrera(Carrera carrera) throws InputValidationException {
+
         if(carrera.getPrecioInscripcion() < 0.0)
         {
-            throw new InputValidationException("PrecioInscripcion is not valid is not valid");
+            throw new InputValidationException("PrecioInscripcion is not valid");
         }
 
         if(carrera.getCiudadCelebracion() == null || carrera.getCiudadCelebracion().length() == 0)
         {
-            throw new InputValidationException("CiudadCelebracion is not valid is not valid");
+            throw new InputValidationException("CiudadCelebracion is not valid");
         }
 
         if(carrera.getDescripcion() == null || carrera.getDescripcion().length() == 0)
         {
-            throw new InputValidationException("Descripcion is not valid is not valid");
+            throw new InputValidationException("Descripcion is not valid");
+        }
+        else {
+            if(carrera.getFechaCelebracion().isBefore(LocalDateTime.now()))
+            {
+                throw new InputValidationException("FechaCelebración is not valid");
+            }
         }
 
-        if(carrera.getPlazasDisponibles() < 0)
+        if(carrera.getPlazasDisponibles() <= 0)
         {
-            throw new InputValidationException("PlazasDisponibles is not valid is not valid");
+            throw new InputValidationException("PlazasDisponibles is not valid, should be more than 0");
         }
 
         if(carrera.getPlazasOcupadas() < 0)
         {
-            throw new InputValidationException("PlazasOcupadas is not valid is not valid");
+            throw new InputValidationException("PlazasOcupadas is not valid");
         }
 
 

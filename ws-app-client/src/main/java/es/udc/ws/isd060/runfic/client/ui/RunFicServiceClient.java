@@ -30,7 +30,6 @@ public class RunFicServiceClient {
                 validateArgs(args, 6, new int[] {3, 5});
 
                 // [add] RunFicServiceClient -a String<ciudadCelebracion> String<descripcion> Float<precioInscripcion> LocalDateTime<fechaCelebracion> Integer<plazasDisponibles>
-                // [add] RunFicServiceClient -a String<ciudadCelebracion> String<descripcion> Float<precioInscripcion> LocalDateTime<fechaCelebracion> Integer<plazasDisponibles>
 
                 try {
                     Long idCarrera = clientRunFicService.addCarrera(new ClientCarreraDto(null,
@@ -63,48 +62,39 @@ public class RunFicServiceClient {
                 } catch (Exception ex) {
                     ex.printStackTrace(System.err);
                 }
+            } else if ("-fl".equalsIgnoreCase(args[0])) {
                 //**************************************************************************************************
                 //****************************************** Yago *************************************************
                 //**************************************************************************************************
-            } else if ("-r".equalsIgnoreCase(args[0])) {
-
-                validateArgs(args, 2, new int[]{1});
-
-                // [remove] RunFicServiceClient -r Long<idInscripcion>
-
-                try {
-                    clientRunFicService.removeInscripcion(Long.parseLong(args[1]));
-
-                    System.out.println("Inscripcion with id " + args[1] +
-                            " removed sucessfully");
-
-                } catch (NumberFormatException | InstanceNotFoundException ex) {
-                    ex.printStackTrace(System.err);
-                } catch (Exception ex) {
-                    ex.printStackTrace(System.err);
-                }
-                //**************************************************************************************************
-                //****************************************** Yago *************************************************
-                //**************************************************************************************************
-            } else if ("-f".equalsIgnoreCase(args[0])) {
 
                 validateArgs(args, 3, new int[]{});
 
-                // [find-ByDateandCity] RunFicServiceClient -f LocalDateTime<fechaCelebracion> String<ciudadCelebracion>
+                // [find-ByDateandCity] RunFicServiceClient -fl LocalDateTime<fechaCelebracion> String<ciudadCelebracion>
 
                 try {
-                    List<ClientCarreraDto> carreras = clientRunFicService.findCarrera(LocalDateTime.parse(args[1]),args[2]);
-                    System.out.println("Found " + carreras.size() +
-                            " carrera(s) with fechaCelebracion '" + args[1] + "' and ciudadCelebracion '"+args[2]+"'");
-                    for (int i = 0; i < carreras.size(); i++) {
-                        ClientCarreraDto carreraDto = carreras.get(i);
-                        System.out.println("Id: " + carreraDto.getIdCarrera() +
-                                ", ciudadCelebracion: " + carreraDto.getCiudadCelebracion() +
-                                ", descripcion: " + carreraDto.getDescripcion() +
-                                ", precioInscripcion: " + carreraDto.getPrecioInscripcion() +
-                                ", fechaCelebracion: " + carreraDto.getFechaCelebracion() +
-                                ", plazasDisponibles: " + carreraDto.getPlazasDisponibles()+
-                                ", plazasLibres: " + carreraDto.getPlazasLibres());
+                    if(args[2] == null || args[2].trim().isEmpty()) //Mandatory CiudadCelebracion
+                    {
+                        try {
+                            throw new InputValidationException("CiudadCelebración cannot be null");
+                        } catch (InputValidationException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    else
+                    {
+                        List<ClientCarreraDto> carreras = clientRunFicService.findCarrera(LocalDateTime.parse(args[1]),args[2]);
+                        System.out.println("Found " + carreras.size() +
+                                " carrera(s) with fechaCelebracion '" + args[1] + "' and ciudadCelebracion '"+args[2]+"'");
+                        for (int i = 0; i < carreras.size(); i++) {
+                            ClientCarreraDto carreraDto = carreras.get(i);
+                            System.out.println("Id: " + carreraDto.getIdCarrera() +
+                                    ", ciudadCelebracion: " + carreraDto.getCiudadCelebracion() +
+                                    ", descripcion: " + carreraDto.getDescripcion() +
+                                    ", precioInscripcion: " + carreraDto.getPrecioInscripcion() +
+                                    ", fechaCelebracion: " + carreraDto.getFechaCelebracion() +
+                                    ", plazasDisponibles: " + carreraDto.getPlazasDisponibles()+
+                                    ", plazasLibres: " + carreraDto.getPlazasLibres());
+                        }
                     }
                 } catch (Exception ex) {
                     ex.printStackTrace(System.err);
@@ -264,12 +254,12 @@ public class RunFicServiceClient {
         System.exit(-1);
     }
 
+
     public static void printUsage() {
         // TODO ARREGLAR USAGE
         System.err.println("Usage:\n" +
                 "    [add]RunFicServiceClient -a <ciudadCelebracion> <descripcion> <precioInscripcion> <fechaCelebracion> <plazasDisponibles>\n" +
-                "    [remove] RunFicServiceClient -r <idInscripcion>\n" +
-                "    [find]   RunFicServiceClient -f <fechaCelebracion> <ciudadCelebracion>\n)" +
+                "    [find]   RunFicServiceClient -fl <fechaCelebracion> <ciudadCelebracion>\n)" +
                 " [findRace] RunFicServiceClient -fr <raceId>\n "+
                 " [deliverNumber] RunFicServiceClient -R <id|code> <creditCardNumber>\n ");
     }

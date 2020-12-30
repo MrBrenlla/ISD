@@ -532,17 +532,18 @@ public class RunFicServiceTest {
         carreras.add(carrera1);
         Carrera carrera2 = createCarrera(getValidCarrera_byDate("Palma de Mallorca", fecha_2));
         carreras.add(carrera2);
-        Carrera carrera_additional = createCarrera(getValidCarrera_byDate("León", fecha_3));
-        carreras.add(carrera_additional);
 
         try {
 
             List<Carrera> foundCarreras = runFicService.findCarrera(fecha);
-            assertEquals(carreras.size() - 1, foundCarreras.size());
+            assertEquals(carreras.size(), foundCarreras.size());
 
             //Carreras Out Date - (Ya celebradas)
             foundCarreras = runFicService.findCarrera(fecha_3);
-            assertEquals(0, foundCarreras.size());
+            assertEquals(0, foundCarreras.size()); //El resultado = 0, ya que no se pueden añadir carreras anteriores al día de hoy - InputValidationException
+
+            //Comprobamos que no se puedan añadir carreras anteriores al día de hoy:
+            assertThrows(RuntimeException.class, () -> createCarrera(getValidCarrera_byDate("León", fecha_3)));
 
             //Find only by: Date
             Carrera carrera3 = createCarrera(getValidCarrera_byDate("Tenerife", fecha_4));
@@ -981,7 +982,7 @@ public class RunFicServiceTest {
         Carrera carrera = null;
         try {
             carrera = getValidCarrera("Vigo");
-            carrera.setPlazasDisponibles(0);
+            carrera.setPlazasOcupadas(carrera.getPlazasDisponibles());
             carrera = createCarrera(carrera);
             final Long id = carrera.getIdCarrera();
             assertThrows(SinPlazas.class, () -> runFicService.addInscripcion("b@gmail.com", "1234567812345678", id));

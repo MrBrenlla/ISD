@@ -1,20 +1,27 @@
 //1.-
 
+mvn exec:java -Dexec.mainClass="es.udc.ws.isd060.runfic.client.ui.RunFicServiceClient" -Dexec.args="-a 'A Coruña' '10Km. Campus Elviña' 10 2021-08-15T11:00 2"   // raceId=1 creada
+mvn exec:java -Dexec.mainClass="es.udc.ws.isd060.runfic.client.ui.RunFicServiceClient" -Dexec.args="-a 'Santiago' '5Km. Plaza Obradoiro' 5 2021-08-25T11:00 100" // raceId=2 creado
+mvn exec:java -Dexec.mainClass="es.udc.ws.isd060.runfic.client.ui.RunFicServiceClient" -Dexec.args="-a 'A Coruña' '7Km. Playa Riazor' 7 2021-10-15T11:00 200" // raceId=3 creado
+mvn exec:java -Dexec.mainClass="es.udc.ws.isd060.runfic.client.ui.RunFicServiceClient" -Dexec.args="-a 'A Coruña' '20Km. Obelisco' 20 2021-10-25T11:00 300" // raceId=4 creado
 
-
+mvn exec:java -Dexec.mainClass="es.udc.ws.isd060.runfic.client.ui.RunFicServiceClient" -Dexec.args="-a 'A Coruña' '10Km. Torre Hércules' 10 2020-08-14T11:00 100"   // Falla (fecha inválida)
+mvn exec:java -Dexec.mainClass="es.udc.ws.isd060.runfic.client.ui.RunFicServiceClient" -Dexec.args="-a 'A Coruña' '10Km. Torre Hércules' -2 2021-08-14T11:00 100"   // Falla (precio inválido)
+mvn exec:java -Dexec.mainClass="es.udc.ws.isd060.runfic.client.ui.RunFicServiceClient" -Dexec.args="-a 'A Coruña' '10Km. Torre Hércules' 10 2021-08-14T11:00 0"   // Falla (partic. inválidos)
+mvn exec:java -Dexec.mainClass="es.udc.ws.isd060.runfic.client.ui.RunFicServiceClient" -Dexec.args="-a ' ' '10Km. Torre Hércules' 10 2021-08-14T11:00 100"   // Falla (ciudad inválida)
+mvn exec:java -Dexec.mainClass="es.udc.ws.isd060.runfic.client.ui.RunFicServiceClient" -Dexec.args="-a 'A Coruña' ' ' 10 2021-08-14T11:00 1000"   // Falla (descripción inválida)
 
 
 //2.-
-
-
-
+UPDATE Carrera SET fechaCelebracion="2020-11-25 10:00" WHERE idCarrera=4;
 
 
 //3.-
-
-
-
-
+mvn exec:java -Dexec.mainClass="es.udc.ws.isd060.runfic.client.ui.RunFicServiceClient" -Dexec.args="-fl 2021-12-15T00:00:00 'A Coruña'"    // Devuelve carreras con id 1 (plazas libres=2) y con id 3 (plazas libres=200)
+mvn exec:java -Dexec.mainClass="es.udc.ws.isd060.runfic.client.ui.RunFicServiceClient" -Dexec.args="-fl 2021-08-31T00:00:00 'A Coruña'"    // Devuelve carrera con id 1 (plazas libres=2)
+mvn exec:java -Dexec.mainClass="es.udc.ws.isd060.runfic.client.ui.RunFicServiceClient" -Dexec.args="-fl 2021-07-31T00:00:00 'Santiago'"   // Devuelve lista vacía
+mvn exec:java -Dexec.mainClass="es.udc.ws.isd060.runfic.client.ui.RunFicServiceClient" -Dexec.args="-fl 2020-06-24T00:00:00 'Santiago'"   // Falla (fecha incorrecta) o devuelve lista vacía
+mvn exec:java -Dexec.mainClass="es.udc.ws.isd060.runfic.client.ui.RunFicServiceClient" -Dexec.args="-fl 2021-08-31T00:00:00 ' '"   // Falla (ciudad obligatoria)
 
 
 //4.-

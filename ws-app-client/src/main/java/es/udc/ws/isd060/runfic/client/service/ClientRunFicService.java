@@ -30,8 +30,6 @@ public interface ClientRunFicService {
     // CT : GET http://XXX/ws-runfic-service/Carrera?fechaCelebracion=[fechaCelebracion]&ciudadCelebracion[ciudad]
     public List<ClientCarreraDto> findCarrera(LocalDateTime fechaCelebracion, String ciudad);
 
-    // Hay Que Borrarlo , no se expone en la interfaz
-    public void removeInscripcion(Long idInscripcion)  throws InstanceNotFoundException;
 
     //**************************************************************************************************
     //****************************************** Carlos *************************************************

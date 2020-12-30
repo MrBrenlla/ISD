@@ -63,23 +63,6 @@ public class RestClientRunFicService implements ClientRunFicService {
 
     }
 
-    // Hay Que Borrarlo , no se expone en la interfaz
-    @Override
-    public void removeInscripcion(Long idInscripcion)  throws InstanceNotFoundException {
-        try {
-
-            HttpResponse response = Request.Delete(getEndpointAddress() + "Inscripcion/" + idInscripcion).
-                    execute().returnResponse();
-
-            validateStatusCode(HttpStatus.SC_NO_CONTENT, response);
-
-        } catch (InstanceNotFoundException e) {
-            throw e;
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
     // CT : GET http://XXX/ws-runfic-service/Carrera?fechaCelebracion=[fechaCelebracion]&ciudadCelebracion[ciudad]
     @Override
     public List<ClientCarreraDto> findCarrera(LocalDateTime fechaCelebracion, String ciudad) {
