@@ -40,6 +40,7 @@ public class InscripcionServlet extends HttpServlet {
     //****************************************** Brais *************************************************
     //**************************************************************************************************
 
+    // TODO CÓDIGOS DE ERROR CORRECTOS (SOLO DEVUELVES SC_BAD_REQUEST EN EXCEPCIONES)
     // CF : List<Inscripcion > findInscripcion (String email );
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -104,6 +105,7 @@ public class InscripcionServlet extends HttpServlet {
 
     // TU CODIGO TAL Y COMO LO TENÍAS PERO COMENTADO
 
+    // TODO CÓDIGOS DE ERROR CORRECTOS (SOLO DEVUELVES SC_BAD_REQUEST EN EXCEPCIONES)
     // CF : Inscripcion addInscripcion (String email , String numTarjeta , Carrera carrera );
     protected void doPostAddInscripcion(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
@@ -178,7 +180,6 @@ public class InscripcionServlet extends HttpServlet {
     private void doPostRecogerDorsal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse)
             throws ServletException, IOException {
         // NOTA : recogerDorsal pasa los parámetros por el cuerpo
-        //TODO ORDEN EXCEPCIONES
         RestRecogerdorsalDto restRecogerdorsalDto ;
         try {
             // Generamos el dto a partir del inputStream de la request
@@ -201,18 +202,18 @@ public class InscripcionServlet extends HttpServlet {
             // BAD REQUEST
             ServletUtils.badRequestExceptionResponse(httpServletResponse,ex);
             return;
-        } catch (DorsalHaSidoRecogidoException e) {
+        } catch (NumTarjetaIncorrectoException  e) {
             ServletUtils.writeCustomExceptionResponse(e,httpServletResponse,
-                    HttpServletResponse.SC_FORBIDDEN,"DorsalHaSidoRecogidoException");
-        } catch (InstanceNotFoundException e) {
+                    HttpServletResponse.SC_BAD_REQUEST,"NumTarjetaIncorrectoException");
+        } catch ( InstanceNotFoundException  e) {
            ServletUtils.writeCustomExceptionResponse(e,httpServletResponse,
                     HttpServletResponse.SC_NOT_FOUND,"InstanceNotFoundException");
         } catch (CarreraYaCelebradaException e) {
             ServletUtils.writeCustomExceptionResponse(e,httpServletResponse,
                     HttpServletResponse.SC_GONE,"CarreraYaCelebradaException");
-        } catch (NumTarjetaIncorrectoException e) {
+        } catch (DorsalHaSidoRecogidoException e) {
             ServletUtils.writeCustomExceptionResponse(e,httpServletResponse,
-                    HttpServletResponse.SC_NOT_FOUND,"NumTarjetaIncorrectoException");
+                    HttpServletResponse.SC_FORBIDDEN,"DorsalHaSidoRecogidoException");
         } catch ( Exception e) {
             // No debería pasar
             throw new RuntimeException(e);
@@ -237,13 +238,12 @@ public class InscripcionServlet extends HttpServlet {
         headers.put("Location", inscripcionUrl);
 
         try {
-            es.udc.ws.util.servlet.ServletUtils.writeServiceResponse(httpServletResponse, HttpServletResponse.SC_CREATED,
+            es.udc.ws.util.servlet.ServletUtils.writeServiceResponse(httpServletResponse, HttpServletResponse.SC_OK,
                     JsonToRestInscripcionDtoConversor.toObjectNode(restInscripcionDto), headers);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
 
     }
-
 
 }

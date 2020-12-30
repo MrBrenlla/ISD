@@ -40,6 +40,7 @@ public class CarreraServlet extends HttpServlet {
     //****************************************** Yago *************************************************
     //**************************************************************************************************
 
+    // TODO CÓDIGOS DE ERROR CORRECTOS (SOLO DEVUELVES SC_BAD_REQUEST EN EXCEPCIONES)
     // CF : public Carrera addCarrera (Carrera carrera);
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String path = ServletUtils.normalizePath(req.getPathInfo());
