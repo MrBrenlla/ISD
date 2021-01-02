@@ -110,7 +110,7 @@ public class RunFicServiceClient {
 
             } else if ("-fi".equalsIgnoreCase(args[0])) {
 
-                //validateArgs(args, 2, new int[]{});
+                validateArgs(args, 2, new int[]{});
 
                 // [findInscripcion] RunFicServiceClient -fi String<email>
 
