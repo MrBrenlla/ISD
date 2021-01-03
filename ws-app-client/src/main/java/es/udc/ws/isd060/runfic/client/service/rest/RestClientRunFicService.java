@@ -154,7 +154,7 @@ public class RestClientRunFicService implements ClientRunFicService {
     // CT : POST http://XXX/ws-runfic-service/Inscripcion/Dorsal
     @Override
     public ClientInscripcionDto recogerDorsal(Long idInscripcion, String numTarjeta) throws InstanceNotFoundException,
-            InputValidationException, CarreraYaCelebradaException, DorsalHaSidoRecogidoException {
+            InputValidationException, CarreraYaCelebradaException, DorsalHaSidoRecogidoException ,NumTarjetaIncorrectoException{
         try {
             ClientRecogerdorsalDto clientRecogerdorsalDto = new ClientRecogerdorsalDto(idInscripcion,numTarjeta);
             HttpResponse httpResponse = Request.Post(getEndpointAddress() + "Inscripcion/Dorsal" )
@@ -172,7 +172,7 @@ public class RestClientRunFicService implements ClientRunFicService {
         } catch ( DorsalHaSidoRecogidoException | CarreraYaCelebradaException  e) {
             throw e;
         } catch(NumTarjetaIncorrectoException e){
-            throw new InstanceNotFoundException(String.class,"NumTarjeta");
+            throw e;
         } catch ( InstanceNotFoundException | InputValidationException e){
             throw e;
         }catch (Exception e) {
