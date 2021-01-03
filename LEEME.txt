@@ -11,4 +11,4 @@
 | 3  | Carlos Fernández Armán                   | 2,6          |
  --------------------------------------------------------------
 
-NOTA : El Script que prepara las BBDD no crea los usuarios ni las tablas . Perdón por las molestias.
+NOTA : El Script que prepara las BBDD no crea los usuarios . Perdón por las molestias.
