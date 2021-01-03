@@ -7,7 +7,6 @@ import es.udc.ws.isd060.runfic.service.restservice.dto.CarreraToRestCarreraDtoCo
 import es.udc.ws.isd060.runfic.service.restservice.dto.RestCarreraDto;
 import es.udc.ws.isd060.runfic.service.restservice.json.JsonToExceptionConversor;
 import es.udc.ws.isd060.runfic.service.restservice.json.JsonToRestCarreraDtoConversor;
-import es.udc.ws.isd060.runfic.service.restservice.servlets.util.Debug;
 import es.udc.ws.util.exceptions.InputValidationException;
 import es.udc.ws.util.exceptions.InstanceNotFoundException;
 import es.udc.ws.util.json.exceptions.ParsingException;

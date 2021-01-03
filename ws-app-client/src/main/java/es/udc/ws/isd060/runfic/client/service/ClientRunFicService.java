@@ -1,6 +1,5 @@
 package es.udc.ws.isd060.runfic.client.service;
 
-import es.udc.ws.isd060.runfic.client.responses.OperationalErrorException;
 import es.udc.ws.isd060.runfic.client.service.dto.ClientCarreraDto;
 import es.udc.ws.isd060.runfic.client.service.dto.ClientInscripcionDto;
 import es.udc.ws.isd060.runfic.model.RunFicService.exceptions.CarreraYaCelebradaException;
