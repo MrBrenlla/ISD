@@ -1,4 +1,4 @@
-
+﻿
  --------------------------------------------------
 | LISTA DE ALUMNOS Y FUNCIONALIDADES IMPLEMENTADAS |
  --------------------------------------------------
@@ -10,3 +10,5 @@
 | 2  | Brais García Brenlla                     | 4,5          |
 | 3  | Carlos Fernández Armán                   | 2,6          |
  --------------------------------------------------------------
+
+NOTA : El Script que prepara las BBDD no crea los usuarios ni las tablas . Perdón por las molestias.
