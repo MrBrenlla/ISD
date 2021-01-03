@@ -11,4 +11,5 @@
 | 3  | Carlos Fernández Armán                   | 2,6          |
  --------------------------------------------------------------
 
-NOTA : El Script que prepara las BBDD no crea los usuarios . Perdón por las molestias.
+NOTA : El Script que prepara las BBDD no crea los usuarios , si hiciese falta inicializarlas se pueden usar ejecutando los comandos
+indicados en INICIALIZAR BBDD desde la raiz del proyecto . Perdón por las molestias.

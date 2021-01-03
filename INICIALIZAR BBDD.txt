@@ -1,0 +1,11 @@
+mysqladmin -u root create ws -p
+    
+mysqladmin -u root create wstest -p
+
+mysql -u ws --password=ws ws
+      
+exit
+
+mysql -u ws --password=ws wstest
+      
+exit
