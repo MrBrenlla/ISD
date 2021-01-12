@@ -13,25 +13,24 @@ public class ClientInscripcionDtoToThriftInscripcionDtoConversor {
         ClientInscripcionDto i) {
 
         Long InscripcionId = i.getIdInscripcion();
-
         return new ThriftInscripcionDto(
             InscripcionId == null ? -1 : InscripcionId.longValue(),
-            i.getIdCarrera().longValue(),i.getTarjeta(),i.getEmail(),i.getDorsal().intValue(),i.isRecogido(),i.getFechaInscripcion().toString());
-
+            i.getIdCarrera().longValue(),i.getTarjeta(),i.getEmail(),0,false,
+                i.getFechaInscripcion()==null ? "" : i.getFechaInscripcion().toString());
     }
 
     public static List<ClientInscripcionDto> toClientInscripcionDto(List<ThriftInscripcionDto> inscropcions) {
 
-        List<ClientInscripcionDto> clientMovieDtos = new ArrayList<>(inscropcions.size());
+        List<ClientInscripcionDto> clientInscripcionDtos = new ArrayList<>(inscropcions.size());
 
         for (ThriftInscripcionDto i : inscropcions) {
-            clientMovieDtos.add(toClientMovieDto(i));
+            clientInscripcionDtos.add(toClientInscripcionDto(i));
         }
-        return clientMovieDtos;
+        return clientInscripcionDtos;
 
     }
 
-    private static ClientInscripcionDto toClientMovieDto(ThriftInscripcionDto i) {
+    public static ClientInscripcionDto toClientInscripcionDto(ThriftInscripcionDto i) {
 
         return new ClientInscripcionDto(i.getInscripcionId(),i.getDorsal(),i.carreraId,i.email,i.tarjeta,LocalDateTime.parse(i.fechaInscripcion),i.recogido);
 

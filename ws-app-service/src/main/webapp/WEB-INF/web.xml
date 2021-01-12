@@ -40,17 +40,16 @@
 
    <!-- Thrift service -->
    <!-- Fill XXX and uncomment the following lines --> 
-   <!--
+
     <servlet>
-        <servlet-name>ThriftXXXServiceServlet</servlet-name>
-        <servlet-class>es.udc.ws.app.thriftservice.ThriftXXXServiceServlet</servlet-class>
+        <servlet-name>ThriftRunFicServiceServlet</servlet-name>
+        <servlet-class>es.udc.ws.isd060.runfic.service.thriftservice.ThriftRunFicServiceServlet</servlet-class>
     </servlet>
 
     <servlet-mapping>
-        <servlet-name>ThriftXXXServiceServlet</servlet-name>
-        <url-pattern>/thrift/XXXservice</url-pattern>
+        <servlet-name>ThriftRunFicServiceServlet</servlet-name>
+        <url-pattern>/thrift/RunFicService</url-pattern>
     </servlet-mapping>
-    -->
 
     <!-- General configuration -->
 

@@ -36,7 +36,11 @@ public class ThriftClientRunFicService implements ClientRunFicService {
 
             transport.open();
 
-            return client.addInscripcion(ClientInscripcionDtoToThriftInscripcionDtoConversor.toThriftInscripcionDto(inscripcion));
+            ThriftInscripcionDto i = ClientInscripcionDtoToThriftInscripcionDtoConversor.toThriftInscripcionDto(inscripcion);
+
+            i.setFechaInscripcion(LocalDateTime.now().toString());
+
+            return client.addInscripcion(i);
 
         } catch (ThriftInputValidationException e) {
             throw new InputValidationException(e.getMessage());
