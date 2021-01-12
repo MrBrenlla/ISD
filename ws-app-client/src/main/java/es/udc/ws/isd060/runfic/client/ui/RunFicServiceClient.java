@@ -9,7 +9,6 @@ import es.udc.ws.isd060.runfic.model.RunFicService.exceptions.DorsalHaSidoRecogi
 import es.udc.ws.isd060.runfic.model.RunFicService.exceptions.NumTarjetaIncorrectoException;
 import es.udc.ws.util.exceptions.InputValidationException;
 import es.udc.ws.util.exceptions.InstanceNotFoundException;
-import es.udc.ws.util.json.exceptions.ParsingException;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -113,7 +112,7 @@ public class RunFicServiceClient {
                 // [findInscripcion] RunFicServiceClient -fi String<email>
 
                 try {
-                    List<ClientInscripcionDto> ins = clientRunFicService.findIscripcion(args[1]);
+                    List<ClientInscripcionDto> ins = clientRunFicService.findInscripcion(args[1]);
                     System.out.println("Found " + ins.size() +
                             " Inscriptions(s) with email '" + args[1] + "'");
                     for (int i = 0; i < ins.size(); i++) {

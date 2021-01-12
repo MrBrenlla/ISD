@@ -23,7 +23,7 @@ public interface ClientRunFicService {
     public Long addInscripcion(ClientInscripcionDto inscripcion) throws InputValidationException;
 
     // CT : GET http://XXX/ws-runfic-service/Inscripcion?email=[email]
-    public List<ClientInscripcionDto> findIscripcion(String email);
+    public List<ClientInscripcionDto> findInscripcion(String email);
 
     //**************************************************************************************************
     //****************************************** Yago *************************************************

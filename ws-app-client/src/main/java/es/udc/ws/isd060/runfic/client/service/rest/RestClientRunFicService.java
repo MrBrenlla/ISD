@@ -98,7 +98,7 @@ public class RestClientRunFicService implements ClientRunFicService {
 
             validateStatusCode(HttpStatus.SC_CREATED, response);
 
-            return JsonToClientInscripcionDtoConversor.toClientInscripcionDto(response.getEntity().getContent()).getIdCarrera();
+            return JsonToClientInscripcionDtoConversor.toClientInscripcionDto(response.getEntity().getContent()).getIdInscripcion();
 
         } catch (InputValidationException e) {
             throw e;
@@ -110,7 +110,7 @@ public class RestClientRunFicService implements ClientRunFicService {
 
     // CT : GET http://XXX/ws-runfic-service/Inscripcion?email=[email]
     @Override
-    public List<ClientInscripcionDto> findIscripcion(String email) {
+    public List<ClientInscripcionDto> findInscripcion(String email) {
         try {
             HttpResponse response = Request.Get(getEndpointAddress() + "Inscripcion?Email="
                     +URLEncoder.encode(email, "UTF-8")).
